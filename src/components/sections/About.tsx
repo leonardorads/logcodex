@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { MapPin } from 'lucide-react'
 import { AnimatedSection } from '@/components/ui/AnimatedSection'
+import { bp } from '@/lib/basePath'
 
 const stack = [
   'Next.js', 'TypeScript', 'Postgres', 'Supabase', 'Stripe',
@@ -10,21 +11,9 @@ const stack = [
 ]
 
 const credentials = [
-  {
-    label: 'CMG · Global Talents Program',
-    sub: 'Shenzhen, China · 2025',
-    accent: '#6366f1',
-  },
-  {
-    label: 'Huawei HQ',
-    sub: 'Shenzhen · China',
-    accent: '#e00',
-  },
-  {
-    label: 'Tencent HQ',
-    sub: 'Shenzhen · China',
-    accent: '#07c160',
-  },
+  { label: 'CMG · Global Talents Program', sub: 'Shenzhen, China · 2025', dotClass: 'bg-accent' },
+  { label: 'Huawei HQ',  sub: 'Shenzhen · China', dotClass: 'bg-[#ee0000]' },
+  { label: 'Tencent HQ', sub: 'Shenzhen · China', dotClass: 'bg-[#07c160]' },
 ]
 
 function PhotoMosaic() {
@@ -32,14 +21,13 @@ function PhotoMosaic() {
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
       {/* Main: CMG Shenzhen */}
-      <div className="relative sm:col-span-2 rounded-2xl overflow-hidden border border-white/[0.07]" style={{ aspectRatio: '4/3' }}>
+      <div className="relative sm:col-span-2 rounded-2xl overflow-hidden border border-white/[0.07] aspect-[4/3]">
         <Image
-          src="/images/leonardo-cmg-china-visit.jpg"
+          src={`${bp}/images/leonardo-cmg-china-visit.jpg`}
           alt="Leonardo Antunes na CMG em Shenzhen, China"
           fill
           sizes="(min-width: 1024px) 50vw, 100vw"
-          className="object-cover"
-          style={{ objectPosition: '18% 55%' }}
+          className="object-cover object-[18%_55%]"
         />
 
         {/* Location chip */}
@@ -53,9 +41,7 @@ function PhotoMosaic() {
         </div>
 
         {/* Bottom identity — pill on dark strip */}
-        <div className="absolute bottom-0 left-0 right-0 px-4 py-3"
-          style={{ background: 'linear-gradient(to top, rgba(8,8,10,0.97) 0%, rgba(8,8,10,0.8) 60%, transparent 100%)' }}
-        >
+        <div className="absolute bottom-0 left-0 right-0 px-4 py-3 about-photo-strip-main">
           <div className="inline-flex items-center gap-1.5 bg-white/[0.08] border border-white/[0.12] rounded-full px-2.5 py-1 mb-2">
             <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
             <span className="font-mono text-[10.5px] text-white uppercase tracking-[0.09em]">10 anos · Logística &amp; Setor Privado</span>
@@ -68,37 +54,31 @@ function PhotoMosaic() {
       </div>
 
       {/* Huawei */}
-      <div className="relative rounded-2xl overflow-hidden border border-white/[0.07]" style={{ aspectRatio: '4/3' }}>
+      <div className="relative rounded-2xl overflow-hidden border border-white/[0.07] aspect-[4/3]">
         <Image
-          src="/images/leonardo-huawei.jpeg"
+          src={`${bp}/images/leonardo-huawei.jpeg`}
           alt="Leonardo Antunes na Huawei em Shenzhen"
           fill
           sizes="(min-width: 1024px) 50vw, 100vw"
-          className="object-cover"
-          style={{ objectPosition: 'center 58%' }}
+          className="object-cover object-[center_58%]"
         />
-        <div className="absolute bottom-0 left-0 right-0 px-4 py-3"
-          style={{ background: 'linear-gradient(to top, rgba(8,8,10,0.95) 0%, rgba(8,8,10,0.6) 60%, transparent 100%)' }}
-        >
-          <p className="font-mono text-[11px] font-semibold tracking-[0.02em]" style={{ color: '#ff5555' }}>Huawei HQ</p>
+        <div className="absolute bottom-0 left-0 right-0 px-4 py-3 about-photo-strip">
+          <p className="font-mono text-[11px] font-semibold tracking-[0.02em] text-[#ff5555]">Huawei HQ</p>
           <p className="text-[11px] text-white/70 mt-0.5">Shenzhen · China</p>
         </div>
       </div>
 
       {/* Tencent */}
-      <div className="relative rounded-2xl overflow-hidden border border-white/[0.07]" style={{ aspectRatio: '4/3' }}>
+      <div className="relative rounded-2xl overflow-hidden border border-white/[0.07] aspect-[4/3]">
         <Image
-          src="/images/leonardo-tencent.jpeg"
+          src={`${bp}/images/leonardo-tencent.jpeg`}
           alt="Leonardo Antunes na Tencent em Shenzhen"
           fill
           sizes="(min-width: 1024px) 50vw, 100vw"
-          className="object-cover"
-          style={{ objectPosition: 'center 25%' }}
+          className="object-cover object-[center_25%]"
         />
-        <div className="absolute bottom-0 left-0 right-0 px-4 py-3"
-          style={{ background: 'linear-gradient(to top, rgba(8,8,10,0.95) 0%, rgba(8,8,10,0.6) 60%, transparent 100%)' }}
-        >
-          <p className="font-mono text-[11px] font-semibold tracking-[0.02em]" style={{ color: '#07c160' }}>Tencent HQ</p>
+        <div className="absolute bottom-0 left-0 right-0 px-4 py-3 about-photo-strip">
+          <p className="font-mono text-[11px] font-semibold tracking-[0.02em] text-[#07c160]">Tencent HQ</p>
           <p className="text-[11px] text-white/70 mt-0.5">Shenzhen · China</p>
         </div>
       </div>
@@ -167,7 +147,7 @@ export function About() {
                   key={c.label}
                   className="flex items-center gap-3 py-3 px-4 rounded-xl border border-white/[0.055] bg-white/[0.015]"
                 >
-                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: c.accent }} />
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${c.dotClass}`} />
                   <div>
                     <span className="text-[13.5px] font-medium text-primary">{c.label}</span>
                     <span className="font-mono text-[11px] text-muted ml-2">{c.sub}</span>

@@ -233,6 +233,14 @@ body {
   .op-scan, .op-live-dot { animation: none !important; }
 }
 
+/* ─── About photo mosaic ──────────────────────────────────────── */
+.about-photo-strip-main {
+  background: linear-gradient(to top, rgba(8,8,10,0.97) 0%, rgba(8,8,10,0.8) 60%, transparent 100%);
+}
+.about-photo-strip {
+  background: linear-gradient(to top, rgba(8,8,10,0.95) 0%, rgba(8,8,10,0.6) 60%, transparent 100%);
+}
+
 /* ─── Case preview area ────────────────────────────────────────── */
 .case-preview-grid {
   background-image:
