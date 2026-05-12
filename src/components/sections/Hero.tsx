@@ -41,11 +41,7 @@ function BusinessPreview() {
             <div className="text-[10.5px] text-muted">Fluxo ativo · sem plantão manual</div>
           </div>
           <div className="flex items-center gap-1.5 font-mono text-[10px] shrink-0">
-            <motion.span
-              className="w-1.5 h-1.5 rounded-full bg-[#25D366]"
-              animate={{ opacity: [1, 0.4, 1] }}
-              transition={{ duration: 1.8, repeat: Infinity }}
-            />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] op-live-dot" />
             <span className="text-[#25D366]">ao vivo</span>
           </div>
         </div>
@@ -150,7 +146,6 @@ export function Hero() {
     <section className="relative min-h-screen flex items-center overflow-hidden pt-36 pb-24">
       <div className="absolute inset-0 bg-base" />
       <div className="absolute inset-0 pointer-events-none hero-grid-animated opacity-80" />
-      <div className="absolute inset-0 bg-noise pointer-events-none opacity-[0.035] mix-blend-overlay" />
       <div className="hero-orb-animated" />
       <div className="hero-orb2-animated" />
       <div className="hero-top-line" />
@@ -167,12 +162,7 @@ export function Hero() {
               className="mb-6"
             >
               <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
-                <motion.span
-                  animate={{ rotate: [0, 15, -10, 0] }}
-                  transition={{ duration: 2.5, repeat: Infinity, delay: 1.5 }}
-                >
-                  <Zap className="w-3 h-3 text-accent" strokeWidth={2} />
-                </motion.span>
+                <Zap className="w-3 h-3 text-accent" strokeWidth={2} />
                 [ LCX ] tecnologia que trabalha por você
               </span>
             </motion.div>
