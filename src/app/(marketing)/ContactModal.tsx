@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 const WA_NUMBER = '5541999283590'
 const WA_MSG = encodeURIComponent(
@@ -49,13 +50,16 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
     }
   }
 
-  if (!open) return null
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
 
-  return (
+  if (!open || !mounted) return null
+
+  return createPortal(
     <>
       <style>{`
         .cm-backdrop {
-          position: fixed; inset: 0; z-index: 1000;
+          position: fixed; inset: 0; z-index: 9999;
           background: rgba(0,0,0,.72);
           backdrop-filter: blur(4px);
           display: flex; align-items: center; justify-content: center;
@@ -197,6 +201,7 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
           <p className="cm-fine">7 dias grátis · sem cartão · seus dados sempre seus</p>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   )
 }
