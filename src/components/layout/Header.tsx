@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'
 import { contactHref } from '@/lib/contact'
 
-function LogoMark({ size = 26 }: { size?: number }) {
+function LogoMark({ size = 34 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
       <rect width="32" height="32" rx="8" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.10)" />
@@ -69,7 +69,7 @@ export function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 text-primary" aria-label="LogCodex">
           <LogoMark />
-          <span className="font-medium text-sm tracking-tight">LogCodex</span>
+          <span className="font-semibold text-[16px] tracking-tight">LogCodex</span>
         </Link>
 
         {/* Desktop nav */}

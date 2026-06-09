@@ -21,7 +21,7 @@ export const services: Service[] = [
     n: '02',
     title: 'IA aplicada ao atendimento',
     description:
-      'Agentes e assistentes usados com critério: triagem, respostas recorrentes, organização de solicitações e apoio ao time. Sem chatbot de demo.',
+      'Agentes e assistentes usados com critério: triagem, respostas recorrentes, organização de solicitações e apoio ao time. Sem automação cenográfica.',
     icon: 'Brain',
   },
   {

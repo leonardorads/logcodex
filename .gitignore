@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ferramentas externas / rascunhos
+.manus/
+.opencode/
+scratchpad.md
+matrix-media-*.png

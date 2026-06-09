@@ -4,19 +4,19 @@ import { AnimatedSection } from '@/components/ui/AnimatedSection'
 
 const signals = [
   {
-    metric: '−3 h/dia',
-    context: 'em tarefas manuais mapeadas',
-    detail: 'Agendamento, confirmação e cobrança deixam de depender de memória, planilha e resposta fora de hora.',
+    metric: '−2h40',
+    context: 'por dia em confirmações',
+    detail: 'Quando lembretes e confirmações saem da mão, a equipe recupera tempo para atendimento, venda e operação.',
   },
   {
-    metric: '+40%',
-    context: 'mais contatos capturados',
-    detail: 'Site com formulário e WhatsApp conectados para transformar visita em conversa antes do concorrente.',
+    metric: '−41%',
+    context: 'em faltas na agenda',
+    detail: 'Lembrete, confirmação e reagendamento reduzem buracos no dia e aumentam o aproveitamento da estrutura.',
   },
   {
-    metric: '< 30 dias',
-    context: 'para a primeira versão em uso',
-    detail: 'Diagnóstico na semana 1, entrega em ciclos curtos e ajustes com base no uso real.',
+    metric: '+22',
+    context: 'consultas qualificadas/mês',
+    detail: 'Site, Google Maps e WhatsApp alinhados ajudam o cliente certo a chegar com contexto, não só com curiosidade.',
   },
 ]
 
@@ -33,7 +33,7 @@ export function Testimonials() {
                 [ 05 ] Indicadores
               </p>
               <h2 className="text-[clamp(28px,3.2vw,42px)] font-medium leading-[1.05] tracking-[-0.028em] text-primary max-w-[28ch]">
-                O que medimos quando a operação deixa de depender de improviso.
+                O que o cliente pode ganhar quando o processo sai do improviso.
               </h2>
             </div>
           </div>
@@ -70,7 +70,8 @@ export function Testimonials() {
               </span>
             </div>
             <p className="text-[13.5px] text-secondary leading-[1.5]">
-              Não vendemos painel bonito como resultado. Medimos tempo economizado, contatos capturados, faltas evitadas e clareza operacional depois da entrega.{' '}
+              Os números acima são recortes de ganhos operacionais que buscamos medir em cada projeto:
+              tempo economizado, faltas evitadas, consultas qualificadas e clareza sobre origem dos contatos.{' '}
               <a href="#contato" className="text-primary hover:text-accent transition-colors underline underline-offset-2 decoration-white/20">
                 Fale com a gente diretamente →
               </a>

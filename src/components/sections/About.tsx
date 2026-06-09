@@ -1,88 +1,76 @@
 'use client'
 
-import Image from 'next/image'
-import { MapPin } from 'lucide-react'
+import { BarChart3, Factory, MapPin, Network, TimerReset } from 'lucide-react'
 import { AnimatedSection } from '@/components/ui/AnimatedSection'
-import { bp } from '@/lib/basePath'
 
-const stack = [
-  'Next.js', 'TypeScript', 'Postgres', 'Supabase', 'Stripe',
-  'Claude API', 'GPT-4o', 'n8n', 'Vercel', 'Tailwind', 'Resend', 'Sanity',
+const principles = [
+  {
+    title: 'Processo antes de ferramenta',
+    description: 'A tecnologia entra depois de entender onde a rotina perde tempo, cliente ou controle.',
+    Icon: Network,
+  },
+  {
+    title: 'Entrega que vira rotina',
+    description: 'Site, automação ou sistema precisam ser simples de operar depois que a implantação acaba.',
+    Icon: TimerReset,
+  },
+  {
+    title: 'Indicador que ajuda decisão',
+    description: 'O objetivo não é encher a tela de gráfico. É mostrar o que muda agenda, receita e atendimento.',
+    Icon: BarChart3,
+  },
 ]
 
-const credentials = [
-  { label: 'CMG · Global Talents Program', sub: 'Shenzhen, China · 2025', dotClass: 'bg-accent' },
-  { label: 'Huawei HQ',  sub: 'Shenzhen · China', dotClass: 'bg-[#ee0000]' },
-  { label: 'Tencent HQ', sub: 'Shenzhen · China', dotClass: 'bg-[#07c160]' },
+const shenzhenSignals = [
+  'Velocidade sem improviso',
+  'Processo documentado',
+  'Operação enxuta',
+  'Tecnologia com função clara',
 ]
 
-function PhotoMosaic() {
+function CompanyPanel() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-surface p-6 sm:p-8">
+      <div className="absolute inset-0 bg-grid opacity-30" />
+      <div className="absolute inset-0 op-panel-glow" />
 
-      {/* Main: CMG Shenzhen */}
-      <div className="relative sm:col-span-2 rounded-2xl overflow-hidden border border-white/[0.07] aspect-[4/3]">
-        <Image
-          src={`${bp}/images/leonardo-cmg-china-visit.jpg`}
-          alt="Leonardo Antunes na CMG em Shenzhen, China"
-          fill
-          sizes="(min-width: 1024px) 50vw, 100vw"
-          className="object-cover object-[18%_55%]"
-        />
-
-        {/* Location chip */}
-        <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-[#08080a]/85 backdrop-blur-sm border border-white/[0.15] rounded-full px-2.5 py-1.5">
-          <MapPin className="w-3 h-3 text-accent shrink-0" strokeWidth={2} />
-          <span className="font-mono text-[11px] text-white font-medium">Shenzhen · China</span>
-        </div>
-
-        <div className="absolute top-3 right-3 bg-[#08080a]/85 backdrop-blur-sm border border-white/[0.15] rounded-full px-2.5 py-1.5">
-          <span className="font-mono text-[11px] text-white/90">CMG · 2025</span>
-        </div>
-
-        {/* Bottom identity — pill on dark strip */}
-        <div className="absolute bottom-0 left-0 right-0 px-4 py-3 about-photo-strip-main">
-          <div className="inline-flex items-center gap-1.5 bg-white/[0.08] border border-white/[0.12] rounded-full px-2.5 py-1 mb-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
-            <span className="font-mono text-[10.5px] text-white uppercase tracking-[0.09em]">10 anos · Logística &amp; Setor Privado</span>
+      <div className="relative z-10">
+        <div className="flex items-center justify-between gap-4 mb-12">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl border border-accent/25 bg-accent/10 flex items-center justify-center">
+              <Factory className="w-5 h-5 text-accent" strokeWidth={1.7} />
+            </div>
+            <div>
+              <p className="text-[15px] font-medium text-primary">LogCodex</p>
+              <p className="font-mono text-[11px] text-muted">operação · tecnologia · escala</p>
+            </div>
           </div>
-          <div className="flex items-baseline gap-2">
-            <p className="text-[17px] font-medium tracking-[-0.018em] text-white">Leonardo Antunes</p>
-            <p className="text-[12px] text-white/60">Fundador · LogCodex</p>
+          <div className="flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.025] px-3 py-1.5">
+            <MapPin className="w-3.5 h-3.5 text-accent" strokeWidth={1.8} />
+            <span className="font-mono text-[10.5px] text-secondary">Shenzhen</span>
           </div>
         </div>
-      </div>
 
-      {/* Huawei */}
-      <div className="relative rounded-2xl overflow-hidden border border-white/[0.07] aspect-[4/3]">
-        <Image
-          src={`${bp}/images/leonardo-huawei.jpeg`}
-          alt="Leonardo Antunes na Huawei em Shenzhen"
-          fill
-          sizes="(min-width: 1024px) 50vw, 100vw"
-          className="object-cover object-[center_58%]"
-        />
-        <div className="absolute bottom-0 left-0 right-0 px-4 py-3 about-photo-strip">
-          <p className="font-mono text-[11px] font-semibold tracking-[0.02em] text-[#ff5555]">Huawei HQ</p>
-          <p className="text-[11px] text-white/70 mt-0.5">Shenzhen · China</p>
+        <div className="grid grid-cols-2 gap-3 mb-8">
+          {shenzhenSignals.map((signal) => (
+            <div key={signal} className="rounded-xl border border-white/[0.055] bg-white/[0.025] p-4">
+              <span className="block w-1.5 h-1.5 rounded-full bg-accent mb-3" />
+              <p className="text-[13px] text-secondary leading-[1.4]">{signal}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="rounded-xl border border-white/[0.055] bg-base/40 p-5">
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-muted mb-3">
+            princípio operacional
+          </p>
+          <p className="text-[22px] sm:text-[26px] font-medium tracking-[-0.025em] leading-[1.15] text-primary">
+            Menos ferramenta solta.
+            <br />
+            Mais processo funcionando.
+          </p>
         </div>
       </div>
-
-      {/* Tencent */}
-      <div className="relative rounded-2xl overflow-hidden border border-white/[0.07] aspect-[4/3]">
-        <Image
-          src={`${bp}/images/leonardo-tencent.jpeg`}
-          alt="Leonardo Antunes na Tencent em Shenzhen"
-          fill
-          sizes="(min-width: 1024px) 50vw, 100vw"
-          className="object-cover object-[center_25%]"
-        />
-        <div className="absolute bottom-0 left-0 right-0 px-4 py-3 about-photo-strip">
-          <p className="font-mono text-[11px] font-semibold tracking-[0.02em] text-[#07c160]">Tencent HQ</p>
-          <p className="text-[11px] text-white/70 mt-0.5">Shenzhen · China</p>
-        </div>
-      </div>
-
     </div>
   )
 }
@@ -92,88 +80,54 @@ export function About() {
     <section id="sobre" className="py-24 bg-base">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-
-          {/* Left — photo mosaic */}
           <AnimatedSection>
-            <PhotoMosaic />
+            <CompanyPanel />
           </AnimatedSection>
 
-          {/* Right — text */}
           <AnimatedSection delay={0.15}>
             <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted mb-5">
-              [ 03 ] Sobre
+              [ 03 ] Sobre a empresa
             </p>
             <h2 className="text-[clamp(28px,3.2vw,42px)] font-medium leading-[1.05] tracking-[-0.028em] text-primary mb-7">
-              Operação primeiro.
+              Nascemos para ligar
               <br />
-              <span className="text-muted font-normal">Código depois.</span>
+              <span className="text-muted font-normal">tecnologia à operação.</span>
             </h2>
 
             <div className="space-y-4 text-[15px] text-secondary leading-[1.7]">
               <p>
-                A LogCodex nasce de 10 anos lidando com operação real: logística portuária,
-                setor privado, rotina crítica, processo quebrando no detalhe. Tecnologia aqui
-                não é enfeite. É estrutura para reduzir ruído, retrabalho e dependência do dono.
+                A LogCodex nasceu da vivência com operação real: rotina crítica, processo quebrando
+                no detalhe, informação espalhada e decisões importantes presas em planilhas,
+                mensagens e retrabalho.
               </p>
               <p>
-                Em 2025, participei do{' '}
-                <strong className="text-primary font-medium">Programa Global Talents da CMG</strong>{' '}
-                em <strong className="text-primary font-medium">Shenzhen, China</strong>. Também visitei a{' '}
-                <strong className="text-primary font-medium">sede da Huawei</strong> e a{' '}
-                <strong className="text-primary font-medium">sede da Tencent</strong>: empresas onde tecnologia,
-                processo e escala não são discurso, são disciplina operacional.
+                A passagem por Shenzhen reforçou uma ideia simples: tecnologia só tem valor quando
+                melhora o fluxo do negócio. Lá, escala, disciplina operacional e velocidade não são
+                discurso; são método.
               </p>
               <p>
-                Esse olhar é o que trazemos para negócios locais: site que captura demanda,
-                automação que responde no tempo certo e sistemas simples o suficiente para
-                virarem rotina. Sem template inflado. Sem ferramenta procurando problema.
+                Esse aprendizado foi traduzido para empresas que precisam vender, atender, agendar,
+                organizar e medir melhor sem criar uma estrutura técnica pesada.
               </p>
             </div>
 
-            {/* Quote callout */}
-            <div className="my-7 relative pl-5 border-l-2 border-accent">
-              <p className="text-[18px] font-medium text-primary tracking-[-0.015em] leading-[1.35] italic">
-                &ldquo;Time is money, efficient is life!&rdquo;
-              </p>
-              <span className="font-mono text-[11px] text-muted mt-1.5 block">
-                — Lema aprendido em Shenzhen, China
-              </span>
-            </div>
-
-            {/* Credential chips */}
-            <div className="mt-7 space-y-2">
-              {credentials.map((c) => (
+            <div className="mt-8 grid grid-cols-1 gap-3">
+              {principles.map(({ title, description, Icon }) => (
                 <div
-                  key={c.label}
-                  className="flex items-center gap-3 py-3 px-4 rounded-xl border border-white/[0.055] bg-white/[0.015]"
+                  key={title}
+                  className="flex items-start gap-4 rounded-xl border border-white/[0.055] bg-white/[0.015] p-4"
                 >
-                  <span className={`w-2 h-2 rounded-full shrink-0 ${c.dotClass}`} />
+                  <div className="w-9 h-9 rounded-lg border border-white/[0.055] bg-white/[0.025] flex items-center justify-center shrink-0">
+                    <Icon className="w-4 h-4 text-accent" strokeWidth={1.7} />
+                  </div>
                   <div>
-                    <span className="text-[13.5px] font-medium text-primary">{c.label}</span>
-                    <span className="font-mono text-[11px] text-muted ml-2">{c.sub}</span>
+                    <h3 className="text-[14px] font-medium text-primary mb-1">{title}</h3>
+                    <p className="text-[13px] text-muted leading-[1.55]">{description}</p>
                   </div>
                 </div>
               ))}
             </div>
-
-            {/* Stack */}
-            <div className="mt-8 pt-7 border-t border-white/[0.055]">
-              <p className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-muted mb-3">
-                Ferramentas quando fazem sentido
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {stack.map((tech) => (
-                  <span
-                    key={tech}
-                    className="font-mono text-[11px] text-secondary border border-white/[0.055] bg-white/[0.012] px-2.5 py-1 rounded"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
           </AnimatedSection>
-
         </div>
       </div>
     </section>

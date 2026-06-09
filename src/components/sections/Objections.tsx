@@ -4,7 +4,7 @@ const objections = [
   {
     question: '"Mas é caro pra mim agora..."',
     answer:
-      'O pacote Negócio no Mapa começa em R$ 1.490 — menos do que um mês de anúncio no Google sem estrutura pra converter o clique. E você começa com 30 dias gratuitos, sem pagar nada antes de ver funcionando.',
+      'Por isso a proposta só vem depois do diagnóstico. Primeiro entendemos o que realmente precisa ser construído, o que pode ser simplificado e qual entrega tende a gerar retorno operacional mais rápido.',
   },
   {
     question: '"Mas eu não entendo nada de tecnologia..."',

@@ -34,7 +34,7 @@ export default function Home() {
       {/* 7. Results */}
       <Testimonials />
 
-      {/* 8. Investment */}
+      {/* 8. Quick request */}
       <Pricing />
 
       {/* 9. Risk removal */}

@@ -65,9 +65,9 @@ export function Footer() {
 
           {/* Navigation */}
           <div>
-            <h4 className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted mb-4 font-medium">
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted mb-4 font-medium">
               Navegação
-            </h4>
+            </h3>
             <ul className="space-y-2.5 list-none p-0 m-0">
               {navLinks.map((link) => (
                 <li key={link.href}>
@@ -81,9 +81,9 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted mb-4 font-medium">
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted mb-4 font-medium">
               Contato
-            </h4>
+            </h3>
             <ul className="space-y-2.5 list-none p-0 m-0">
               {contactLinks.map((link) => (
                 <li key={link.label}>
@@ -101,9 +101,9 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted mb-4 font-medium">
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted mb-4 font-medium">
               Critério
-            </h4>
+            </h3>
             <p className="text-[13.5px] text-secondary leading-[1.6] max-w-[30ch]">
               Diagnóstico antes de escopo. Proposta antes de cobrança. Entrega com 30 dias de acompanhamento.
             </p>
@@ -112,10 +112,10 @@ export function Footer() {
 
         {/* Legal row */}
         <div className="pt-6 border-t border-white/[0.055] flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-[12px] text-faint">
+          <p className="text-[12px] text-muted">
             © 2026 LogCodex. Curitiba, BR · Operação, automação e desenvolvimento digital.
           </p>
-          <p className="font-mono text-[12px] text-faint">logcodex.com.br</p>
+          <p className="font-mono text-[12px] text-muted">logcodex.com.br</p>
         </div>
       </div>
     </footer>

@@ -18,7 +18,7 @@ function CasePreview({ kind }: { kind: string }) {
             <span className="w-1.5 h-1.5 rounded-full bg-accent" />
           </div>
           <div className="grid grid-cols-3 gap-2">
-            {[['R$', '184k'], ['Pedidos', '1.243'], ['SLA', '99.4%']].map(([l, v]) => (
+            {[['Receita', '184k'], ['Pedidos', '1.243'], ['SLA', '99.4%']].map(([l, v]) => (
               <div key={l} className={cardStyle}>
                 <div className="font-mono text-[9px] text-faint uppercase tracking-[0.1em]">{l}</div>
                 <div className="text-[17px] font-medium text-primary mt-1 tracking-tight">{v}</div>
