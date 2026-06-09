@@ -80,21 +80,21 @@ export function MarketingPage() {
         <a href="#" className="nav-cta" onClick={openModal}>Testar grátis</a>
       </nav>
 
-      {/* HERO */}
+      {/* HERO + CHAT integrados */}
       <section className="hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
         <ShaderBackground />
 
-        {/* overlay escuro para legibilidade */}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(12,13,15,0.72) 0%, rgba(12,13,15,0.55) 60%, rgba(12,13,15,0.92) 100%)', zIndex: 1 }} />
+        {/* overlay */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(12,13,15,0.68) 0%, rgba(12,13,15,0.50) 50%, rgba(12,13,15,0.88) 100%)', zIndex: 1 }} />
 
-        <div style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: '860px', margin: '0 auto', padding: 'clamp(80px,12vh,120px) clamp(20px,5vw,40px) clamp(60px,8vh,100px)', textAlign: 'center' }}>
+        <div style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: '780px', margin: '0 auto', padding: 'clamp(90px,11vh,110px) clamp(20px,5vw,40px) clamp(40px,5vh,60px)', textAlign: 'center' }}>
 
           {/* badge pill */}
           <motion.div
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '32px', padding: '6px 16px', borderRadius: '999px', border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.05)', fontSize: '12px', letterSpacing: '.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '24px', padding: '6px 16px', borderRadius: '999px', border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.05)', fontSize: '12px', letterSpacing: '.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}
           >
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80', display: 'inline-block', boxShadow: '0 0 6px #4ade80' }} />
             LogCodex Fleet · Controle de frota com IA
@@ -105,10 +105,10 @@ export function MarketingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
-            style={{ fontSize: 'clamp(40px, 7vw, 80px)', fontWeight: 800, letterSpacing: '-.03em', lineHeight: 1.1, marginBottom: '24px', color: '#fff' }}
+            style={{ fontSize: 'clamp(44px, 8vw, 92px)', fontWeight: 800, letterSpacing: '-.03em', lineHeight: 1.05, marginBottom: '16px', color: '#fff' }}
           >
             Sua logística{' '}
-            <span style={{ display: 'inline-block', position: 'relative', overflow: 'hidden', height: '1.15em', verticalAlign: 'bottom', minWidth: 'min(280px, 70vw)' }}>
+            <span style={{ display: 'inline-block', position: 'relative', overflow: 'hidden', height: '1.1em', verticalAlign: 'bottom', minWidth: 'min(300px, 70vw)' }}>
               <AnimatePresence mode="wait">
                 <motion.span
                   key={wordIndex}
@@ -129,64 +129,38 @@ export function MarketingPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
-            style={{ fontSize: 'clamp(16px, 2vw, 20px)', color: 'rgba(255,255,255,0.5)', lineHeight: 1.65, maxWidth: '600px', margin: '0 auto 40px' }}
+            style={{ fontSize: 'clamp(15px, 1.8vw, 18px)', color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, maxWidth: '520px', margin: '0 auto 32px' }}
           >
             O Fleet conecta frota, motoristas e financeiro em um só sistema — e entrega o número real de cada operação, em tempo real.
           </motion.p>
 
-          {/* CTAs */}
+          {/* CHAT dentro do hero */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.45, ease: 'easeOut' }}
-            style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '64px' }}
+            transition={{ duration: 0.7, delay: 0.45, ease: 'easeOut' }}
           >
-            <a href="#" onClick={openModal} style={{ padding: '14px 32px', borderRadius: '10px', background: '#fff', color: '#0c0d0f', fontSize: '15px', fontWeight: 700, textDecoration: 'none', transition: 'transform .15s, background .15s' }}
-              onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
-              onMouseLeave={e => (e.currentTarget.style.transform = 'none')}
-            >
-              Testar grátis
-            </a>
-            <a href="#metodo" style={{ padding: '14px 32px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.75)', fontSize: '15px', fontWeight: 500, textDecoration: 'none', transition: 'transform .15s, border-color .15s' }}
-              onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
-              onMouseLeave={e => (e.currentTarget.style.transform = 'none')}
-            >
-              Ver como funciona
-            </a>
+            <FleetChat onOpenContact={() => setModalOpen(true)} />
           </motion.div>
 
           {/* badges de prova */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            style={{ display: 'flex', gap: '32px', justifyContent: 'center', flexWrap: 'wrap' }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+            style={{ display: 'flex', gap: '24px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '36px' }}
           >
             {[
-              { label: 'Operação documentada', sub: 'Cada viagem registrada em tempo real' },
-              { label: 'Controle de bordo automatizado', sub: 'Motorista no celular, sem papel' },
-              { label: '7 dias grátis', sub: 'Sem cartão de crédito' },
-              { label: 'Seus dados, seus', sub: 'Export Excel quando quiser' },
+              { label: '7 dias grátis', sub: 'Sem cartão' },
+              { label: 'Seus dados, seus', sub: 'Export Excel' },
+              { label: 'Suporte incluído', sub: 'Do onboarding em diante' },
             ].map(({ label, sub }) => (
               <div key={label} style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.75)', marginBottom: '2px' }}>{label}</div>
-                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)' }}>{sub}</div>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.6)', marginBottom: '1px' }}>{label}</div>
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.25)' }}>{sub}</div>
               </div>
             ))}
           </motion.div>
-        </div>
-      </section>
-
-      {/* ASSISTENTE FLEET */}
-      <section style={{ padding: '80px clamp(16px,4vw,40px) 80px', background: 'var(--bg)' }}>
-        <div className="reveal" style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <p style={{ fontSize: '11px', letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--ink-3)', marginBottom: '12px' }}>Assistente Fleet · IA</p>
-          <h2 style={{ fontSize: 'clamp(24px,3vw,38px)', fontWeight: 800, letterSpacing: '-.025em', marginBottom: '0' }}>
-            Pergunte à sua operação.<br /><em style={{ fontStyle: 'normal', color: 'var(--ink-3)' }}>Ela responde em segundos.</em>
-          </h2>
-        </div>
-        <div className="reveal">
-          <FleetChat onOpenContact={() => setModalOpen(true)} />
         </div>
       </section>
 
