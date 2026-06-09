@@ -81,13 +81,24 @@ export function MarketingPage() {
       </nav>
 
       {/* HERO + CHAT integrados */}
-      <section className="hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+      <style>{`
+        .hero-section { align-items: center; }
+        .hero-inner { padding: clamp(64px,8vh,80px) clamp(20px,5vw,40px) clamp(40px,5vh,60px); }
+        @media (max-width: 640px) {
+          .hero-section { align-items: flex-start; padding: 0 !important; }
+          .hero-inner { padding: 72px 20px 32px; }
+          .hero-ctas { gap: 8px; margin-bottom: 20px !important; }
+          .hero-ctas a { padding: 11px 20px !important; font-size: 14px !important; }
+          .hero-badges { gap: 16px; margin-top: 20px !important; }
+        }
+      `}</style>
+      <section className="hero hero-section" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', display: 'flex' }}>
         <ShaderBackground />
 
         {/* overlay */}
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(12,13,15,0.68) 0%, rgba(12,13,15,0.50) 50%, rgba(12,13,15,0.88) 100%)', zIndex: 1 }} />
 
-        <div style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: '780px', margin: '0 auto', padding: 'clamp(90px,11vh,110px) clamp(20px,5vw,40px) clamp(40px,5vh,60px)', textAlign: 'center' }}>
+        <div className="hero-inner" style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: '780px', margin: '0 auto', textAlign: 'center' }}>
 
           {/* badge pill */}
           <motion.div
@@ -105,7 +116,7 @@ export function MarketingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
-            style={{ fontSize: 'clamp(44px, 8vw, 92px)', fontWeight: 800, letterSpacing: '-.03em', lineHeight: 1.05, marginBottom: '16px', color: '#fff' }}
+            style={{ fontSize: 'clamp(40px, 8vw, 92px)', fontWeight: 800, letterSpacing: '-.03em', lineHeight: 1.05, marginBottom: '16px', color: '#fff' }}
           >
             Sua logística{' '}
             <span style={{ display: 'inline-block', position: 'relative', overflow: 'hidden', height: '1.1em', verticalAlign: 'bottom', minWidth: 'min(300px, 70vw)' }}>
@@ -129,16 +140,34 @@ export function MarketingPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
-            style={{ fontSize: 'clamp(15px, 1.8vw, 18px)', color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, maxWidth: '520px', margin: '0 auto 32px' }}
+            style={{ fontSize: 'clamp(15px, 1.8vw, 18px)', color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, maxWidth: '520px', margin: '0 auto 28px' }}
           >
             O Fleet conecta frota, motoristas e financeiro em um só sistema — e entrega o número real de cada operação, em tempo real.
           </motion.p>
+
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+            className="hero-ctas"
+            style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '28px' }}
+          >
+            <a href="#" onClick={openModal} style={{ padding: '13px 28px', borderRadius: '10px', background: '#fff', color: '#0c0d0f', fontSize: '15px', fontWeight: 700, textDecoration: 'none', transition: 'transform .15s' }}
+              onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
+              onMouseLeave={e => (e.currentTarget.style.transform = 'none')}
+            >Testar grátis</a>
+            <a href="#metodo" style={{ padding: '13px 28px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.75)', fontSize: '15px', fontWeight: 500, textDecoration: 'none', transition: 'transform .15s' }}
+              onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
+              onMouseLeave={e => (e.currentTarget.style.transform = 'none')}
+            >Ver como funciona</a>
+          </motion.div>
 
           {/* CHAT dentro do hero */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.45, ease: 'easeOut' }}
+            transition={{ duration: 0.7, delay: 0.55, ease: 'easeOut' }}
           >
             <FleetChat onOpenContact={() => setModalOpen(true)} />
           </motion.div>
@@ -148,16 +177,18 @@ export function MarketingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.7 }}
-            style={{ display: 'flex', gap: '24px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '36px' }}
+            className="hero-badges"
+            style={{ display: 'flex', gap: '28px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '28px' }}
           >
             {[
-              { label: '7 dias grátis', sub: 'Sem cartão' },
-              { label: 'Seus dados, seus', sub: 'Export Excel' },
-              { label: 'Suporte incluído', sub: 'Do onboarding em diante' },
+              { label: 'Operação documentada', sub: 'Cada viagem registrada em tempo real' },
+              { label: 'Controle de bordo automatizado', sub: 'Motorista no celular, sem papel' },
+              { label: '7 dias grátis', sub: 'Sem cartão de crédito' },
+              { label: 'Seus dados, seus', sub: 'Export Excel quando quiser' },
             ].map(({ label, sub }) => (
               <div key={label} style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.6)', marginBottom: '1px' }}>{label}</div>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.25)' }}>{sub}</div>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.7)', marginBottom: '2px' }}>{label}</div>
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.28)' }}>{sub}</div>
               </div>
             ))}
           </motion.div>

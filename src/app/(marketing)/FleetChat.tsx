@@ -113,6 +113,12 @@ export function FleetChat({ onOpenContact }: FleetChatProps) {
           border-color: rgba(255,255,255,0.25);
           background: rgba(255,255,255,0.04);
         }
+        @media (max-width: 640px) {
+          .fc-pills-inner { display: none; }
+          .fc-box { padding: 14px 16px 12px; border-radius: 16px; }
+          .fc-border-wrap { border-radius: 18px; }
+          .fc-textarea { font-size: 14px; min-height: 44px; }
+        }
 
         .fc-textarea {
           width: 100%;
