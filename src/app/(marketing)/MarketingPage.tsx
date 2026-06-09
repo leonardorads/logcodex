@@ -1,8 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ContactModal } from './ContactModal'
 import { ShaderBackground } from './ShaderBackground'
+
+const ROTATING_WORDS = ['inteligente', 'automatizada', 'conectada', 'escalável', 'em tempo real']
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || ''
 
@@ -16,7 +19,15 @@ const LogoMark = () => (
 
 export function MarketingPage() {
   const [modalOpen, setModalOpen] = useState(false)
+  const [wordIndex, setWordIndex] = useState(0)
   const openModal = (e: React.MouseEvent) => { e.preventDefault(); setModalOpen(true) }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWordIndex((i) => (i + 1) % ROTATING_WORDS.length)
+    }, 2200)
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     const nav = document.getElementById('lcx-nav')
@@ -69,41 +80,99 @@ export function MarketingPage() {
       </nav>
 
       {/* HERO */}
-      <section className="hero" style={{ position: 'relative', overflow: 'hidden' }}>
+      <section className="hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
         <ShaderBackground />
-        <div className="wrap reveal" style={{ position: 'relative', zIndex: 1 }}>
-          <h1 className="hero-title">
-            <strong>Operação</strong> <em>que escala.</em><br />
-            Sem ruído.
-          </h1>
 
-          <p className="hero-sub">
-            Automação integrada com IA para sua logística. O Fleet conecta frota, motoristas e financeiro em um só sistema — e entrega o número real de cada operação, em tempo real.
-          </p>
+        {/* overlay escuro para legibilidade */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(12,13,15,0.72) 0%, rgba(12,13,15,0.55) 60%, rgba(12,13,15,0.92) 100%)', zIndex: 1 }} />
 
-          <div className="hero-ctas">
-            <a href="#" className="btn btn-primary" onClick={openModal}>Testar grátis</a>
-            <a href="#metodo" className="btn btn-ghost">Ver como funciona</a>
-          </div>
+        <div style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: '860px', margin: '0 auto', padding: '120px 40px 100px', textAlign: 'center' }}>
 
-          <div className="hero-foot">
-            <div>
-              <strong>Operação documentada</strong>
-              Cada viagem, custo e acerto registrado em tempo real.
-            </div>
-            <div>
-              <strong>Controle de bordo automatizado</strong>
-              Motorista acompanha despesas, acertos e viagens pelo celular. Sem papel, sem ligação.
-            </div>
-            <div>
-              <strong>7 dias grátis</strong>
-              Sistema completo, sem cartão de crédito.
-            </div>
-            <div>
-              <strong>Seus dados, seus</strong>
-              Exporta tudo em Excel quando quiser. Sem trava.
-            </div>
-          </div>
+          {/* badge pill */}
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '32px', padding: '6px 16px', borderRadius: '999px', border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.05)', fontSize: '12px', letterSpacing: '.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}
+          >
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80', display: 'inline-block', boxShadow: '0 0 6px #4ade80' }} />
+            LogCodex Fleet · Controle de frota com IA
+          </motion.div>
+
+          {/* headline com palavra rotativa */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
+            style={{ fontSize: 'clamp(40px, 7vw, 80px)', fontWeight: 800, letterSpacing: '-.03em', lineHeight: 1.1, marginBottom: '24px', color: '#fff' }}
+          >
+            Sua logística{' '}
+            <span style={{ display: 'inline-block', position: 'relative', overflow: 'hidden', height: '1.15em', verticalAlign: 'bottom', minWidth: '280px' }}>
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={wordIndex}
+                  initial={{ opacity: 0, y: -60 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 60 }}
+                  transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ display: 'block', color: 'transparent', backgroundImage: 'linear-gradient(90deg, #60a5fa, #818cf8)', WebkitBackgroundClip: 'text', backgroundClip: 'text' }}
+                >
+                  {ROTATING_WORDS[wordIndex]}
+                </motion.span>
+              </AnimatePresence>
+            </span>
+          </motion.h1>
+
+          {/* subtítulo */}
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
+            style={{ fontSize: 'clamp(16px, 2vw, 20px)', color: 'rgba(255,255,255,0.5)', lineHeight: 1.65, maxWidth: '600px', margin: '0 auto 40px' }}
+          >
+            O Fleet conecta frota, motoristas e financeiro em um só sistema — e entrega o número real de cada operação, em tempo real.
+          </motion.p>
+
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.45, ease: 'easeOut' }}
+            style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '64px' }}
+          >
+            <a href="#" onClick={openModal} style={{ padding: '14px 32px', borderRadius: '10px', background: '#fff', color: '#0c0d0f', fontSize: '15px', fontWeight: 700, textDecoration: 'none', transition: 'transform .15s, background .15s' }}
+              onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
+              onMouseLeave={e => (e.currentTarget.style.transform = 'none')}
+            >
+              Testar grátis
+            </a>
+            <a href="#metodo" style={{ padding: '14px 32px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.75)', fontSize: '15px', fontWeight: 500, textDecoration: 'none', transition: 'transform .15s, border-color .15s' }}
+              onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
+              onMouseLeave={e => (e.currentTarget.style.transform = 'none')}
+            >
+              Ver como funciona
+            </a>
+          </motion.div>
+
+          {/* badges de prova */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            style={{ display: 'flex', gap: '32px', justifyContent: 'center', flexWrap: 'wrap' }}
+          >
+            {[
+              { label: 'Operação documentada', sub: 'Cada viagem registrada em tempo real' },
+              { label: 'Controle de bordo automatizado', sub: 'Motorista no celular, sem papel' },
+              { label: '7 dias grátis', sub: 'Sem cartão de crédito' },
+              { label: 'Seus dados, seus', sub: 'Export Excel quando quiser' },
+            ].map(({ label, sub }) => (
+              <div key={label} style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.75)', marginBottom: '2px' }}>{label}</div>
+                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)' }}>{sub}</div>
+              </div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
