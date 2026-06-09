@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react'
 import { ContactModal } from './ContactModal'
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH || ''
+const FLEET_URL = `${BASE}/fleet`
+
 const LogoMark = () => (
   <svg viewBox="0 0 32 32" fill="none">
     <rect width="32" height="32" rx="7" fill="none" stroke="currentColor" strokeOpacity="0.45" />
@@ -115,7 +118,7 @@ export function MarketingPage() {
         </div>
         <div className="reveal" style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--line)', boxShadow: '0 32px 80px rgba(0,0,0,.55)' }}>
           <img
-            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/screenshots/dashboard.jpg`}
+            src={`${BASE}/screenshots/dashboard.jpg`}
             alt="Dashboard LogCodex Fleet — visão geral da operação"
             style={{ width: '100%', display: 'block' }}
             onError={(e) => {
@@ -151,37 +154,37 @@ export function MarketingPage() {
           </div>
 
           <div className="svc-list">
-            <a className="svc-row reveal" href="/fleet">
+            <a className="svc-row reveal" href={FLEET_URL}>
               <span className="svc-n">/01</span>
               <span className="svc-name">Viagens e rotas documentadas</span>
               <span className="svc-desc">Origem, destino, KM, despesas. Cada viagem fica registrada com custo real calculado automaticamente.</span>
               <span className="svc-arrow">→</span>
             </a>
-            <a className="svc-row reveal" href="/fleet">
+            <a className="svc-row reveal" href={FLEET_URL}>
               <span className="svc-n">/02</span>
               <span className="svc-name">Acertos com motoristas</span>
               <span className="svc-desc">Proposta menos despesas igual acerto. Motorista vê tudo, aprova, recebe. Sem planilha, sem discussão.</span>
               <span className="svc-arrow">→</span>
             </a>
-            <a className="svc-row reveal" href="/fleet">
+            <a className="svc-row reveal" href={FLEET_URL}>
               <span className="svc-n">/03</span>
               <span className="svc-name">Despesas e combustível</span>
               <span className="svc-desc">Diesel, ARLA, pedágio, manutenção. Controle de custo por veículo e por viagem, sem surpresa no caixa.</span>
               <span className="svc-arrow">→</span>
             </a>
-            <a className="svc-row reveal" href="/fleet">
+            <a className="svc-row reveal" href={FLEET_URL}>
               <span className="svc-n">/04</span>
               <span className="svc-name">Assistente Fleet (IA)</span>
               <span className="svc-desc">Pergunta em linguagem natural: "quanto faturei essa semana?". Resposta com contexto real, em segundos.</span>
               <span className="svc-arrow">→</span>
             </a>
-            <a className="svc-row reveal" href="/fleet">
+            <a className="svc-row reveal" href={FLEET_URL}>
               <span className="svc-n">/05</span>
               <span className="svc-name">Painéis operacionais</span>
               <span className="svc-desc">Viagens ativas, faturamento, margem por rota, acertos pendentes. Decisão sem esperar relatório.</span>
               <span className="svc-arrow">→</span>
             </a>
-            <a className="svc-row reveal" href="/fleet">
+            <a className="svc-row reveal" href={FLEET_URL}>
               <span className="svc-n">/06</span>
               <span className="svc-name">Propostas e clientes</span>
               <span className="svc-desc">Da cotação ao fechamento. Proposta com validade, endereço de rota e cliente — tudo amarrado à viagem.</span>
@@ -204,7 +207,7 @@ export function MarketingPage() {
         </div>
         <div className="reveal" style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--line)', boxShadow: '0 24px 60px rgba(0,0,0,.5)' }}>
           <img
-            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/screenshots/assistant.jpg`}
+            src={`${BASE}/screenshots/assistant.jpg`}
             alt="Assistente Fleet — chat IA com dados reais da operação"
             style={{ width: '100%', display: 'block' }}
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
