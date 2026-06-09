@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { ContactModal } from './ContactModal'
+import { ShaderBackground } from './ShaderBackground'
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || ''
 
@@ -68,8 +69,9 @@ export function MarketingPage() {
       </nav>
 
       {/* HERO */}
-      <section className="hero">
-        <div className="wrap reveal">
+      <section className="hero" style={{ position: 'relative', overflow: 'hidden' }}>
+        <ShaderBackground />
+        <div className="wrap reveal" style={{ position: 'relative', zIndex: 1 }}>
           <h1 className="hero-title">
             <strong>Operação</strong> <em>que escala.</em><br />
             Sem ruído.
