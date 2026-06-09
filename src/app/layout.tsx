@@ -1,14 +1,22 @@
-import type { Metadata } from 'next'
-import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google'
-import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
+import type { Metadata, Viewport } from 'next'
+import { Geist, Geist_Mono, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
+
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+})
+
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+})
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-jakarta',
   display: 'swap',
-  weight: ['300', '400', '500', '600'],
+  weight: ['200', '300', '400', '500', '600'],
 })
 
 const jetbrainsMono = JetBrains_Mono({
@@ -18,60 +26,21 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://logcodex.com.br'),
-  title: 'LogCodex | Automação, IA e Desenvolvimento Digital',
-  description:
-    'Tecnologia que resolve. Operação que escala. Combinamos estratégia operacional, automação e desenvolvimento digital para empresas que precisam de resultado real.',
-  keywords: [
-    'automação de processos',
-    'integrações com IA',
-    'desenvolvimento SaaS',
-    'landing pages',
-    'dashboards',
-    'consultoria tecnológica',
-    'LogCodex',
-  ],
-  authors: [{ name: 'LogCodex', url: 'https://logcodex.com.br' }],
-  openGraph: {
-    type: 'website',
-    locale: 'pt_BR',
-    url: 'https://logcodex.com.br',
-    siteName: 'LogCodex',
-    title: 'LogCodex | Automação, IA e Desenvolvimento Digital',
-    description:
-      'Tecnologia que resolve. Operação que escala. Automação, IA aplicada e desenvolvimento digital orientados a resultado real.',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'LogCodex — Tecnologia que resolve. Operação que escala.',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'LogCodex | Automação, IA e Desenvolvimento Digital',
-    description: 'Tecnologia que resolve. Operação que escala.',
-    images: ['/og-image.png'],
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  title: 'LogCodex Fleet',
+  description: 'Controle de frota LogCodex',
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={`${plusJakartaSans.variable} ${jetbrainsMono.variable}`}>
-      <body className="min-h-screen bg-base text-primary antialiased">
-        <Header />
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
         {children}
-        <Footer />
       </body>
     </html>
   )
