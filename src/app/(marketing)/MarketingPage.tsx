@@ -76,7 +76,7 @@ export function MarketingPage() {
           </h1>
 
           <p className="hero-sub">
-            Engenharia de operação em código. O Fleet é o controle de frota para transportadoras que cresceram além da planilha — e precisam saber o número real de cada viagem.
+            Automação integrada com IA para sua logística. O Fleet conecta frota, motoristas e financeiro em um só sistema — e entrega o número real de cada operação, em tempo real.
           </p>
 
           <div className="hero-ctas">
@@ -90,8 +90,8 @@ export function MarketingPage() {
               Cada viagem, custo e acerto registrado em tempo real.
             </div>
             <div>
-              <strong>Acerto sem briga</strong>
-              Motorista vê o número antes de sair. Zero discussão.
+              <strong>Controle de bordo automatizado</strong>
+              Motorista acompanha despesas, acertos e viagens pelo celular. Sem papel, sem ligação.
             </div>
             <div>
               <strong>7 dias grátis</strong>
@@ -105,15 +105,40 @@ export function MarketingPage() {
         </div>
       </section>
 
+      {/* ASSISTENTE FLEET — GIF/vídeo em tempo real */}
+      <section style={{ padding: '0 40px 60px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="reveal" style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <p style={{ fontSize: '11px', letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--ink-3)', marginBottom: '12px' }}>Assistente Fleet · IA</p>
+          <h2 style={{ fontSize: 'clamp(24px,3vw,38px)', fontWeight: 800, letterSpacing: '-.025em', marginBottom: '10px' }}>
+            Pergunte à sua operação.<br /><em style={{ fontStyle: 'normal', color: 'var(--ink-3)' }}>Ela responde em segundos.</em>
+          </h2>
+          <p style={{ color: 'var(--ink-3)', fontSize: '16px', maxWidth: '560px', margin: '0 auto', lineHeight: 1.6 }}>
+            "Quanto faturei essa semana?" · "Qual motorista tem acerto pendente?" · "Qual rota deu prejuízo?" — resposta com dados reais, sem relatório, sem planilha.
+          </p>
+        </div>
+        <div className="reveal" style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--line)', boxShadow: '0 32px 80px rgba(0,0,0,.55)', background: '#0e1117', minHeight: '320px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {/* TODO: substituir pelo GIF do Assistente Fleet em ação */}
+          <div style={{ textAlign: 'center', color: 'var(--ink-3)', padding: '60px 40px' }}>
+            <div style={{ fontSize: '40px', marginBottom: '16px' }}>🤖</div>
+            <p style={{ fontSize: '15px', lineHeight: 1.6 }}>Assistente Fleet em ação<br /><span style={{ fontSize: '13px', opacity: .5 }}>GIF será inserido aqui</span></p>
+          </div>
+        </div>
+      </section>
+
       {/* SCREENSHOT — DASHBOARD */}
       <section style={{ padding: '0 40px 100px', maxWidth: '1200px', margin: '0 auto' }}>
         <div className="reveal" style={{ textAlign: 'center', marginBottom: '40px' }}>
           <h2 style={{ fontSize: 'clamp(24px,3vw,38px)', fontWeight: 800, letterSpacing: '-.025em', marginBottom: '10px' }}>
             Operação inteira. <em style={{ fontStyle: 'normal', color: 'var(--ink-3)' }}>Em uma tela.</em>
           </h2>
-          <p style={{ color: 'var(--ink-3)', fontSize: '16px', maxWidth: '520px', margin: '0 auto', lineHeight: 1.6 }}>
-            Faturamento, custos, margem, viagens ativas e acertos pendentes — sem abrir planilha.
+          <p style={{ color: 'var(--ink-3)', fontSize: '16px', maxWidth: '640px', margin: '0 auto', lineHeight: 1.6 }}>
+            Controle de frota, acertos com motoristas, despesas por viagem, prevenção de manutenção e margem real por rota — tudo centralizado, sem abrir planilha.
           </p>
+          <div className="reveal" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px', marginTop: '20px' }}>
+            {['Controle de frota', 'Acertos com motoristas', 'Despesas por viagem', 'Prevenção de manutenção', 'Margem por rota', 'Assistente IA'].map(tag => (
+              <span key={tag} style={{ fontSize: '12px', padding: '5px 12px', borderRadius: '20px', border: '1px solid var(--line)', color: 'var(--ink-3)', letterSpacing: '.04em' }}>{tag}</span>
+            ))}
+          </div>
         </div>
         <div className="reveal" style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--line)', boxShadow: '0 32px 80px rgba(0,0,0,.55)' }}>
           <img
