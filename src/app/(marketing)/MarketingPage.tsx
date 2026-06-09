@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ContactModal } from './ContactModal'
 import { ShaderBackground } from './ShaderBackground'
+import { FleetChat } from './FleetChat'
 
 const ROTATING_WORDS = ['inteligente', 'automatizada', 'conectada', 'escalável', 'em tempo real']
 
@@ -86,7 +87,7 @@ export function MarketingPage() {
         {/* overlay escuro para legibilidade */}
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(12,13,15,0.72) 0%, rgba(12,13,15,0.55) 60%, rgba(12,13,15,0.92) 100%)', zIndex: 1 }} />
 
-        <div style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: '860px', margin: '0 auto', padding: '120px 40px 100px', textAlign: 'center' }}>
+        <div style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: '860px', margin: '0 auto', padding: 'clamp(80px,12vh,120px) clamp(20px,5vw,40px) clamp(60px,8vh,100px)', textAlign: 'center' }}>
 
           {/* badge pill */}
           <motion.div
@@ -107,7 +108,7 @@ export function MarketingPage() {
             style={{ fontSize: 'clamp(40px, 7vw, 80px)', fontWeight: 800, letterSpacing: '-.03em', lineHeight: 1.1, marginBottom: '24px', color: '#fff' }}
           >
             Sua logística{' '}
-            <span style={{ display: 'inline-block', position: 'relative', overflow: 'hidden', height: '1.15em', verticalAlign: 'bottom', minWidth: '280px' }}>
+            <span style={{ display: 'inline-block', position: 'relative', overflow: 'hidden', height: '1.15em', verticalAlign: 'bottom', minWidth: 'min(280px, 70vw)' }}>
               <AnimatePresence mode="wait">
                 <motion.span
                   key={wordIndex}
@@ -176,28 +177,21 @@ export function MarketingPage() {
         </div>
       </section>
 
-      {/* ASSISTENTE FLEET — GIF/vídeo em tempo real */}
-      <section style={{ padding: '0 40px 60px', maxWidth: '1200px', margin: '0 auto' }}>
+      {/* ASSISTENTE FLEET */}
+      <section style={{ padding: '80px clamp(16px,4vw,40px) 80px', background: 'var(--bg)' }}>
         <div className="reveal" style={{ textAlign: 'center', marginBottom: '40px' }}>
           <p style={{ fontSize: '11px', letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--ink-3)', marginBottom: '12px' }}>Assistente Fleet · IA</p>
-          <h2 style={{ fontSize: 'clamp(24px,3vw,38px)', fontWeight: 800, letterSpacing: '-.025em', marginBottom: '10px' }}>
+          <h2 style={{ fontSize: 'clamp(24px,3vw,38px)', fontWeight: 800, letterSpacing: '-.025em', marginBottom: '0' }}>
             Pergunte à sua operação.<br /><em style={{ fontStyle: 'normal', color: 'var(--ink-3)' }}>Ela responde em segundos.</em>
           </h2>
-          <p style={{ color: 'var(--ink-3)', fontSize: '16px', maxWidth: '560px', margin: '0 auto', lineHeight: 1.6 }}>
-            "Quanto faturei essa semana?" · "Qual motorista tem acerto pendente?" · "Qual rota deu prejuízo?" — resposta com dados reais, sem relatório, sem planilha.
-          </p>
         </div>
-        <div className="reveal" style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--line)', boxShadow: '0 32px 80px rgba(0,0,0,.55)', background: '#0e1117', minHeight: '320px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {/* TODO: substituir pelo GIF do Assistente Fleet em ação */}
-          <div style={{ textAlign: 'center', color: 'var(--ink-3)', padding: '60px 40px' }}>
-            <div style={{ fontSize: '40px', marginBottom: '16px' }}>🤖</div>
-            <p style={{ fontSize: '15px', lineHeight: 1.6 }}>Assistente Fleet em ação<br /><span style={{ fontSize: '13px', opacity: .5 }}>GIF será inserido aqui</span></p>
-          </div>
+        <div className="reveal">
+          <FleetChat onOpenContact={() => setModalOpen(true)} />
         </div>
       </section>
 
       {/* SCREENSHOT — DASHBOARD */}
-      <section style={{ padding: '0 40px 100px', maxWidth: '1200px', margin: '0 auto' }}>
+      <section style={{ padding: '0 clamp(16px,4vw,40px) 100px', maxWidth: '1200px', margin: '0 auto' }}>
         <div className="reveal" style={{ textAlign: 'center', marginBottom: '40px' }}>
           <h2 style={{ fontSize: 'clamp(24px,3vw,38px)', fontWeight: 800, letterSpacing: '-.025em', marginBottom: '10px' }}>
             Operação inteira. <em style={{ fontStyle: 'normal', color: 'var(--ink-3)' }}>Em uma tela.</em>
@@ -284,7 +278,12 @@ export function MarketingPage() {
       </section>
 
       {/* SCREENSHOT — ASSISTENTE */}
-      <section style={{ padding: '80px 40px', maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '64px', alignItems: 'center' }}>
+      <style>{`
+        @media (max-width: 768px) {
+          .assistant-grid { grid-template-columns: 1fr !important; gap: 32px !important; padding: 60px clamp(16px,4vw,40px) !important; }
+        }
+      `}</style>
+      <section className="assistant-grid" style={{ padding: '80px 40px', maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '64px', alignItems: 'center' }}>
         <div className="reveal">
           <p className="eyebrow" style={{ marginBottom: '16px' }}>Assistente Fleet · IA</p>
           <h2 style={{ fontSize: 'clamp(24px,3vw,36px)', fontWeight: 800, letterSpacing: '-.025em', lineHeight: 1.1, marginBottom: '16px' }}>

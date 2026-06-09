@@ -489,3 +489,34 @@
   color: var(--ink-4); letter-spacing: 0.06em;
 }
 @media (max-width: 800px) { .lcx-root .fgrid { grid-template-columns: 1fr 1fr; } }
+
+/* ─── MOBILE GLOBAL */
+@media (max-width: 640px) {
+  .lcx-root .wrap,
+  .lcx-root .wrap-narrow { padding: 0 20px; }
+
+  .lcx-root nav { padding: 18px 20px; }
+
+  .lcx-root .stmt { padding: 120px 20px; min-height: 0; }
+  .lcx-root .stmt-num { top: 40px; left: 20px; }
+
+  .lcx-root .services { padding: 80px 20px; }
+  .lcx-root .services-head { margin-bottom: 48px; }
+
+  .lcx-root .process { padding: 100px 20px; }
+  .lcx-root .process-head { margin-bottom: 48px; }
+  .lcx-root .timeline { padding-left: 28px; }
+
+  .lcx-root .about { padding: 100px 20px !important; }
+
+  .lcx-root .invest { padding: 100px 20px; }
+  .lcx-root .invest-grid { margin-top: 40px; }
+  .lcx-root .inv-card { padding: 36px 24px; }
+
+  .lcx-root .faq { padding: 100px 20px; }
+
+  .lcx-root .closer { padding: 120px 20px; }
+
+  .lcx-root footer { padding: 48px 20px 32px; }
+  .lcx-root .fgrid { grid-template-columns: 1fr; gap: 32px; }
+}
