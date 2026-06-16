@@ -196,8 +196,8 @@
 
 .lcx-root .svc-list { display: flex; flex-direction: column; }
 .lcx-root .svc-row {
-  display: grid; grid-template-columns: 100px 1fr 1.4fr 80px;
-  gap: 40px; align-items: baseline;
+  display: grid; grid-template-columns: 100px 40px 1fr 1.4fr 80px;
+  gap: 40px; align-items: center;
   padding: 36px 0;
   border-top: 1px solid var(--line);
   transition: padding .3s var(--ease);
@@ -205,9 +205,15 @@
 .lcx-root .svc-row:hover { padding-left: 16px; padding-right: 16px; }
 .lcx-root .svc-row:hover .svc-arrow { color: var(--accent); transform: translateX(4px); }
 .lcx-root .svc-row:hover .svc-name { color: var(--ink); }
+.lcx-root .svc-row:hover .svc-icon { color: var(--accent); }
 .lcx-root .svc-n {
   font-family: var(--mono); font-size: 11px;
   letter-spacing: 0.14em; color: var(--ink-3);
+}
+.lcx-root .svc-icon {
+  width: 28px; height: 28px;
+  color: var(--ink-3); transition: color .2s;
+  flex-shrink: 0;
 }
 .lcx-root .svc-name {
   font-size: 22px; font-weight: 400; letter-spacing: -0.015em;
@@ -222,9 +228,42 @@
   transition: transform .2s, color .2s;
 }
 @media (max-width: 900px) {
-  .lcx-root .svc-row { grid-template-columns: 60px 1fr; gap: 16px; }
-  .lcx-root .svc-desc { grid-column: 1 / 3; padding-top: 8px; }
+  .lcx-root .svc-row { grid-template-columns: 60px 28px 1fr; gap: 16px; }
+  .lcx-root .svc-desc { grid-column: 1 / -1; padding-top: 8px; }
   .lcx-root .svc-arrow { display: none; }
+}
+@media (max-width: 640px) {
+  .lcx-root .svc-row { grid-template-columns: 48px 24px 1fr; gap: 10px; }
+  .lcx-root .svc-name { font-size: 17px; }
+}
+
+/* ─── LAPTOP MOCKUP */
+.lcx-laptop { position: relative; width: 100%; max-width: 1100px; margin: 0 auto; }
+.lcx-laptop-frame {
+  background: #1a1d27; border-radius: 12px 12px 0 0;
+  border: 2px solid #2a2f3f; padding: 10px 10px 0;
+  box-shadow: 0 40px 100px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.04);
+}
+.lcx-laptop-bar {
+  background: #131720; border-radius: 8px 8px 0 0;
+  height: 28px; display: flex; align-items: center;
+  padding: 0 12px; gap: 6px; margin-bottom: 8px;
+}
+.lcx-laptop-dot { width: 10px; height: 10px; border-radius: 50%; }
+.lcx-dot-red { background: #ef4444; }
+.lcx-dot-yellow { background: #f59e0b; }
+.lcx-dot-green { background: #22c55e; }
+.lcx-laptop-screen { border-radius: 4px; overflow: hidden; border: 1px solid #1e2330; }
+.lcx-laptop-screen img, .lcx-laptop-screen video { width: 100%; display: block; }
+.lcx-laptop-base {
+  background: linear-gradient(to bottom, #1a1d27, #131720);
+  height: 18px; border-radius: 0 0 4px 4px;
+  border: 2px solid #2a2f3f; border-top: none; width: 100%;
+}
+.lcx-laptop-foot {
+  background: #111318; height: 10px;
+  border-radius: 0 0 16px 16px; width: 40%;
+  margin: 0 auto; border: 1px solid #2a2f3f; border-top: none;
 }
 
 /* ─── PROCESS */

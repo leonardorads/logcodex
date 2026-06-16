@@ -72,10 +72,10 @@ export function MarketingPage() {
           LogCodex
         </a>
         <div className="nav-links">
-          <a href="#produto">Produto</a>
-          <a href="#metodo">Como trabalhamos</a>
-          <a href="#roadmap">Roadmap</a>
-          <a href="#investimento">Planos</a>
+          <a href="#produto" onClick={(e) => { e.preventDefault(); document.getElementById('produto')?.scrollIntoView({ behavior: 'smooth' }) }}>Produto</a>
+          <a href="#metodo" onClick={(e) => { e.preventDefault(); document.getElementById('metodo')?.scrollIntoView({ behavior: 'smooth' }) }}>Como trabalhamos</a>
+          <a href="#roadmap" onClick={(e) => { e.preventDefault(); document.getElementById('roadmap')?.scrollIntoView({ behavior: 'smooth' }) }}>Roadmap</a>
+          <a href="#investimento" onClick={(e) => { e.preventDefault(); document.getElementById('investimento')?.scrollIntoView({ behavior: 'smooth' }) }}>Planos</a>
         </div>
         <a href="#" className="nav-cta" onClick={openModal}>Testar grátis</a>
       </nav>
@@ -195,31 +195,76 @@ export function MarketingPage() {
         </div>
       </section>
 
-      {/* SCREENSHOT — DASHBOARD */}
-      <section style={{ padding: '0 clamp(16px,4vw,40px) 100px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div className="reveal" style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <h2 style={{ fontSize: 'clamp(24px,3vw,38px)', fontWeight: 800, letterSpacing: '-.025em', marginBottom: '10px' }}>
-            Operação inteira. <em style={{ fontStyle: 'normal', color: 'var(--ink-3)' }}>Em uma tela.</em>
+      {/* SCREENSHOT — ASSISTENTE FLEET (grid texto + GIF lado a lado) */}
+      <style>{`
+        .assistant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+        @media (max-width: 768px) { .assistant-grid { grid-template-columns: 1fr; gap: 32px; } }
+      `}</style>
+      <section className="assistant-grid" style={{ padding: '60px clamp(16px,4vw,40px) 100px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="reveal">
+          <p className="eyebrow" style={{ marginBottom: '16px' }}>Assistente Fleet · IA</p>
+          <h2 style={{ fontSize: 'clamp(24px,3vw,36px)', fontWeight: 800, letterSpacing: '-.025em', lineHeight: 1.1, marginBottom: '16px' }}>
+            Pergunta em português.<br /><span style={{ color: 'var(--ink-3)' }}>Resposta em segundos.</span>
           </h2>
-          <p style={{ color: 'var(--ink-3)', fontSize: '16px', maxWidth: '640px', margin: '0 auto', lineHeight: 1.6 }}>
-            Controle de frota, acertos com motoristas, despesas por viagem, prevenção de manutenção e margem real por rota — tudo centralizado, sem abrir planilha.
+          <p style={{ color: 'var(--ink-3)', fontSize: '16px', lineHeight: 1.7, marginBottom: '24px' }}>
+            "Quanto gastei com combustível em maio?" — O assistente consulta os dados reais da operação e responde com contexto completo: despesas, viagens, motoristas. Sem abrir relatório.
           </p>
-          <div className="reveal" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px', marginTop: '20px' }}>
-            {['Controle de frota', 'Acertos com motoristas', 'Despesas por viagem', 'Prevenção de manutenção', 'Margem por rota', 'Assistente IA'].map(tag => (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {['Controle de frota', 'Acertos com motoristas', 'Despesas por viagem', 'Margem por rota', 'Assistente IA'].map(tag => (
               <span key={tag} style={{ fontSize: '12px', padding: '5px 12px', borderRadius: '20px', border: '1px solid var(--line)', color: 'var(--ink-3)', letterSpacing: '.04em' }}>{tag}</span>
             ))}
           </div>
         </div>
-        <div className="reveal" style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--line)', boxShadow: '0 32px 80px rgba(0,0,0,.55)' }}>
-          <img
-            src={`${BASE}/screenshots/dashboard.jpg`}
-            alt="Dashboard LogCodex Fleet — visão geral da operação"
-            style={{ width: '100%', display: 'block' }}
-            onError={(e) => {
-              const t = e.target as HTMLImageElement
-              t.style.display = 'none'
-            }}
-          />
+        <div className="reveal lcx-laptop" style={{ maxWidth: '510px', margin: '0 auto' }}>
+          <div className="lcx-laptop-frame">
+            <div className="lcx-laptop-bar">
+              <div className="lcx-laptop-dot lcx-dot-red" />
+              <div className="lcx-laptop-dot lcx-dot-yellow" />
+              <div className="lcx-laptop-dot lcx-dot-green" />
+            </div>
+            <div className="lcx-laptop-screen">
+              <video
+                src={`${BASE}/screenshots/logcodex-fleet-assistant_2.mp4`}
+                autoPlay muted loop playsInline preload="metadata"
+                aria-label="Assistente Fleet — chat IA com dados reais da operação"
+                style={{ width: '100%', display: 'block' }}
+              />
+            </div>
+          </div>
+          <div className="lcx-laptop-base" />
+          <div className="lcx-laptop-foot" />
+        </div>
+      </section>
+
+      {/* SCREENSHOT — VIAGENS */}
+      <section style={{ padding: '0 clamp(16px,4vw,40px) 100px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="reveal" style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <p className="eyebrow" style={{ justifyContent: 'center', marginBottom: '12px' }}>Viagens · Rotas</p>
+          <h2 style={{ fontSize: 'clamp(24px,3vw,36px)', fontWeight: 800, letterSpacing: '-.025em', marginBottom: '10px' }}>
+            Cada viagem documentada. <em style={{ fontStyle: 'normal', color: 'var(--ink-3)' }}>Em menos de 5 minutos.</em>
+          </h2>
+          <p style={{ color: 'var(--ink-3)', fontSize: '16px', maxWidth: '560px', margin: '0 auto', lineHeight: 1.6 }}>
+            Origem, destino, KM e valor do frete registrados em segundos. O custo real sai calculado automaticamente — sem planilha, sem surpresa no caixa.
+          </p>
+        </div>
+        <div className="reveal lcx-laptop">
+          <div className="lcx-laptop-frame">
+            <div className="lcx-laptop-bar">
+              <div className="lcx-laptop-dot lcx-dot-red" />
+              <div className="lcx-laptop-dot lcx-dot-yellow" />
+              <div className="lcx-laptop-dot lcx-dot-green" />
+            </div>
+            <div className="lcx-laptop-screen">
+              <video
+                src={`${BASE}/screenshots/logcodex-fleet-viagens.mp4`}
+                autoPlay muted loop playsInline preload="metadata"
+                aria-label="Dashboard LogCodex Fleet — viagens em tempo real"
+                style={{ width: '100%', display: 'block' }}
+              />
+            </div>
+          </div>
+          <div className="lcx-laptop-base" />
+          <div className="lcx-laptop-foot" />
         </div>
       </section>
 
@@ -250,61 +295,102 @@ export function MarketingPage() {
           <div className="svc-list">
             <div className="svc-row reveal">
               <span className="svc-n">/01</span>
+              <svg className="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
               <span className="svc-name">Viagens e rotas documentadas</span>
               <span className="svc-desc">Origem, destino, KM, despesas. Cada viagem fica registrada com custo real calculado automaticamente.</span>
+              <span className="svc-arrow">→</span>
             </div>
             <div className="svc-row reveal">
               <span className="svc-n">/02</span>
+              <svg className="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
               <span className="svc-name">Acertos com motoristas</span>
               <span className="svc-desc">Proposta menos despesas igual acerto. Motorista vê tudo, aprova, recebe. Sem planilha, sem discussão.</span>
+              <span className="svc-arrow">→</span>
             </div>
             <div className="svc-row reveal">
               <span className="svc-n">/03</span>
+              <svg className="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 22V8l9-6 9 6v14"/><path d="M9 22V12h6v10"/></svg>
               <span className="svc-name">Despesas e combustível</span>
               <span className="svc-desc">Diesel, ARLA, pedágio, manutenção. Controle de custo por veículo e por viagem, sem surpresa no caixa.</span>
+              <span className="svc-arrow">→</span>
             </div>
             <div className="svc-row reveal">
               <span className="svc-n">/04</span>
+              <svg className="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
               <span className="svc-name">Assistente Fleet (IA)</span>
               <span className="svc-desc">Pergunta em linguagem natural: "quanto faturei essa semana?". Resposta com contexto real, em segundos.</span>
+              <span className="svc-arrow">→</span>
             </div>
             <div className="svc-row reveal">
               <span className="svc-n">/05</span>
+              <svg className="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
               <span className="svc-name">Painéis operacionais</span>
               <span className="svc-desc">Viagens ativas, faturamento, margem por rota, acertos pendentes. Decisão sem esperar relatório.</span>
+              <span className="svc-arrow">→</span>
             </div>
             <div className="svc-row reveal">
               <span className="svc-n">/06</span>
+              <svg className="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
               <span className="svc-name">Propostas e clientes</span>
               <span className="svc-desc">Da cotação ao fechamento. Proposta com validade, endereço de rota e cliente — tudo amarrado à viagem.</span>
+              <span className="svc-arrow">→</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* SCREENSHOT — ASSISTENTE */}
-      <style>{`
-        @media (max-width: 768px) {
-          .assistant-grid { grid-template-columns: 1fr !important; gap: 32px !important; padding: 60px clamp(16px,4vw,40px) !important; }
-        }
-      `}</style>
-      <section className="assistant-grid" style={{ padding: '80px 40px', maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '64px', alignItems: 'center' }}>
-        <div className="reveal">
-          <p className="eyebrow" style={{ marginBottom: '16px' }}>Assistente Fleet · IA</p>
-          <h2 style={{ fontSize: 'clamp(24px,3vw,36px)', fontWeight: 800, letterSpacing: '-.025em', lineHeight: 1.1, marginBottom: '16px' }}>
-            Pergunta em português.<br /><span style={{ color: 'var(--ink-3)' }}>Resposta em segundos.</span>
+      {/* SCREENSHOT — FINANCEIRO */}
+      <section style={{ padding: '0 clamp(16px,4vw,40px) 60px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="reveal" style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <p className="eyebrow" style={{ justifyContent: 'center', marginBottom: '12px' }}>Financeiro · Acertos</p>
+          <h2 style={{ fontSize: 'clamp(24px,3vw,36px)', fontWeight: 800, letterSpacing: '-.025em', marginBottom: '10px' }}>
+            Acerto com motorista. <em style={{ fontStyle: 'normal', color: 'var(--ink-3)' }}>Sem discussão.</em>
           </h2>
-          <p style={{ color: 'var(--ink-3)', fontSize: '16px', lineHeight: 1.7 }}>
-            "Quanto gastei com combustível em maio?" — O assistente consulta os dados reais da operação e responde com contexto completo: despesas, viagens, motoristas. Sem abrir relatório.
+          <p style={{ color: 'var(--ink-3)', fontSize: '16px', maxWidth: '560px', margin: '0 auto', lineHeight: 1.6 }}>
+            Proposta menos despesas igual a acerto. O motorista vê o número, aprova e recebe. Sem planilha refeita à mão.
           </p>
         </div>
-        <div className="reveal" style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--line)', boxShadow: '0 24px 60px rgba(0,0,0,.5)' }}>
-          <img
-            src={`${BASE}/screenshots/assistant.jpg`}
-            alt="Assistente Fleet — chat IA com dados reais da operação"
-            style={{ width: '100%', display: 'block' }}
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-          />
+        <div className="reveal lcx-laptop">
+          <div className="lcx-laptop-frame">
+            <div className="lcx-laptop-bar">
+              <div className="lcx-laptop-dot lcx-dot-red" />
+              <div className="lcx-laptop-dot lcx-dot-yellow" />
+              <div className="lcx-laptop-dot lcx-dot-green" />
+            </div>
+            <div className="lcx-laptop-screen">
+              <video
+                src={`${BASE}/screenshots/logcodex-fleet-financeiro.mp4`}
+                autoPlay muted loop playsInline preload="metadata"
+                aria-label="LogCodex Fleet — acertos financeiros com motoristas"
+                style={{ width: '100%', display: 'block' }}
+              />
+            </div>
+          </div>
+          <div className="lcx-laptop-base" />
+          <div className="lcx-laptop-foot" />
+        </div>
+      </section>
+
+      {/* SCREENSHOT — ASSISTENTE (removido — bloco já existe acima com layout grid) */}
+      <section style={{ display: 'none' }}>
+        <div className="reveal lcx-laptop" style={{ maxWidth: '480px', margin: '0 auto' }}>
+          <div className="lcx-laptop-frame">
+            <div className="lcx-laptop-bar">
+              <div className="lcx-laptop-dot lcx-dot-red" />
+              <div className="lcx-laptop-dot lcx-dot-yellow" />
+              <div className="lcx-laptop-dot lcx-dot-green" />
+            </div>
+            <div className="lcx-laptop-screen">
+              <video
+                src={`${BASE}/screenshots/logcodex-fleet-assistant_2.mp4`}
+                autoPlay muted loop playsInline preload="metadata"
+                aria-label="Assistente Fleet — chat IA com dados reais da operação"
+                style={{ width: '100%', display: 'block' }}
+              />
+            </div>
+          </div>
+          <div className="lcx-laptop-base" />
+          <div className="lcx-laptop-foot" />
         </div>
       </section>
 
@@ -371,24 +457,28 @@ export function MarketingPage() {
           <div className="svc-list">
             <div className="svc-row reveal" style={{ cursor: 'default' }}>
               <span className="svc-n">AGORA</span>
+              <span />
               <span className="svc-name">Fleet — Controle de frota</span>
               <span className="svc-desc">Viagens, acertos, despesas, propostas e assistente de IA. Disponível agora.</span>
               <span className="svc-arrow" style={{ color: 'var(--accent)' }}>●</span>
             </div>
             <div className="svc-row reveal" style={{ cursor: 'default' }}>
               <span className="svc-n">PRÓXIMO</span>
+              <span />
               <span className="svc-name">Otimização de rotas</span>
               <span className="svc-desc">Roteirização inteligente: menor custo, menor KM, melhor sequência de entregas.</span>
               <span className="svc-arrow">○</span>
             </div>
             <div className="svc-row reveal" style={{ cursor: 'default' }}>
               <span className="svc-n">EM BREVE</span>
+              <span />
               <span className="svc-name">Gestão de pátio</span>
               <span className="svc-desc">Controle de entrada, saída e posição de veículos e carretas no pátio.</span>
               <span className="svc-arrow">○</span>
             </div>
             <div className="svc-row reveal" style={{ cursor: 'default' }}>
               <span className="svc-n">EM BREVE</span>
+              <span />
               <span className="svc-name">Gestão de armazém</span>
               <span className="svc-desc">Estoque, posições, separação e expedição integrados à operação de transporte.</span>
               <span className="svc-arrow">○</span>
@@ -415,7 +505,7 @@ export function MarketingPage() {
               <h3>Starter</h3>
               <p className="tagline">Para transportadoras começando a sair da planilha.</p>
               <p className="price">R$ 99<span style={{ fontSize: '18px', color: 'var(--ink-3)' }}>/mês</span></p>
-              <p className="price-meta">até 50 viagens/mês · 5 motoristas</p>
+              <p className="price-meta">até 10 veículos · motoristas ilimitados</p>
               <ul>
                 <li>Viagens, despesas e acertos</li>
                 <li>Painel operacional completo</li>
@@ -429,7 +519,7 @@ export function MarketingPage() {
               <h3>Profissional</h3>
               <p className="tagline">Para frota que já roda no volume e precisa de controle.</p>
               <p className="price">R$ 299<span style={{ fontSize: '18px', color: 'var(--ink-3)' }}>/mês</span></p>
-              <p className="price-meta">até 300 viagens/mês · motoristas ilimitados</p>
+              <p className="price-meta">até 50 veículos · motoristas ilimitados</p>
               <ul>
                 <li>Tudo do Starter</li>
                 <li>Relatórios avançados e fluxo mensal</li>
@@ -442,7 +532,7 @@ export function MarketingPage() {
               <h3>Sob demanda</h3>
               <p className="tagline">Para grandes operações com necessidade de integração.</p>
               <p className="price">Customizado</p>
-              <p className="price-meta">acima de 300 viagens/mês</p>
+              <p className="price-meta">acima de 50 veículos</p>
               <ul>
                 <li>Tudo do Profissional</li>
                 <li>Integrações customizadas</li>
