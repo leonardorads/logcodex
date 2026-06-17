@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://leonardorads.github.io/logcodex/sitemap.xml
