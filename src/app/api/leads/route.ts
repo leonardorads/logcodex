@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createSupabaseServiceClient } from '@/lib/supabase-service'
+import { getDb } from '@/lib/db'
 
 // Route Handlers não são cacheados em POST (Next 16) — escrita roda em request-time.
+
+// Mensagem única de erro interno (env ausente OU falha de banco). Texto oficial do
+// contrato api-leads-1.6.md: orienta uma ação ao usuário, sem vazar detalhe técnico.
+const INTERNAL_ERROR_MSG =
+  'Não conseguimos registrar sua vaga agora. Verifique sua conexão e tente de novo.'
 
 // ── Valores válidos (espelham os CHECK da migration 050, acentuação inclusa) ──
 const Q_VEICULOS = ['1 a 5', '6 a 10', '11 a 50', 'Mais de 50'] as const
@@ -116,45 +121,48 @@ export async function POST(req: NextRequest) {
 
   const segmento = deriveSegmento(qVeiculos as QVeiculos, qControle as QControle)
 
-  // consent_at e updated_at vêm do servidor (não confiar no client).
-  // created_at é OMITIDO → no insert recebe DEFAULT NOW(); no conflito é preservado.
-  const now = new Date().toISOString()
-  const payload = {
-    nome,
-    whatsapp,
-    email,
-    q_veiculos: qVeiculos,
-    q_controle: qControle,
-    q_dor: qDor,
-    segmento,
-    utm_source: optStr(body.utm_source),
-    utm_medium: optStr(body.utm_medium),
-    utm_campaign: optStr(body.utm_campaign),
-    utm_content: optStr(body.utm_content),
-    utm_term: optStr(body.utm_term),
-    variant: optStr(body.variant),
-    consent_at: now,
-    updated_at: now,
-  }
+  // consent_at vem do servidor (não confiar no client, exigência LGPD).
+  // created_at e updated_at são OMITIDOS do INSERT → recebem DEFAULT NOW();
+  // no conflito, created_at é preservado e updated_at é atualizado pelo
+  // trigger trg_marketing_leads_updated_at (migration 050) — não duplicamos a lógica.
+  const consentAt = new Date().toISOString()
 
-  let supabase
+  // ── Acesso a dados: conexão Postgres DIRETA (BL-1 / Decisão 57) ──
+  // O schema `marketing` é isolado e NÃO exposto no PostgREST; supabase-js
+  // falharia com PGRST106. A conexão direta enxerga o schema preservando o
+  // isolamento da API pública. Tagged template do postgres.js PARAMETRIZA tudo
+  // (sem interpolação de string → sem risco de SQL injection).
   try {
-    supabase = createSupabaseServiceClient()
+    const sql = getDb()
+    const rows = await sql<{ nome: string }[]>`
+      INSERT INTO marketing.leads
+        (nome, whatsapp, email, q_veiculos, q_controle, q_dor, segmento,
+         utm_source, utm_medium, utm_campaign, utm_content, utm_term, variant, consent_at)
+      VALUES
+        (${nome}, ${whatsapp}, ${email}, ${qVeiculos}, ${qControle}, ${qDor}, ${segmento},
+         ${optStr(body.utm_source)}, ${optStr(body.utm_medium)}, ${optStr(body.utm_campaign)},
+         ${optStr(body.utm_content)}, ${optStr(body.utm_term)}, ${optStr(body.variant)}, ${consentAt})
+      ON CONFLICT (email) DO UPDATE SET
+        nome         = EXCLUDED.nome,
+        whatsapp     = EXCLUDED.whatsapp,
+        q_veiculos   = EXCLUDED.q_veiculos,
+        q_controle   = EXCLUDED.q_controle,
+        q_dor        = EXCLUDED.q_dor,
+        segmento     = EXCLUDED.segmento,
+        utm_source   = EXCLUDED.utm_source,
+        utm_medium   = EXCLUDED.utm_medium,
+        utm_campaign = EXCLUDED.utm_campaign,
+        utm_content  = EXCLUDED.utm_content,
+        utm_term     = EXCLUDED.utm_term,
+        variant      = EXCLUDED.variant,
+        consent_at   = EXCLUDED.consent_at
+      RETURNING nome
+    `
+    // Retorna só o nome (para a tela de confirmação interpolar "Pronto, [Nome]!").
+    const savedNome = rows[0]?.nome ?? nome
+    return ok({ status: 'ok', nome: savedNome })
   } catch {
-    // Env de service role ausente (pendência do DevOps) — não vazar detalhe técnico.
-    return err('INTERNAL_ERROR', 'Não conseguimos registrar sua vaga agora. Tente novamente em instantes.', 500)
+    // Env DATABASE_URL ausente OU falha do banco — mensagem única, sem detalhe técnico.
+    return err('INTERNAL_ERROR', INTERNAL_ERROR_MSG, 500)
   }
-
-  // Upsert por email: dedupe preservando created_at original (ON CONFLICT não toca created_at).
-  const { error } = await supabase
-    .schema('marketing')
-    .from('leads')
-    .upsert(payload, { onConflict: 'email' })
-
-  if (error) {
-    return err('INTERNAL_ERROR', 'Não conseguimos registrar sua vaga agora. Verifique sua conexão e tente de novo.', 500)
-  }
-
-  // Retorna só o nome (para a tela de confirmação interpolar "Pronto, [Nome]!").
-  return ok({ status: 'ok', nome })
 }
