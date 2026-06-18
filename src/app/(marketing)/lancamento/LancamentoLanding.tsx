@@ -319,7 +319,9 @@ export function LancamentoLanding({ utm, variant = 'A' }: { utm: Utm; variant?: 
         .hidden{display:none !important}
 
         @media(max-width:600px){
-          #fl-nav{padding:14px 20px}
+          #fl-nav{padding:14px 20px;gap:12px}
+          .fl-brand{font-size:15px;white-space:nowrap}
+          .fl-nav-cta{padding:9px 14px;font-size:13px}
           .fl-section,.fl-section-sm{padding:60px 20px}
           .fl-final{padding:80px 20px}
           .fl-footer{flex-direction:column;align-items:flex-start;padding:32px 20px}
@@ -730,7 +732,7 @@ function LeadForm({ utm, variant, hasJs }: { utm: Utm; variant: string; hasJs: b
     if (nome.trim().length < 2) e.nome = 'Informe seu nome para a gente saber como te chamar.'
     if (whatsapp.replace(/\D/g, '').length < 10) e.whatsapp = 'Informe um WhatsApp válido com DDD. É por onde a gente te chama.'
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) e.email = 'Esse e-mail não parece válido. Confira e tente de novo.'
-    if (!consent) e.consent = 'Marque a caixa para a gente poder entrar em contato.'
+    if (!consent) e.consent = 'Marque a caixa de consentimento para a gente poder entrar em contato.'
     setErrors(e)
     return Object.keys(e).length === 0
   }
