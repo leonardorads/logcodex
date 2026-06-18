@@ -18,9 +18,15 @@ export type Utm = {
 
 const LogoMark = () => (
   <svg viewBox="0 0 32 32" fill="none" width="26" height="26">
-    <rect width="32" height="32" rx="7" fill="none" stroke="currentColor" strokeOpacity="0.45" />
-    <path d="M9 8.5 V21.5 H15.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M23.5 11.6 A5 5 0 0 0 18.5 11.6 V18.4 A5 5 0 0 0 23.5 18.4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    <defs>
+      <linearGradient id="lc-stroke" x1="6" y1="6" x2="26" y2="26" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#60a5fa" />
+        <stop offset="1" stopColor="#818cf8" />
+      </linearGradient>
+    </defs>
+    <rect x="0.5" y="0.5" width="31" height="31" rx="7" fill="#0c0d0f" stroke="#ffffff" strokeOpacity="0.12" />
+    <path d="M9 8.5 V21.5 H15.5" stroke="url(#lc-stroke)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M23.5 11.6 A5 5 0 0 0 18.5 11.6 V18.4 A5 5 0 0 0 23.5 18.4" stroke="url(#lc-stroke)" strokeWidth="2.4" strokeLinecap="round" />
   </svg>
 )
 
@@ -70,14 +76,7 @@ function trackLeadConversion(segmentoHint: string) {
   }
 }
 
-const FAQ = [
-  { q: 'Preciso pagar alguma coisa para entrar na lista?', a: 'Não. Entrar no Lote 1 é grátis e sem compromisso. Você responde 3 perguntas, entra na lista e a gente te chama por ordem. Só decide se contrata depois de conhecer o sistema.' },
-  { q: 'Sou obrigado a assinar depois?', a: 'Não. Entrar na lista não é assinar. Quando a gente te chamar, você conhece o Fleet com a condição do Lote 1 (30% de desconto por 12 meses) e decide com calma. Sem cartão, sem contrato.' },
-  { q: 'Quando eu vou ser chamado?', a: 'Por ordem de entrada na lista. Como o onboarding é assistido — a gente configura o sistema junto com você — atendemos as 20 vagas aos poucos, para fazer bem feito. Quanto antes entrar, mais cedo é chamado.' },
-  { q: 'O sistema já funciona ou é promessa?', a: 'Já funciona. O Fleet está em produção numa transportadora real (JCLS, no Paraná) todos os dias. Você não está entrando numa lista de algo que talvez exista — está garantindo a condição de lançamento de um produto que já roda.' },
-  { q: 'Meus dados estão seguros?', a: 'Sim. Coletamos só nome, WhatsApp e e-mail para te chamar sobre o Fleet, com o seu consentimento. Você pode pedir a exclusão a qualquer momento — está tudo na política de privacidade.' },
-  { q: 'Preciso saber mexer com tecnologia?', a: 'Não. O Fleet foi feito para o dono de transportadora, não para especialista em TI. E no Lote 1 a gente configura o sistema junto com você — você começa no ponto certo.' },
-]
+import { FAQ } from './faq-data'
 
 export function LancamentoLanding({ utm, variant = 'A' }: { utm: Utm; variant?: string }) {
   // hasJs: realce progressivo. SSR_SAFE_DEFAULT=false → 1ª etapa do form renderiza sem JS (L15/L17).
@@ -334,6 +333,7 @@ export function LancamentoLanding({ utm, variant = 'A' }: { utm: Utm; variant?: 
         <button className="fl-nav-cta" onClick={scrollTo('vaga')}>Quero minha vaga →</button>
       </nav>
 
+      <main>
       {/* ── HERO ── */}
       <section style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
         <ShaderBackground />
@@ -412,7 +412,7 @@ As 20 primeiras transportadoras entram com <strong style={{ color: 'rgba(255,255
         <div className="fl-ai-grid rev">
           <div>
             <span className="fl-eyebrow">Assistente Fleet · IA</span>
-            <h3 className="fl-ai-title">Pergunte qualquer coisa<br />sobre sua operação.</h3>
+            <h2 className="fl-ai-title">Pergunte qualquer coisa<br />sobre sua operação.</h2>
             <p className="fl-ai-desc">
               "Qual motorista deu mais prejuízo esse mês?" — o assistente consulta seus dados reais e responde em segundos. Sem abrir relatório, sem filtrar planilha.
             </p>
@@ -437,7 +437,7 @@ As 20 primeiras transportadoras entram com <strong style={{ color: 'rgba(255,255
                 <div className="fl-laptop-dot" style={{ background: '#22c55e' }} />
               </div>
               <div className="fl-laptop-screen">
-                <video src={`${BASE}/screenshots/logcodex-fleet-assistant_2.mp4`} autoPlay muted loop playsInline preload="metadata" aria-label="Assistente Fleet IA — perguntas em linguagem natural" />
+                <video src={`${BASE}/screenshots/logcodex-fleet-assistant_2.mp4`} poster={`${BASE}/screenshots/logcodex-fleet-assistant-poster.jpg`} autoPlay muted loop playsInline preload="metadata" aria-label="Assistente Fleet IA — perguntas em linguagem natural" />
               </div>
             </div>
             <div className="fl-laptop-base" />
@@ -495,7 +495,7 @@ As 20 primeiras transportadoras entram com <strong style={{ color: 'rgba(255,255
                 <div className="fl-laptop-dot" style={{ background: '#22c55e' }} />
               </div>
               <div className="fl-laptop-screen">
-                <video src={`${BASE}/screenshots/logcodex-fleet-viagens.mp4`} autoPlay muted loop playsInline preload="metadata" aria-label="LogCodex Fleet — registro de viagens" />
+                <video src={`${BASE}/screenshots/logcodex-fleet-viagens.mp4`} poster={`${BASE}/screenshots/logcodex-fleet-viagens-poster.jpg`} autoPlay muted loop playsInline preload="metadata" aria-label="LogCodex Fleet — registro de viagens" />
               </div>
             </div>
             <div className="fl-laptop-base" />
@@ -535,7 +535,7 @@ As 20 primeiras transportadoras entram com <strong style={{ color: 'rgba(255,255
                 <div className="fl-laptop-dot" style={{ background: '#22c55e' }} />
               </div>
               <div className="fl-laptop-screen">
-                <video src={`${BASE}/screenshots/logcodex-fleet-financeiro.mp4`} autoPlay muted loop playsInline preload="metadata" aria-label="LogCodex Fleet — acertos financeiros" />
+                <video src={`${BASE}/screenshots/logcodex-fleet-financeiro.mp4`} poster={`${BASE}/screenshots/logcodex-fleet-financeiro-poster.jpg`} autoPlay muted loop playsInline preload="metadata" aria-label="LogCodex Fleet — acertos financeiros" />
               </div>
             </div>
             <div className="fl-laptop-base" />
@@ -666,6 +666,8 @@ As 20 primeiras transportadoras entram com <strong style={{ color: 'rgba(255,255
         <p>O Fleet vai abrir pra todo mundo. Mas o preço de lançamento e o onboarding assistido são só pra quem entra no Lote 1.</p>
         <button className="fl-btn-primary" onClick={scrollTo('vaga')} style={{ fontSize: '18px', padding: '18px 40px' }}>Quero minha vaga no Lote 1 →</button>
       </div>
+
+      </main>
 
       {/* ── FOOTER ── */}
       <footer style={{ borderTop: '1px solid #1d2335' }}>

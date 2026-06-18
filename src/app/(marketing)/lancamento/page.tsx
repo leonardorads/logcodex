@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { FAQ } from './faq-data'
 import { LancamentoLanding, type Utm } from './LancamentoLanding'
 
 // noindex + canonical → /fleet (Decisão 2 / decision-018): página de campanha,
@@ -9,6 +10,21 @@ export const metadata: Metadata = {
     'As 20 primeiras transportadoras entram com condição de lançamento: 30% de desconto por 12 meses no LogCodex Fleet. Entre na lista do Lote 1.',
   robots: { index: false, follow: false },
   alternates: { canonical: 'https://www.logcodex.com/fleet' },
+  openGraph: {
+    title: 'LogCodex Fleet — 30% OFF por 12 meses · Lote 1',
+    description:
+      'As 20 primeiras transportadoras ganham 30% de desconto por 12 meses + onboarding assistido. Sem cartão, sem compromisso.',
+    url: 'https://www.logcodex.com/lancamento',
+    siteName: 'LogCodex',
+    locale: 'pt_BR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'LogCodex Fleet — 30% OFF por 12 meses · Lote 1',
+    description:
+      'Controle de frota sem planilha. 20 vagas com desconto de lançamento. Entre na lista.',
+  },
 }
 
 // Captura UTM via searchParams do Page (Server Component) — evita useSearchParams
@@ -31,5 +47,23 @@ export default async function LancamentoPage({
   }
   const variant = one(sp.v) === 'b' ? 'B' : 'A'
 
-  return <LancamentoLanding utm={utm} variant={variant} />
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQ.map(({ q, a }) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a },
+    })),
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <LancamentoLanding utm={utm} variant={variant} />
+    </>
+  )
 }
