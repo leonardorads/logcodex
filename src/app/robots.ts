@@ -15,6 +15,10 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/lancamento',
       },
       {
+        userAgent: 'facebookexternalhit',
+        allow: '/lancamento',
+      },
+      {
         userAgent: 'Twitterbot',
         allow: '/lancamento',
       },
