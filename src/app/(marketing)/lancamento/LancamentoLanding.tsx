@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShaderBackground } from '../ShaderBackground'
 import { LancamentoChat } from './LancamentoChat'
+import { trackLeadConversion } from '@/lib/track'
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || ''
 
@@ -64,15 +65,6 @@ function scrollTo(id: string) {
   return (e: React.MouseEvent) => {
     e.preventDefault()
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-  }
-}
-
-// ── Evento de conversão (stub — DevOps liga ao provider de analytics depois) ──
-function trackLeadConversion(segmentoHint: string) {
-  if (typeof window === 'undefined') return
-  const w = window as unknown as { dataLayer?: unknown[] }
-  if (Array.isArray(w.dataLayer)) {
-    w.dataLayer.push({ event: 'lead_lote1', segmento_hint: segmentoHint })
   }
 }
 
