@@ -3,11 +3,14 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 
-const WA_NUMBER = '5541999283590'
+// O número vem do ambiente, não do código: era o único lugar do site onde ele
+// estava fixo, e um segundo número aqui divergiria em silêncio do resto.
+// Ausente, os caminhos de WhatsApp somem em vez de apontar para wa.me/undefined.
+const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
 const WA_MSG = encodeURIComponent(
   'Olá! Quero conhecer o LogCodex Fleet. Pode me ajudar?'
 )
-const WA_URL = `https://wa.me/${WA_NUMBER}?text=${WA_MSG}`
+const WA_URL = WA_NUMBER ? `https://wa.me/${WA_NUMBER}?text=${WA_MSG}` : null
 
 interface ContactModalProps {
   open: boolean
@@ -45,7 +48,7 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
       setStatus('done')
     } catch {
       const msg = encodeURIComponent(`Olá! Quero conhecer o LogCodex Fleet. Meu e-mail: ${email}`)
-      window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank')
+      if (WA_NUMBER) window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank')
       setStatus('done')
     }
   }
@@ -154,7 +157,8 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
           <h2 className="cm-title">Como prefere começar?</h2>
           <p className="cm-sub">Sem cartão de crédito. Sem compromisso. Você escolhe o canal.</p>
 
-          {/* WhatsApp */}
+          {/* WhatsApp — sem número configurado, o botão não existe (ver topo) */}
+          {WA_URL && (
           <a
             href={WA_URL}
             target="_blank"
@@ -166,6 +170,7 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
             </svg>
             Falar pelo WhatsApp
           </a>
+          )}
 
           <div className="cm-divider">
             <hr /><span>ou entre com e-mail</span><hr />
