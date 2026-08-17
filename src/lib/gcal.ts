@@ -113,6 +113,10 @@ export interface InsertEventInput {
   description: string
   startIso: string
   endIso: string
+  /**
+   * Contato do visitante. NÃO vira `attendees` na API (ver insertEvent abaixo) —
+   * entra na descrição do evento, montada por quem chama.
+   */
   attendeeEmail: string
   attendeeName: string
 }
@@ -122,9 +126,19 @@ export interface InsertEventResult {
 }
 
 /**
- * Cria o evento na agenda. Sem domain-wide delegation, o e-mail de convite ao
- * participante pode não chegar de forma confiável — mitigado pela confirmação
- * na tela e pela descrição do evento carregar os dados de contato.
+ * Cria o evento na agenda.
+ *
+ * SEM `attendees`, de propósito. Uma service account sem domain-wide delegation
+ * não pode convidar participantes: o Google recusa a requisição INTEIRA com
+ * 403 `forbiddenForServiceAccounts` — "Service accounts cannot invite attendees
+ * without Domain-Wide Delegation of Authority". Não é o convite que falha, é o
+ * evento que não chega a ser criado.
+ *
+ * Delegation exigiria Google Workspace com acesso de super-admin, e daria à
+ * conta de robô poder sobre todas as agendas do domínio — desproporcional para
+ * marcar reunião. Então os dados do visitante vão na DESCRIÇÃO do evento (nome,
+ * empresa, WhatsApp, e-mail), que é o que o Leonardo precisa ver ao abrir a
+ * agenda, e a confirmação para o visitante sai por WhatsApp.
  */
 export async function insertEvent(input: InsertEventInput): Promise<InsertEventResult> {
   const calendarId = process.env.GOOGLE_CALENDAR_ID!
@@ -144,7 +158,6 @@ export async function insertEvent(input: InsertEventInput): Promise<InsertEventR
         description: input.description,
         start: { dateTime: input.startIso, timeZone },
         end: { dateTime: input.endIso, timeZone },
-        attendees: [{ email: input.attendeeEmail, displayName: input.attendeeName }],
       }),
     }
   )
