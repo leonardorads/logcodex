@@ -1,0 +1,123 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ShaderBackground } from '../ShaderBackground'
+
+const ROTATING_WORDS = ['automatizada', 'com IA', 'sem planilha', 'no piloto automático']
+
+export function HomeHero({ onOpenContact }: { onOpenContact: (intent: 'agendar') => void }) {
+  const [wordIndex, setWordIndex] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWordIndex((i) => (i + 1) % ROTATING_WORDS.length)
+    }, 2200)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <>
+      <style>{`
+        /* .hero (marketing.css) traz padding-top:200px + justify-content:center
+           pensados pro hero antigo, mais alto — sobrescrevemos os dois aqui pra
+           puxar o conteúdo para logo abaixo do nav, sem o vão vazio. */
+        .hero-section { padding-top: 0 !important; justify-content: flex-start !important; align-items: flex-start; }
+        .hero-inner { padding: clamp(88px,11vh,110px) clamp(20px,5vw,40px) clamp(40px,5vh,60px); }
+        @media (max-width: 640px) {
+          .hero-inner { padding: 88px 20px 32px; }
+          .hero-ctas { gap: 8px; margin-bottom: 20px !important; }
+          .hero-ctas a { padding: 11px 20px !important; font-size: 14px !important; }
+          .hero-badges { gap: 16px; margin-top: 20px !important; }
+        }
+      `}</style>
+      <section className="hero hero-section" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', display: 'flex' }}>
+        <ShaderBackground />
+
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(12,13,15,0.68) 0%, rgba(12,13,15,0.50) 50%, rgba(12,13,15,0.88) 100%)', zIndex: 1 }} />
+
+        <div className="hero-inner" style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: '780px', margin: '0 auto', textAlign: 'center' }}>
+
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '24px', padding: '6px 16px', borderRadius: '999px', border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.05)', fontSize: '12px', letterSpacing: '.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}
+          >
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80', display: 'inline-block', boxShadow: '0 0 6px #4ade80' }} />
+            LogCodex · Transformação operacional para logística
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
+            style={{ fontSize: 'clamp(40px, 8vw, 92px)', fontWeight: 800, letterSpacing: '-.03em', lineHeight: 1.05, marginBottom: '16px', color: '#fff' }}
+          >
+            Sua operação logística,{' '}
+            <span style={{ display: 'inline-block', position: 'relative', overflow: 'hidden', height: '1.1em', verticalAlign: 'bottom', minWidth: 'min(340px, 70vw)' }}>
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={wordIndex}
+                  initial={{ opacity: 0, y: -60 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 60 }}
+                  transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ display: 'block', color: 'transparent', backgroundImage: 'linear-gradient(90deg, #60a5fa, #818cf8)', WebkitBackgroundClip: 'text', backgroundClip: 'text' }}
+                >
+                  {ROTATING_WORDS[wordIndex]}
+                </motion.span>
+              </AnimatePresence>
+            </span>
+            <br />resolvida ponta a ponta.
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
+            style={{ fontSize: 'clamp(15px, 1.8vw, 18px)', color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, maxWidth: '560px', margin: '0 auto 28px' }}
+          >
+            A LogCodex entende sua operação, desenha a solução certa, integra com o que você já usa e implanta tudo — do diagnóstico ao time treinado. Sem travar a operação, sem jogar a complexidade no seu colo.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+            className="hero-ctas"
+            style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '28px' }}
+          >
+            <a
+              href="#"
+              onClick={(e) => { e.preventDefault(); onOpenContact('agendar') }}
+              style={{ padding: '13px 28px', borderRadius: '10px', background: '#fff', color: '#0c0d0f', fontSize: '15px', fontWeight: 700, textDecoration: 'none', transition: 'transform .15s' }}
+              onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
+              onMouseLeave={e => (e.currentTarget.style.transform = 'none')}
+            >Falar com especialista</a>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="hero-badges"
+            style={{ display: 'flex', gap: '28px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '28px' }}
+          >
+            {[
+              { label: 'Diagnóstico completo', sub: 'Antes de qualquer proposta' },
+              { label: 'Implantação assistida', sub: 'A gente assume a parte pesada' },
+              { label: 'Integração com o que já existe', sub: 'Sem recomeçar do zero' },
+              { label: 'Suporte técnico consultivo', sub: 'Depois que o sistema entra no ar' },
+            ].map(({ label, sub }) => (
+              <div key={label} style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.7)', marginBottom: '2px' }}>{label}</div>
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.28)' }}>{sub}</div>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+    </>
+  )
+}

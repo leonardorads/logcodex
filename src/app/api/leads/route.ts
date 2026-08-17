@@ -22,6 +22,12 @@ type QVeiculos = (typeof Q_VEICULOS)[number]
 type QControle = (typeof Q_CONTROLE)[number]
 type Segmento = 'pequena_planilha' | 'pequena_sistema' | 'media_planilha' | 'media_sistema'
 
+// Origens da home (reposicionamento) não fazem as 3 perguntas de qualificação de
+// frota — são específicas do funil antigo do /lancamento. Colunas q_* viraram
+// nullable e origem/empresa/mensagem foram adicionadas nesta sessão (Fase 1).
+const HOME_ORIGENS = ['home_diagnostico', 'home_agendamento', 'home_whatsapp'] as const
+type HomeOrigem = (typeof HOME_ORIGENS)[number]
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 // ── Helpers de resposta (padrão do projeto) ──
@@ -96,30 +102,54 @@ export async function POST(req: NextRequest) {
     return err('VALIDATION_ERROR', 'Esse e-mail não parece válido. Confira e tente de novo.', 422)
   }
 
-  // ── Validação das 3 respostas (devem estar entre os valores permitidos) ──
-  const qVeiculos = body.q_veiculos
-  if (typeof qVeiculos !== 'string' || !Q_VEICULOS.includes(qVeiculos as QVeiculos)) {
-    return err('VALIDATION_ERROR', 'Selecione quantos veículos tem a sua frota.', 422)
-  }
-  const qControle = body.q_controle
-  if (typeof qControle !== 'string' || !Q_CONTROLE.includes(qControle as QControle)) {
-    return err('VALIDATION_ERROR', 'Selecione como você controla a frota hoje.', 422)
-  }
-  const qDor = body.q_dor
-  if (typeof qDor !== 'string' || !Q_DOR.includes(qDor as (typeof Q_DOR)[number])) {
-    return err('VALIDATION_ERROR', 'Selecione o que mais te incomoda hoje.', 422)
+  // ── Origem do lead. Ausente/desconhecida = comportamento legado (/lancamento) ──
+  const origem: HomeOrigem | 'lancamento' =
+    typeof body.origem === 'string' && HOME_ORIGENS.includes(body.origem as HomeOrigem)
+      ? (body.origem as HomeOrigem)
+      : 'lancamento'
+  const isHomeOrigem = origem !== 'lancamento'
+
+  // ── Campos opcionais (UTM + variant). Aceitar string, senão null. ──
+  const optStr = (v: unknown): string | null =>
+    typeof v === 'string' && v.trim() !== '' ? v.trim().slice(0, 255) : null
+
+  let qVeiculos: QVeiculos | null = null
+  let qControle: QControle | null = null
+  let qDor: (typeof Q_DOR)[number] | null = null
+  let segmento: Segmento | null = null
+  let empresa: string | null = null
+
+  if (isHomeOrigem) {
+    // A home não qualifica frota — só empresa (obrigatória) e mensagem livre.
+    const empresaValue = typeof body.empresa === 'string' ? body.empresa.trim() : ''
+    if (empresaValue.length < 2) {
+      return err('VALIDATION_ERROR', 'Informe o nome da sua empresa.', 422)
+    }
+    empresa = empresaValue
+  } else {
+    // ── Validação das 3 respostas (devem estar entre os valores permitidos) ──
+    const qv = body.q_veiculos
+    if (typeof qv !== 'string' || !Q_VEICULOS.includes(qv as QVeiculos)) {
+      return err('VALIDATION_ERROR', 'Selecione quantos veículos tem a sua frota.', 422)
+    }
+    const qc = body.q_controle
+    if (typeof qc !== 'string' || !Q_CONTROLE.includes(qc as QControle)) {
+      return err('VALIDATION_ERROR', 'Selecione como você controla a frota hoje.', 422)
+    }
+    const qd = body.q_dor
+    if (typeof qd !== 'string' || !Q_DOR.includes(qd as (typeof Q_DOR)[number])) {
+      return err('VALIDATION_ERROR', 'Selecione o que mais te incomoda hoje.', 422)
+    }
+    qVeiculos = qv as QVeiculos
+    qControle = qc as QControle
+    qDor = qd as (typeof Q_DOR)[number]
+    segmento = deriveSegmento(qVeiculos, qControle)
   }
 
   // ── Consentimento LGPD (obrigatório) ──
   if (body.consent !== true) {
     return err('VALIDATION_ERROR', 'Marque a caixa de consentimento para a gente poder entrar em contato.', 422)
   }
-
-  // ── Campos opcionais (UTM + variant). Aceitar string, senão null. ──
-  const optStr = (v: unknown): string | null =>
-    typeof v === 'string' && v.trim() !== '' ? v.trim().slice(0, 255) : null
-
-  const segmento = deriveSegmento(qVeiculos as QVeiculos, qControle as QControle)
 
   // consent_at vem do servidor (não confiar no client, exigência LGPD).
   // created_at e updated_at são OMITIDOS do INSERT → recebem DEFAULT NOW();
@@ -132,29 +162,36 @@ export async function POST(req: NextRequest) {
   // falharia com PGRST106. A conexão direta enxerga o schema preservando o
   // isolamento da API pública. Tagged template do postgres.js PARAMETRIZA tudo
   // (sem interpolação de string → sem risco de SQL injection).
+  const mensagem = optStr(body.mensagem)
+
   try {
     const sql = getDb()
     const rows = await sql<{ nome: string }[]>`
       INSERT INTO marketing.leads
         (nome, whatsapp, email, q_veiculos, q_controle, q_dor, segmento,
+         origem, empresa, mensagem,
          utm_source, utm_medium, utm_campaign, utm_content, utm_term, variant, consent_at)
       VALUES
         (${nome}, ${whatsapp}, ${email}, ${qVeiculos}, ${qControle}, ${qDor}, ${segmento},
+         ${origem}, ${empresa}, ${mensagem},
          ${optStr(body.utm_source)}, ${optStr(body.utm_medium)}, ${optStr(body.utm_campaign)},
          ${optStr(body.utm_content)}, ${optStr(body.utm_term)}, ${optStr(body.variant)}, ${consentAt})
       ON CONFLICT (email) DO UPDATE SET
         nome         = EXCLUDED.nome,
         whatsapp     = EXCLUDED.whatsapp,
-        q_veiculos   = EXCLUDED.q_veiculos,
-        q_controle   = EXCLUDED.q_controle,
-        q_dor        = EXCLUDED.q_dor,
-        segmento     = EXCLUDED.segmento,
-        utm_source   = EXCLUDED.utm_source,
-        utm_medium   = EXCLUDED.utm_medium,
-        utm_campaign = EXCLUDED.utm_campaign,
-        utm_content  = EXCLUDED.utm_content,
-        utm_term     = EXCLUDED.utm_term,
-        variant      = EXCLUDED.variant,
+        q_veiculos   = COALESCE(EXCLUDED.q_veiculos, marketing.leads.q_veiculos),
+        q_controle   = COALESCE(EXCLUDED.q_controle, marketing.leads.q_controle),
+        q_dor        = COALESCE(EXCLUDED.q_dor, marketing.leads.q_dor),
+        segmento     = COALESCE(EXCLUDED.segmento, marketing.leads.segmento),
+        origem       = EXCLUDED.origem,
+        empresa      = COALESCE(EXCLUDED.empresa, marketing.leads.empresa),
+        mensagem     = COALESCE(EXCLUDED.mensagem, marketing.leads.mensagem),
+        utm_source   = COALESCE(EXCLUDED.utm_source, marketing.leads.utm_source),
+        utm_medium   = COALESCE(EXCLUDED.utm_medium, marketing.leads.utm_medium),
+        utm_campaign = COALESCE(EXCLUDED.utm_campaign, marketing.leads.utm_campaign),
+        utm_content  = COALESCE(EXCLUDED.utm_content, marketing.leads.utm_content),
+        utm_term     = COALESCE(EXCLUDED.utm_term, marketing.leads.utm_term),
+        variant      = COALESCE(EXCLUDED.variant, marketing.leads.variant),
         consent_at   = EXCLUDED.consent_at
       RETURNING nome
     `

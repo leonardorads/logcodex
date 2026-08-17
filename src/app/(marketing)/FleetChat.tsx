@@ -6,17 +6,76 @@ interface FleetChatProps {
   onOpenContact: () => void
 }
 
-const SUGGESTIONS = [
+// Frases digitadas automaticamente no placeholder, uma de cada vez, enquanto o
+// campo está vazio e sem foco — some assim que o usuário interage de verdade.
+const TYPE_EXAMPLES = [
   'Quanto faturei essa semana?',
-  'Qual rota deu mais prejuízo?',
-  'Motoristas com acerto pendente?',
+  'Qual motorista deu mais prejuízo esse mês?',
   'Custo de combustível em maio?',
+  'Quais viagens ainda não fecharam acerto?',
 ]
+
+const TYPE_SPEED_MS = 45
+const ERASE_SPEED_MS = 22
+const HOLD_MS = 1400
+const PAUSE_MS = 500
+
+function useTypingPlaceholder(active: boolean) {
+  const [text, setText] = useState('')
+
+  useEffect(() => {
+    // Quando `active` vira false, o consumidor já para de renderizar `text`
+    // (ver FleetChat: overlay some no foco/digitação) — não precisa resetar
+    // aqui, evitando setState síncrono dentro do efeito.
+    if (!active) return
+    let phraseIndex = 0
+    let cancelled = false
+    let timeoutId: ReturnType<typeof setTimeout>
+
+    function typePhrase() {
+      const phrase = TYPE_EXAMPLES[phraseIndex]
+      let charIndex = 0
+
+      function typeStep() {
+        if (cancelled) return
+        charIndex++
+        setText(phrase.slice(0, charIndex))
+        if (charIndex < phrase.length) {
+          timeoutId = setTimeout(typeStep, TYPE_SPEED_MS)
+        } else {
+          timeoutId = setTimeout(eraseStep, HOLD_MS)
+        }
+      }
+
+      function eraseStep() {
+        if (cancelled) return
+        charIndex--
+        setText(phrase.slice(0, charIndex))
+        if (charIndex > 0) {
+          timeoutId = setTimeout(eraseStep, ERASE_SPEED_MS)
+        } else {
+          phraseIndex = (phraseIndex + 1) % TYPE_EXAMPLES.length
+          timeoutId = setTimeout(typePhrase, PAUSE_MS)
+        }
+      }
+
+      typeStep()
+    }
+
+    typePhrase()
+    return () => { cancelled = true; clearTimeout(timeoutId) }
+  }, [active])
+
+  return text
+}
 
 export function FleetChat({ onOpenContact }: FleetChatProps) {
   const [value, setValue] = useState('')
+  const [focused, setFocused] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  const typingPlaceholder = useTypingPlaceholder(!focused && value === '' && !submitted)
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -39,11 +98,6 @@ export function FleetChat({ onOpenContact }: FleetChatProps) {
     }
   }
 
-  function handleSuggestion(s: string) {
-    setValue(s)
-    setTimeout(() => handleSend(s), 0)
-  }
-
   return (
     <>
       <style>{`
@@ -63,10 +117,10 @@ export function FleetChat({ onOpenContact }: FleetChatProps) {
           padding: 1.5px;
           background: linear-gradient(
             var(--fc-angle, 135deg),
-            rgba(99,102,241,0.55),
-            rgba(96,165,250,0.35),
+            rgba(201,168,118,0.55),
+            rgba(228,200,150,0.35),
             rgba(255,255,255,0.08),
-            rgba(99,102,241,0.45)
+            rgba(201,168,118,0.45)
           );
           animation: fc-border-spin 4s linear infinite;
         }
@@ -81,45 +135,20 @@ export function FleetChat({ onOpenContact }: FleetChatProps) {
 
         .fc-box {
           width: 100%;
-          background: #0e1014;
+          background: #131313;
           border-radius: 20px;
           padding: 16px 18px 14px;
           position: relative;
         }
 
-        /* pills inside box */
-        .fc-pills-inner {
-          display: flex;
-          gap: 8px;
-          flex-wrap: wrap;
-          margin-bottom: 12px;
-          padding-bottom: 12px;
-          border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-        .fc-pill {
-          font-size: 12px;
-          padding: 5px 12px;
-          border-radius: 999px;
-          border: 1px solid rgba(255,255,255,0.1);
-          color: rgba(255,255,255,0.38);
-          background: transparent;
-          cursor: pointer;
-          font-family: inherit;
-          transition: color .15s, border-color .15s, background .15s;
-          white-space: nowrap;
-        }
-        .fc-pill:hover {
-          color: rgba(255,255,255,0.75);
-          border-color: rgba(255,255,255,0.25);
-          background: rgba(255,255,255,0.04);
-        }
         @media (max-width: 640px) {
-          .fc-pills-inner { display: none; }
           .fc-box { padding: 14px 16px 12px; border-radius: 16px; }
           .fc-border-wrap { border-radius: 18px; }
-          .fc-textarea { font-size: 14px; min-height: 44px; }
+          .fc-textarea, .fc-typing-overlay { font-size: 14px; }
+          .fc-textarea { min-height: 44px; }
         }
 
+        .fc-input-wrap { position: relative; }
         .fc-textarea {
           width: 100%;
           background: transparent;
@@ -135,7 +164,26 @@ export function FleetChat({ onOpenContact }: FleetChatProps) {
           overflow-y: auto;
           padding: 0;
         }
-        .fc-textarea::placeholder { color: rgba(255,255,255,0.22); }
+        .fc-textarea::placeholder { color: transparent; }
+        .fc-typing-overlay {
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          font-size: 15px;
+          line-height: 1.55;
+          color: rgba(255,255,255,0.32);
+          pointer-events: none;
+          white-space: pre;
+        }
+        .fc-typing-cursor {
+          display: inline-block;
+          width: 1.5px;
+          height: 15px;
+          margin-left: 2px;
+          background: rgba(255,255,255,0.4);
+          vertical-align: -2px;
+          animation: fc-blink 1s step-end infinite;
+        }
+        @keyframes fc-blink { 0%,100% { opacity: 1 } 50% { opacity: 0 } }
 
         .fc-footer {
           display: flex;
@@ -222,24 +270,28 @@ export function FleetChat({ onOpenContact }: FleetChatProps) {
         {!submitted ? (
           <div className="fc-border-wrap">
             <div className="fc-box">
-              {/* Pills dentro da caixa */}
-              <div className="fc-pills-inner">
-                {SUGGESTIONS.map((s) => (
-                  <button type="button" key={s} className="fc-pill" onClick={() => handleSuggestion(s)}>
-                    {s}
-                  </button>
-                ))}
+              {/* Sem pills de sugestão: o placeholder já digita os exemplos
+                  sozinho (useTypingPlaceholder), então os botões repetiam a
+                  mesma informação e competiam com a animação. */}
+              <div className="fc-input-wrap">
+                <textarea
+                  ref={textareaRef}
+                  className="fc-textarea"
+                  placeholder="Pergunte sobre sua operação..."
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  onKeyDown={handleKey}
+                  onFocus={() => setFocused(true)}
+                  onBlur={() => setFocused(false)}
+                  rows={1}
+                />
+                {!focused && value === '' && (
+                  <span className="fc-typing-overlay" aria-hidden="true">
+                    {typingPlaceholder}
+                    <span className="fc-typing-cursor" />
+                  </span>
+                )}
               </div>
-
-              <textarea
-                ref={textareaRef}
-                className="fc-textarea"
-                placeholder="Pergunte sobre sua operação..."
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                onKeyDown={handleKey}
-                rows={1}
-              />
               <div className="fc-footer">
                 <span className="fc-hint">Enter para enviar</span>
                 <button
@@ -260,10 +312,10 @@ export function FleetChat({ onOpenContact }: FleetChatProps) {
           <div className="fc-cta-box">
             <p className="fc-cta-query">"{value}"</p>
             <p className="fc-cta-text">
-              Essa é uma <strong>demonstração</strong>. Para consultar os dados reais da sua operação com o Assistente Fleet, comece seu teste grátis.
+              Essa é uma <strong>demonstração</strong>. Para ver esse tipo de automação aplicada aos dados reais da sua operação, fale com a gente.
             </p>
             <button type="button" className="fc-cta-action" onClick={onOpenContact}>
-              Testar grátis →
+              Falar com especialista →
             </button>
             <button type="button" className="fc-reset" onClick={() => { setSubmitted(false); setValue('') }}>
               voltar

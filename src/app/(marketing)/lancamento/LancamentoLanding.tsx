@@ -755,7 +755,7 @@ function LeadForm({ utm, variant, hasJs }: { utm: Utm; variant: string; hasJs: b
         return
       }
       const name = json.data?.nome ?? json.nome ?? nome
-      trackLeadConversion(`${qVeiculos}|${qControle}`)
+      trackLeadConversion('lead_lote1', `${qVeiculos}|${qControle}`)
       setDoneName(name)
     } catch {
       setSendErr('Não conseguimos enviar agora. Verifique sua internet e toque em "Garantir minha vaga" de novo.')

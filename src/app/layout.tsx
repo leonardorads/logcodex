@@ -31,8 +31,8 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.logcodex.com'),
-  title: 'LogCodex Fleet',
-  description: 'Controle de frota LogCodex',
+  title: 'LogCodex',
+  description: 'Tecnologia e automação para operações logísticas',
 }
 
 export const viewport: Viewport = {

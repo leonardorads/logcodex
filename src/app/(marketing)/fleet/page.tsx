@@ -2,33 +2,28 @@ import type { Metadata } from 'next'
 import { FAQ } from './faq-data'
 import { FleetLanding } from './FleetLanding'
 
-// /fleet é a página canônica de SEO orgânico do produto (a /lancamento é noindex
-// e aponta canonical para cá — decision-018). Metadata completo: OG + Twitter +
-// JSON-LD para máxima descoberta e share em redes sociais e mecanismos de busca.
-const TITLE = 'LogCodex Fleet — Saiba quanto ganha em cada viagem'
+// /fleet deixou de ser a página oficial do produto (reposicionamento da home,
+// 2026-08). É uma landing de demonstração — segue viva por link direto, mas sai
+// da busca: noindex + canonical para a home + fora do sitemap (ver src/app/sitemap.ts).
+// A home agora carrega o Organization/JSON-LD de marca; aqui mantemos só o FAQPage,
+// que continua verdadeiro para quem acessa via link direto.
+// Título da ABA: só o nome do produto. Sem custo de busca aqui — esta página é
+// `noindex` desde o reposicionamento, então o title não disputa ranking.
+const TAB_TITLE = 'Fleet.ai'
 const DESCRIPTION =
-  'Controle de frota sem planilha. Viagens, despesas e acertos com motoristas num lugar só. Teste grátis por 7 dias, sem cartão.'
+  'O Fleet é a base de controle de frota — viagens, despesas e acertos com motoristas, sem planilha — que a LogCodex já implantou em operação real. Ponto de partida para a solução personalizada da sua transportadora.'
 const URL = 'https://www.logcodex.com/fleet'
+const HOME_URL = 'https://www.logcodex.com'
 
 export const metadata: Metadata = {
-  title: TITLE,
+  title: TAB_TITLE,
   description: DESCRIPTION,
-  keywords: [
-    'controle de frota',
-    'gestão de transportadora',
-    'sistema para transportadora',
-    'gestão de viagens',
-    'custo por viagem',
-    'acerto de motorista',
-    'TMS para frota pequena',
-    'software de logística',
-  ],
-  alternates: { canonical: URL },
-  robots: { index: true, follow: true },
+  alternates: { canonical: HOME_URL },
+  robots: { index: false, follow: true },
   openGraph: {
-    title: 'LogCodex Fleet — Controle de frota sem planilha',
+    title: 'LogCodex Fleet — controle de frota sem planilha',
     description:
-      'Transportadoras com 5 a 30 caminhões perdem em média R$1.800/mês em custos invisíveis. O Fleet fecha essa conta — automaticamente, no celular. Teste grátis por 7 dias.',
+      'Transportadoras com 5 a 30 caminhões perdem em média R$1.800/mês em custos invisíveis. O Fleet fecha essa conta, automaticamente. Base implantada pela LogCodex sob medida para cada operação.',
     url: URL,
     siteName: 'LogCodex',
     locale: 'pt_BR',
@@ -36,55 +31,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'LogCodex Fleet — Controle de frota sem planilha',
+    title: 'LogCodex Fleet — controle de frota sem planilha',
     description:
-      'Saiba quanto sobra em cada viagem. Viagens, despesas e acertos num lugar só. 7 dias grátis, sem cartão.',
+      'Saiba quanto sobra em cada viagem. Viagens, despesas e acertos num lugar só — implantado sob medida pela LogCodex.',
   },
 }
 
 export default function FleetLandingPage() {
-  const softwareJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'LogCodex Fleet',
-    applicationCategory: 'BusinessApplication',
-    operatingSystem: 'Web',
-    description: DESCRIPTION,
-    url: URL,
-    inLanguage: 'pt-BR',
-    offers: [
-      {
-        '@type': 'Offer',
-        name: 'Starter',
-        price: '99.00',
-        priceCurrency: 'BRL',
-        description: 'Plano Starter — para frotas pequenas. Teste grátis por 7 dias, sem cartão.',
-      },
-      {
-        '@type': 'Offer',
-        name: 'Profissional',
-        price: '299.00',
-        priceCurrency: 'BRL',
-        description: 'Plano Profissional — suporte prioritário. Teste grátis por 7 dias, sem cartão.',
-      },
-    ],
-    publisher: {
-      '@type': 'Organization',
-      name: 'LogCodex',
-      url: 'https://www.logcodex.com',
-    },
-  }
-
-  const organizationJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'LogCodex',
-    url: 'https://www.logcodex.com',
-    description:
-      'LogCodex desenvolve o Fleet, sistema de controle de frota para transportadoras de pequeno e médio porte.',
-    areaServed: 'BR',
-  }
-
   const faqJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -97,14 +50,6 @@ export default function FleetLandingPage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}

@@ -17,7 +17,7 @@ const GOOGLE_ADS_CONVERSION_LABEL =
 type GtagFn = (...args: unknown[]) => void
 type FbqFn = (...args: unknown[]) => void
 
-export function trackLeadConversion(segmentoHint: string): void {
+export function trackLeadConversion(eventName: string, segmentoHint?: string): void {
   if (typeof window === 'undefined') return
 
   const w = window as unknown as {
@@ -26,14 +26,15 @@ export function trackLeadConversion(segmentoHint: string): void {
     fbq?: FbqFn
   }
 
-  // 1. GA4 / dataLayer (evento 'lead_lote1')
+  // 1. GA4 / dataLayer — nome do evento é o parâmetro recebido (cada funil
+  //    dispara o seu: lead_lote1, lead_diagnostico, lead_agendamento...)
   if (Array.isArray(w.dataLayer)) {
-    w.dataLayer.push({ event: 'lead_lote1', segmento_hint: segmentoHint })
+    w.dataLayer.push({ event: eventName, ...(segmentoHint ? { segmento_hint: segmentoHint } : {}) })
   }
 
   // 2. Meta Pixel — evento padrão 'Lead'
   if (typeof w.fbq === 'function') {
-    w.fbq('track', 'Lead', { content_name: 'lote1', segmento_hint: segmentoHint })
+    w.fbq('track', 'Lead', { content_name: eventName, ...(segmentoHint ? { segmento_hint: segmentoHint } : {}) })
   }
 
   // 3. Google Ads — conversão (precisa do label da ação de conversão)

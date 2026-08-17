@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
 export const alt =
-  'LogCodex Fleet — controle de frota sem planilha. Saiba quanto sobra em cada viagem.'
+  'LogCodex Fleet — a base de controle de frota implantada sob medida pela LogCodex.'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -106,7 +106,7 @@ export default async function Image() {
             Controle de frota sem planilha. Viagens, despesas e acertos num lugar só.
           </div>
 
-          {/* Offer box */}
+          {/* Offer box — implantação, não preço */}
           <div
             style={{
               display: 'flex',
@@ -118,16 +118,14 @@ export default async function Image() {
               padding: '14px 24px',
             }}
           >
-            <span style={{ fontSize: 15, color: '#94a3b8' }}>A partir de</span>
-            <span style={{ fontSize: 34, fontWeight: 700, color: '#818cf8' }}>
-              R$ 99
+            <span style={{ fontSize: 22, fontWeight: 700, color: '#818cf8' }}>
+              Implantação sob medida
             </span>
-            <span style={{ fontSize: 15, color: '#94a3b8' }}>/mês</span>
           </div>
 
           {/* Bottom line */}
           <div style={{ fontSize: 13, color: '#64748b', marginTop: '16px' }}>
-            7 dias grátis · Sem cartão · Sem contrato
+            Diagnóstico · integração · suporte técnico
           </div>
         </div>
 

@@ -1,5 +1,17 @@
 /* ─── LogCodex Fleet — v3-quiet design ─── */
 
+/* Rolagem animada para qualquer link de âncora (#id) na página — nav, footer,
+   ou qualquer outro `<a href="#...">` futuro. Aplica em `html` porque o
+   scroll acontece na viewport, não dentro de `.lcx-root`; seguro porque este
+   arquivo CSS só é importado pelo layout do grupo (marketing). Respeita
+   `prefers-reduced-motion` desligando a suavização. */
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
 .lcx-root {
   --bg: #0c0d0f;
   --bg-2: #0f1012;
@@ -47,10 +59,12 @@
   border-bottom-color: var(--line);
 }
 .lcx-root .brand {
-  display: inline-flex; align-items: center; gap: 10px;
-  font-size: 14px; font-weight: 500; letter-spacing: -0.005em;
+  display: inline-flex; align-items: center; gap: 11px;
+  font-size: 16px; font-weight: 500; letter-spacing: -0.005em;
 }
-.lcx-root .brand svg { width: 22px; height: 22px; color: var(--silver); }
+/* 32px = tamanho nativo do viewBox: o traço cai exatamente no pixel,
+   sem meio-pixel de antialias que borrava o desenho em 22px. */
+.lcx-root .brand svg { width: 32px; height: 32px; color: var(--silver); }
 .lcx-root .nav-links {
   display: flex; gap: 32px; font-size: 13.5px;
   color: var(--ink-2); font-weight: 400;
@@ -123,6 +137,28 @@
 }
 .lcx-root .btn-ghost { color: var(--ink-2); border: 1px solid var(--line-strong); }
 .lcx-root .btn-ghost:hover { color: var(--ink); border-color: rgba(255,255,255,0.22); }
+
+/* Botão que leva ao Fleet: carrega o dourado da marca do produto (--fl-accent
+   da Fleet Landing) em vez do cinza neutro, para se destacar como a única
+   porta de saída da home para o produto. */
+.lcx-root .btn-fleet {
+  color: #c9a876;
+  border: 1px solid rgba(201,168,118,0.42);
+  background: rgba(201,168,118,0.07);
+}
+.lcx-root .btn-fleet:hover {
+  color: #e4c896;
+  border-color: rgba(201,168,118,0.75);
+  background: rgba(201,168,118,0.14);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(201,168,118,0.16);
+}
+
+/* Eyebrow com o ícone do Fleet: o traço padrão sai para o ícone ocupar o
+   lugar dele, senão sobram dois elementos disputando a mesma posição. */
+.lcx-root .eyebrow-fleet::before { display: none; }
+.lcx-root .eyebrow-fleet { gap: 10px; color: #c9a876; }
+.lcx-root .eyebrow-fleet img { border-radius: 6px; }
 
 .lcx-root .hero-foot {
   margin-top: 96px; padding-top: 32px;
