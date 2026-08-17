@@ -20,10 +20,13 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   alternates: { canonical: HOME_URL },
   robots: { index: false, follow: true },
+  // Título e texto da prévia de link. Alinhados à arte do opengraph-image.tsx,
+  // que mostra o assistente respondendo no WhatsApp: quem recebe o link pelo
+  // WhatsApp vê a demonstração no canal em que já está.
   openGraph: {
-    title: 'LogCodex Fleet — controle de frota sem planilha',
+    title: 'Fleet.ai — sua frota responde no WhatsApp',
     description:
-      'Transportadoras com 5 a 30 caminhões perdem em média R$1.800/mês em custos invisíveis. O Fleet fecha essa conta, automaticamente. Base implantada pela LogCodex sob medida para cada operação.',
+      'Pergunte em português e receba viagens, custos e acertos na hora — sem abrir painel, sem planilha, sem app novo para a equipe. Implantado sob medida pela LogCodex.',
     url: URL,
     siteName: 'LogCodex',
     locale: 'pt_BR',
@@ -31,9 +34,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'LogCodex Fleet — controle de frota sem planilha',
+    title: 'Fleet.ai — sua frota responde no WhatsApp',
     description:
-      'Saiba quanto sobra em cada viagem. Viagens, despesas e acertos num lugar só — implantado sob medida pela LogCodex.',
+      'Pergunte em português e receba viagens, custos e acertos na hora — sem abrir painel, sem planilha, sem app novo para a equipe.',
   },
 }
 

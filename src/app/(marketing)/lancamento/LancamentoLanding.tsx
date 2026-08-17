@@ -556,25 +556,23 @@ As 20 primeiras transportadoras entram com <strong style={{ color: 'rgba(255,255
         </div>
       </div>
 
-      {/* ── PROVA SOCIAL JCLS + quem é a LogCodex ── */}
+      {/* ── PROVA SOCIAL + quem é a LogCodex ──
+          Depoimento nominal removido a pedido do Leonardo (17/08/2026). A
+          afirmação de que o produto roda em operação real continua — ela é
+          verdadeira sem identificar o cliente. */}
       <div className="fl-section-sm rev" style={{ borderTop: '1px solid var(--fl-line)' }}>
         <div className="fl-proof-inner fl-proof">
-          <div className="fl-proof-badge">✓ CLIENTE EM PRODUÇÃO</div>
+          <div className="fl-proof-badge">✓ EM PRODUÇÃO</div>
           <blockquote>
-            "Antes do Fleet, todo acerto com motorista virava uma tarde perdida. Agora fechamos em 30 minutos. O sistema calcula, o motorista vê e confirma — sem briga."
+            Não é promessa de startup: o Fleet roda todos os dias numa transportadora real, com viagens, acertos de motorista e financeiro de verdade passando pelo sistema.
           </blockquote>
-          <div className="fl-proof-meta">
-            <div className="fl-proof-avatar">J</div>
-            <div className="fl-proof-who"><strong>Junior Rodrigo</strong><span>Gestor · JCLS Transportes · Paraná</span></div>
-          </div>
           <div className="fl-proof-nums">
-            <div className="fl-proof-m"><div className="n">−12h</div><div className="l">por semana no acerto</div></div>
-            <div className="fl-proof-m"><div className="n">~0</div><div className="l">erros de acerto</div></div>
-            <div className="fl-proof-m"><div className="n">180</div><div className="l">viagens/mês</div></div>
-            <div className="fl-proof-m"><div className="n">5</div><div className="l">motoristas ativos</div></div>
+            <div className="fl-proof-m"><div className="n">Diário</div><div className="l">uso em operação real</div></div>
+            <div className="fl-proof-m"><div className="n">Acerto</div><div className="l">de horas para minutos</div></div>
+            <div className="fl-proof-m"><div className="n">WhatsApp</div><div className="l">sem app novo pro motorista</div></div>
           </div>
           <p className="fl-about">
-            Isto não é promessa de startup. O Fleet <strong>já roda na operação real da JCLS Transportes</strong>, no Paraná, todos os dias. A LogCodex constrói sistemas que ligam tecnologia à operação logística — o Fleet, controle de frota, é o primeiro produto: estável, testado e em produção.
+            A LogCodex constrói sistemas que ligam tecnologia à operação logística — o Fleet, controle de frota, é o primeiro produto: estável, testado e em produção.
           </p>
         </div>
       </div>

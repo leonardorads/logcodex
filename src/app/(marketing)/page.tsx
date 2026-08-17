@@ -28,6 +28,10 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: URL },
   robots: { index: true, follow: true },
+  // Sem `images`: o `opengraph-image.tsx` desta pasta é detectado pelo Next e
+  // preenche og:image/twitter:image sozinho. Declarar `/og-image.png` aqui
+  // sobrescreveria a arte gerada e traria de volta o PNG antigo — que trazia o
+  // slogan velho e o domínio .com.br.
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
@@ -35,13 +39,11 @@ export const metadata: Metadata = {
     siteName: 'LogCodex',
     locale: 'pt_BR',
     type: 'website',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'LogCodex — Transformação operacional para logística' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: TITLE,
     description: DESCRIPTION,
-    images: ['/og-image.png'],
   },
 }
 

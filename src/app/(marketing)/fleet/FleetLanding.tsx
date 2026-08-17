@@ -685,36 +685,28 @@ export function FleetLanding() {
       {/* ── SÍNTESE (marquee) ── */}
       <FleetMarquee rowA={FLEET_MARQUEE_ROW_A} rowB={FLEET_MARQUEE_ROW_B} />
 
-      {/* ── PROVA SOCIAL — JCLS ── */}
+      {/* ── PROVA SOCIAL ──
+          O depoimento nominal foi removido a pedido do Leonardo (17/08/2026).
+          Substituído por prova genérica: afirma que o produto roda em operação
+          real, sem identificar o cliente. */}
       <div className="fl-section-sm rev" style={{ background: 'var(--fl-bg)', borderTop: '1px solid var(--fl-line)' }}>
         <div className="fl-proof-inner">
-          <div className="fl-proof-badge">✓ CLIENTE EM PRODUÇÃO</div>
+          <div className="fl-proof-badge">✓ EM PRODUÇÃO</div>
           <blockquote>
-            "Antes do Fleet, todo acerto com motorista virava uma tarde perdida. Agora fechamos em 30 minutos. O sistema calcula, o motorista vê e confirma — sem briga."
+            Não é protótipo nem promessa: o Fleet.ai roda todos os dias numa transportadora real, com viagens, acertos de motorista e financeiro de verdade passando pelo sistema.
           </blockquote>
-          <div className="fl-proof-meta">
-            <div className="fl-proof-avatar">J</div>
-            <div className="fl-proof-who">
-              <strong>Junior Rodrigo</strong>
-              <span>Gestor · JCLS Transportes · Paraná</span>
-            </div>
-          </div>
           <div className="fl-proof-nums">
             <div className="fl-proof-m">
-              <div className="n">−12h</div>
-              <div className="l">por semana no acerto</div>
+              <div className="n">Diário</div>
+              <div className="l">uso em operação real</div>
             </div>
             <div className="fl-proof-m">
-              <div className="n">~0</div>
-              <div className="l">erros de acerto</div>
+              <div className="n">Acerto</div>
+              <div className="l">de horas para minutos</div>
             </div>
             <div className="fl-proof-m">
-              <div className="n">180</div>
-              <div className="l">viagens/mês</div>
-            </div>
-            <div className="fl-proof-m">
-              <div className="n">5</div>
-              <div className="l">motoristas ativos</div>
+              <div className="n">WhatsApp</div>
+              <div className="l">sem app novo pro motorista</div>
             </div>
           </div>
         </div>
