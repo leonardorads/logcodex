@@ -64,7 +64,39 @@ export function SecComoEntregamos() {
       { rootMargin: '-80px 0px -10% 0px', threshold: 0.15 }
     )
     steps.forEach((el) => io.observe(el))
-    return () => io.disconnect()
+
+    // Progresso da linha vertical: 0 quando o topo da timeline chega ao meio
+    // da tela, 1 quando o fim passa por lá. rAF para não recalcular layout a
+    // cada evento de scroll (getBoundingClientRect força reflow).
+    let ticking = false
+    const atualizarProgresso = () => {
+      ticking = false
+      const r = container.getBoundingClientRect()
+      const vh = window.innerHeight
+      // A linha começa a crescer quando o topo da timeline chega a 85% da
+      // altura da tela e termina quando o fim dela passa dos 55%. Sem essa
+      // janela, o cálculo saturava em 1 assim que a seção entrava.
+      const inicio = vh * 0.85
+      const fim = vh * 0.55
+      const percorrido = inicio - r.top
+      const total = Math.max(r.height + (inicio - fim), 1)
+      const p = Math.min(1, Math.max(0, percorrido / total))
+      container.style.setProperty('--tl-progresso', p.toFixed(3))
+    }
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(atualizarProgresso)
+    }
+    atualizarProgresso()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+
+    return () => {
+      io.disconnect()
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
   }, [])
 
   return (
@@ -90,14 +122,56 @@ export function SecComoEntregamos() {
       </div>
 
       <style>{`
+        /* Leitura cronológica: o passo entra pela esquerda (sentido da linha
+           do tempo), e dentro dele o número → título → descrição aparecem em
+           cascata, como se a etapa estivesse sendo escrita naquele instante. */
         .tl-step {
           opacity: 0;
-          transform: translateY(28px);
-          transition: opacity .7s var(--ease), transform .7s var(--ease);
+          transform: translateX(-18px);
+          transition: opacity .55s var(--ease), transform .55s var(--ease);
         }
         .tl-step.tl-in { opacity: 1; transform: none; }
+
+        /* O atraso vem na MESMA declaração da forma curta de transition:
+           escrever transition-delay numa regra separada não adianta, porque a
+           forma curta reseta o delay e vence por vir depois na cascata — foi
+           assim que o escalonamento dos cards da /fleet falhou antes. */
+        .lcx-root .tl-step .tl-num,
+        .lcx-root .tl-step .tl-title,
+        .lcx-root .tl-step .tl-desc {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        .lcx-root .tl-step .tl-num   { transition: opacity .5s var(--ease) .10s, transform .5s var(--ease) .10s; }
+        .lcx-root .tl-step .tl-title { transition: opacity .5s var(--ease) .20s, transform .5s var(--ease) .20s; }
+        .lcx-root .tl-step .tl-desc  { transition: opacity .5s var(--ease) .30s, transform .5s var(--ease) .30s; }
+        .lcx-root .tl-step.tl-in .tl-num,
+        .lcx-root .tl-step.tl-in .tl-title,
+        .lcx-root .tl-step.tl-in .tl-desc { opacity: 1; transform: none; }
+
+        /* O marcador pulsa ao acender: é o "tique" do relógio da etapa. */
+        .tl-step::before {
+          transform: scale(.4);
+          opacity: 0;
+          transition: transform .45s cubic-bezier(.34,1.56,.64,1), opacity .3s var(--ease);
+        }
+        .tl-step.tl-in::before { transform: scale(1); opacity: 1; }
+
+        /* A linha vertical se desenha de cima para baixo conforme a seção é
+           percorrida — o progresso é escrito por JS em --tl-progresso. */
+        .lcx-root .timeline::before {
+          transform-origin: top;
+          transform: scaleY(var(--tl-progresso, 0));
+          transition: transform .18s linear;
+        }
+
         @media (prefers-reduced-motion: reduce) {
-          .tl-step { opacity: 1; transform: none; transition: none; }
+          .tl-step,
+          .tl-step .tl-num, .tl-step .tl-title, .tl-step .tl-desc,
+          .tl-step::before {
+            opacity: 1; transform: none; transition: none;
+          }
+          .lcx-root .timeline::before { transform: none; }
         }
       `}</style>
     </section>

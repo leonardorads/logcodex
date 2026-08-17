@@ -1,13 +1,35 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShaderBackground } from '../ShaderBackground'
 
-const ROTATING_WORDS = ['automatizada', 'com IA', 'sem planilha', 'no piloto automático']
+// A palavra rotativa FECHA a frase: "Sua operação logística, automatizada."
+// Antes ela caía no meio, entre a vírgula e um "resolvida ponta a ponta" fixo,
+// e a leitura não fechava sentido ("logística, automatizada resolvida ponta a
+// ponta"). O "ponta a ponta" migrou para o parágrafo, que não anima.
+//
+// Vocabulário de tecnologia e liberdade, não de "problema resolvido": cada
+// termo é um particípio feminino (concorda com "operação") que fala do que a
+// tecnologia FAZ pela operação, e o arco termina em "livre" — a promessa é o
+// tempo que o dono da transportadora recupera.
+//
+// Uma palavra só, de propósito: a 92px qualquer frase maior quebra em 2 linhas
+// e a caixa saltaria ~100px de altura a cada troca (verificado em 1920 e 390px).
+const ROTATING_WORDS = [
+  'automatizada.',
+  'integrada.',
+  'inteligente.',
+  'autônoma.',
+  'no automático.',
+]
 
 export function HomeHero({ onOpenContact }: { onOpenContact: (intent: 'agendar') => void }) {
   const [wordIndex, setWordIndex] = useState(0)
+  const espelhoRef = useRef<HTMLSpanElement>(null)
+  const rotRef = useRef<HTMLSpanElement>(null)
+  const [altura, setAltura] = useState<number | undefined>(undefined)
+  const [larguraRot, setLarguraRot] = useState<number | undefined>(undefined)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -15,6 +37,25 @@ export function HomeHero({ onOpenContact }: { onOpenContact: (intent: 'agendar')
     }, 2200)
     return () => clearInterval(interval)
   }, [])
+
+  // A altura vem de um espelho invisível com a MESMA tipografia: o elemento
+  // visível está sempre no meio de uma transição do Framer, então medir ele
+  // devolveria valores intermediários. useLayoutEffect para a caixa já nascer
+  // no tamanho certo, sem um quadro de salto. Reage a resize porque a fonte é
+  // clamp() — em outra largura a mesma frase ocupa outro número de linhas.
+  useLayoutEffect(() => {
+    const medir = () => {
+      // A largura vem primeiro: o espelho só quebra linha igual ao visível se
+      // já estiver na largura certa quando a altura for lida.
+      const w = rotRef.current?.getBoundingClientRect().width
+      if (w) setLarguraRot(w)
+      const h = espelhoRef.current?.getBoundingClientRect().height
+      if (h) setAltura(h)
+    }
+    medir()
+    window.addEventListener('resize', medir)
+    return () => window.removeEventListener('resize', medir)
+  }, [wordIndex, larguraRot])
 
   return (
     <>
@@ -24,6 +65,26 @@ export function HomeHero({ onOpenContact }: { onOpenContact: (intent: 'agendar')
            puxar o conteúdo para logo abaixo do nav, sem o vão vazio. */
         .hero-section { padding-top: 0 !important; justify-content: flex-start !important; align-items: flex-start; }
         .hero-inner { padding: clamp(88px,11vh,110px) clamp(20px,5vw,40px) clamp(40px,5vh,60px); }
+
+        /* Sem altura fixa: as frases variam de 1 a 2 linhas (de "sob controle."
+           a "implantada por quem entende."). Reservar o pior caso deixava um
+           vão enorme nas curtas; travar em 1 linha cortava as longas.
+           A altura é medida por JS e animada, então a caixa acompanha. */
+        .hero-rot { display: block; position: relative; overflow: hidden;
+                    transition: height .38s cubic-bezier(.22,1,.36,1); }
+        .hero-rot > span { display: block; }
+
+        /* Mesma tipografia e mesma largura do h1 — é o que garante que a
+           frase quebre no mesmo ponto e a medida valha. position:absolute
+           tira do fluxo (não empurra nada); visibility:hidden mantém ele
+           mensurável, ao contrário de display:none. */
+        .hero-rot-espelho {
+          position: absolute; left: 0; top: 0;
+          visibility: hidden; pointer-events: none;
+          font-size: clamp(36px, 7vw, 80px); font-weight: 800;
+          letter-spacing: -.03em; line-height: 1.05;
+        }
+
         @media (max-width: 640px) {
           .hero-inner { padding: 88px 20px 32px; }
           .hero-ctas { gap: 8px; margin-bottom: 20px !important; }
@@ -48,14 +109,21 @@ export function HomeHero({ onOpenContact }: { onOpenContact: (intent: 'agendar')
             LogCodex · Transformação operacional para logística
           </motion.div>
 
+          {/* position:relative ancora o .hero-rot-espelho (absolute) nesta
+              caixa, para ele herdar a MESMA largura do h1 e quebrar linha no
+              mesmo ponto. Sem isso ele ancoraria no body. */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
-            style={{ fontSize: 'clamp(40px, 8vw, 92px)', fontWeight: 800, letterSpacing: '-.03em', lineHeight: 1.05, marginBottom: '16px', color: '#fff' }}
+            style={{ position: 'relative', fontSize: 'clamp(36px, 7vw, 80px)', fontWeight: 800, letterSpacing: '-.03em', lineHeight: 1.05, marginBottom: '16px', color: '#fff' }}
           >
             Sua operação logística,{' '}
-            <span style={{ display: 'inline-block', position: 'relative', overflow: 'hidden', height: '1.1em', verticalAlign: 'bottom', minWidth: 'min(340px, 70vw)' }}>
+            {/* Bloco próprio, ocupando a linha inteira: os termos têm larguras
+                muito diferentes ("sob controle." x "implantada por quem
+                entende.") e, em linha, empurrariam o texto fixo a cada troca.
+                A altura vem medida do espelho e é animada — ver .hero-rot. */}
+            <span ref={rotRef} className="hero-rot" style={{ height: altura }}>
               <AnimatePresence mode="wait">
                 <motion.span
                   key={wordIndex}
@@ -69,8 +137,24 @@ export function HomeHero({ onOpenContact }: { onOpenContact: (intent: 'agendar')
                 </motion.span>
               </AnimatePresence>
             </span>
-            <br />resolvida ponta a ponta.
           </motion.h1>
+
+          {/* Espelho de medição — FORA do h1 de propósito: dentro dele, o
+              texto entrava no textContent e o Google lia o título duplicado
+              ("...já existe.diagnosticada de verdade."). aria-hidden cobre o
+              leitor de tela; ficar fora do h1 cobre o buscador.
+              A largura vem do .hero-rot (medida abaixo) e não de um pai
+              posicionado: ancorar no h1 não funciona porque o Framer reescreve
+              o transform dele, e o espelho acabava herdando os 780px do
+              .hero-inner em vez dos 700px reais do h1. */}
+          <span
+            ref={espelhoRef}
+            aria-hidden
+            className="hero-rot-espelho"
+            style={{ width: larguraRot }}
+          >
+            {ROTATING_WORDS[wordIndex]}
+          </span>
 
           <motion.p
             initial={{ opacity: 0, y: 16 }}
@@ -78,7 +162,7 @@ export function HomeHero({ onOpenContact }: { onOpenContact: (intent: 'agendar')
             transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
             style={{ fontSize: 'clamp(15px, 1.8vw, 18px)', color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, maxWidth: '560px', margin: '0 auto 28px' }}
           >
-            A LogCodex entende sua operação, desenha a solução certa, integra com o que você já usa e implanta tudo — do diagnóstico ao time treinado. Sem travar a operação, sem jogar a complexidade no seu colo.
+            Ponta a ponta: a LogCodex entende sua operação, desenha a solução certa, integra com o que você já usa e implanta tudo — do diagnóstico ao time treinado. Sem travar a operação, sem jogar a complexidade no seu colo.
           </motion.p>
 
           <motion.div

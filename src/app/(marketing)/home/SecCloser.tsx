@@ -12,7 +12,7 @@ export function SecCloser({ onOpenContact }: { onOpenContact: (intent: 'agendar'
         <a href="#" className="btn btn-primary reveal-fade" onClick={(e) => { e.preventDefault(); onOpenContact('agendar') }}>
           Falar com especialista →
         </a>
-        <p className="fine reveal-fade">Diagnóstico completo · sem compromisso · reunião confirmada na hora</p>
+        <p className="fine reveal-fade">Diagnóstico completo · sem compromisso · retorno pelo WhatsApp</p>
       </div>
     </section>
   )

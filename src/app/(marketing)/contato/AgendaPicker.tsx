@@ -9,8 +9,17 @@ const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 declare global {
   interface Window {
     turnstile?: {
-      render: (container: HTMLElement, options: { sitekey: string }) => string
+      render: (
+        container: HTMLElement,
+        options: {
+          sitekey: string
+          callback?: (token: string) => void
+          'error-callback'?: () => void
+          'expired-callback'?: () => void
+        }
+      ) => string
       remove: (widgetId: string) => void
+      reset: (widgetId: string) => void
     }
   }
 }
@@ -22,8 +31,23 @@ declare global {
  * e `cf-turnstile-response` ficava sempre vazio, derrubando todo envio com 422.
  * Precisa chamar `window.turnstile.render()` explicitamente quando o elemento
  * aparece — com retry curto, pois o script pode ainda não ter carregado.
+ *
+ * O token vem pelo `callback`, não da leitura do input escondido no momento do
+ * clique: o desafio termina de forma ASSÍNCRONA, então quem preenchia o
+ * formulário rápido enviava com o campo ainda vazio e levava 422
+ * ("Verificação de segurança falhou"). Guardar o token em estado permite
+ * bloquear o botão até ele existir.
  */
-function useTurnstileWidget(containerRef: React.RefObject<HTMLDivElement | null>) {
+function useTurnstileWidget(
+  containerRef: React.RefObject<HTMLDivElement | null>,
+  onToken: (token: string | null) => void,
+  widgetIdRef: React.MutableRefObject<string | null>
+) {
+  // Ref para o callback não recriar o widget a cada render do formulário
+  // (cada recriação reiniciaria o desafio e perderia o token já obtido).
+  const onTokenRef = useRef(onToken)
+  useEffect(() => { onTokenRef.current = onToken }, [onToken])
+
   useEffect(() => {
     if (!TURNSTILE_SITE_KEY) return
     const container = containerRef.current
@@ -36,7 +60,15 @@ function useTurnstileWidget(containerRef: React.RefObject<HTMLDivElement | null>
     function tryRender() {
       if (cancelled || !container) return
       if (window.turnstile) {
-        widgetId = window.turnstile.render(container, { sitekey: TURNSTILE_SITE_KEY! })
+        widgetId = window.turnstile.render(container, {
+          sitekey: TURNSTILE_SITE_KEY!,
+          callback: (token: string) => { if (!cancelled) onTokenRef.current(token) },
+          // Token expira em ~5 min; sem isto o visitante que deixa o modal
+          // aberto envia com token vencido e leva 422.
+          'expired-callback': () => { if (!cancelled) onTokenRef.current(null) },
+          'error-callback': () => { if (!cancelled) onTokenRef.current(null) },
+        })
+        widgetIdRef.current = widgetId
         return
       }
       attempts++
@@ -47,8 +79,9 @@ function useTurnstileWidget(containerRef: React.RefObject<HTMLDivElement | null>
     return () => {
       cancelled = true
       if (widgetId && window.turnstile) window.turnstile.remove(widgetId)
+      widgetIdRef.current = null
     }
-  }, [containerRef])
+  }, [containerRef, widgetIdRef])
 }
 
 interface SlotApi {
@@ -100,7 +133,24 @@ type FieldErrors = { nome?: string; empresa?: string; whatsapp?: string; email?:
 
 export function AgendaPicker() {
   const turnstileRef = useRef<HTMLDivElement | null>(null)
-  useTurnstileWidget(turnstileRef)
+  const widgetIdRef = useRef<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileDesistiu, setTurnstileDesistiu] = useState(false)
+  useTurnstileWidget(turnstileRef, setTurnstileToken, widgetIdRef)
+
+  // Trava de segurança da trava: se o desafio não resolver em 12s (domínio não
+  // autorizado, Cloudflare fora do ar, bloqueador), liberar o botão. É melhor
+  // deixar o servidor recusar com uma mensagem do que prender o visitante num
+  // botão que nunca habilita — o guard do servidor continua valendo.
+  useEffect(() => {
+    if (!TURNSTILE_SITE_KEY || turnstileToken) return
+    const t = setTimeout(() => setTurnstileDesistiu(true), 12000)
+    return () => clearTimeout(t)
+  }, [turnstileToken])
+
+  // Sem site key configurada o guard do servidor se auto-desliga, então o
+  // formulário não pode ficar travado esperando um token que nunca vem.
+  const aguardandoTurnstile = Boolean(TURNSTILE_SITE_KEY) && !turnstileToken && !turnstileDesistiu
 
   const [slots, setSlots] = useState<SlotApi[] | null>(null)
   const [loadErr, setLoadErr] = useState(false)
@@ -159,7 +209,13 @@ export function AgendaPicker() {
     if (!validate() || !selected) return
     const form = ev.currentTarget
     const honeypot = (form.elements.namedItem('website') as HTMLInputElement | null)?.value ?? ''
-    const turnstileToken = (form.elements.namedItem('cf-turnstile-response') as HTMLInputElement | null)?.value ?? ''
+    // O token vem do callback do widget. Fallback para o input escondido
+    // cobre o caso de o Turnstile ter preenchido o campo sem disparar o
+    // callback (acontece quando o desafio é resolvido antes do render).
+    const token =
+      turnstileToken ??
+      (form.elements.namedItem('cf-turnstile-response') as HTMLInputElement | null)?.value ??
+      ''
     setLoading(true)
     try {
       const res = await fetch('/api/agenda/reservar', {
@@ -171,7 +227,7 @@ export function AgendaPicker() {
           slot_inicio: selected.inicio,
           slot_fim: selected.fim,
           website: honeypot,
-          turnstile_token: turnstileToken,
+          turnstile_token: token,
         }),
       })
       const json = await res.json()
@@ -180,6 +236,11 @@ export function AgendaPicker() {
           setSelected(null)
           setSlots((prev) => prev?.map((s) => (s.inicio === selected.inicio ? { ...s, ocupado: true } : s)) ?? null)
         }
+        // O Turnstile consome o token a cada verificação: sem reiniciar o
+        // widget, a segunda tentativa reenviaria um token já gasto e falharia
+        // de novo, prendendo o visitante num erro que não é culpa dele.
+        setTurnstileToken(null)
+        if (widgetIdRef.current && window.turnstile) window.turnstile.reset(widgetIdRef.current)
         setSendErr(json.error?.message ?? 'Não conseguimos registrar seu horário agora.')
         return
       }
@@ -353,6 +414,15 @@ export function AgendaPicker() {
 
       {TURNSTILE_SITE_KEY ? <div ref={turnstileRef} style={{ margin: '8px 0' }} /> : null}
 
+      {/* O visitante não pode ficar sem caminho se a verificação não carregar:
+          o envio segue permitido (o servidor decide), e o WhatsApp fica à mão. */}
+      {turnstileDesistiu && !turnstileToken && (
+        <div className="cm-send-err">
+          <p>A verificação de segurança não carregou. Você pode tentar enviar mesmo assim ou falar direto com a gente.</p>
+          <WhatsAppButton message="Olá! Quero agendar uma reunião sobre a minha operação." label="Falar no WhatsApp" />
+        </div>
+      )}
+
       {sendErr && (
         <div className="cm-send-err">
           <p>{sendErr}</p>
@@ -360,8 +430,11 @@ export function AgendaPicker() {
         </div>
       )}
 
-      <button className="cm-email-btn" type="submit" disabled={loading}>
-        {loading ? 'Enviando…' : 'Confirmar horário'}
+      {/* Desabilitar enquanto o desafio não termina evita o 422 silencioso:
+          antes o clique rápido enviava token vazio e o visitante só via
+          "Verificação de segurança falhou", sem entender o motivo. */}
+      <button className="cm-email-btn" type="submit" disabled={loading || aguardandoTurnstile}>
+        {loading ? 'Enviando…' : aguardandoTurnstile ? 'Verificando segurança…' : 'Confirmar horário'}
       </button>
 
       <style>{`
@@ -376,10 +449,13 @@ export function AgendaPicker() {
           padding: 14px 14px 12px;
         }
         .ap-cal-head { display: flex; align-items: center; gap: 4px; margin-bottom: 10px; }
+        /* Sem text-transform:capitalize — ele maiusculiza TODA palavra e
+           produzia "Agosto De 2026". ::first-letter capitaliza só a inicial. */
         .ap-cal-title {
           font-size: 13.5px; font-weight: 600; color: rgba(255,255,255,.9);
-          text-transform: capitalize; margin-right: auto;
+          margin-right: auto;
         }
+        .ap-cal-title::first-letter { text-transform: uppercase; }
         .ap-cal-nav {
           width: 28px; height: 28px; flex-shrink: 0;
           display: inline-flex; align-items: center; justify-content: center;
@@ -419,10 +495,12 @@ export function AgendaPicker() {
         .ap-cal-cell.active .ap-cal-dot { display: none; }
 
         .ap-times { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.08); }
+        /* Mesmo motivo do .ap-cal-title: capitalize fazia "Seg., 17 De Ago." */
         .ap-times-label {
           font-size: 11.5px; color: rgba(255,255,255,.45);
-          text-transform: capitalize; margin: 0 0 8px;
+          margin: 0 0 8px;
         }
+        .ap-times-label::first-letter { text-transform: uppercase; }
         .ap-times-list { display: flex; flex-wrap: wrap; gap: 8px; }
         .ap-slot {
           padding: 9px 14px; border-radius: 999px; font-size: 13px; font-family: inherit;

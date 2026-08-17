@@ -151,6 +151,13 @@ export function FleetWhatsApp() {
   return (
     <div className="fl-section" id="whatsapp" style={{ borderTop: '1px solid var(--fl-line)', background: 'var(--fl-bg2)' }}>
       <div className="rev" style={{ textAlign: 'center', marginBottom: '48px' }}>
+        {/* Glifo oficial do WhatsApp (marca registrada da Meta), no verde da
+            marca — usado para identificar o canal, não como endosso. */}
+        <div className="wa-marca" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="currentColor" role="img">
+            <path d="M16 3C8.82 3 3 8.82 3 16c0 2.3.6 4.47 1.65 6.35L3 29l6.85-1.6A13 13 0 0 0 16 29c7.18 0 13-5.82 13-13S23.18 3 16 3zm6.45 18.1c-.27.76-1.58 1.46-2.16 1.52-.55.06-1.07.26-3.6-.75-3.02-1.2-4.96-4.27-5.11-4.47-.15-.2-1.22-1.63-1.22-3.1 0-1.47.77-2.2 1.04-2.5.27-.3.6-.37.8-.37l.57.01c.18 0 .43-.07.67.51l.87 2.1c.07.17.12.37.01.58l-.32.54-.48.5c-.15.15-.32.32-.14.63.18.3.8 1.31 1.72 2.12 1.18 1.05 2.18 1.38 2.49 1.53.3.15.47.13.65-.08l.43-.52c.18-.22.36-.18.6-.11l1.92.9c.22.1.37.15.42.24.05.33-.12 1.35-.39 2.11z" />
+          </svg>
+        </div>
         <span className="fl-eyebrow">Assistente Fleet · WhatsApp</span>
         <h2 className="fl-h2">O mesmo assistente,<br /><em>na palma da mão.</em></h2>
         <p className="fl-lead" style={{ margin: '0 auto', textAlign: 'center' }}>
@@ -311,6 +318,21 @@ export function FleetWhatsApp() {
         .wa-status-icons { display: inline-flex; align-items: center; gap: 5px; }
         .wa-status-icons svg { width: 11px; height: 11px; }
         .wa-status-icons svg:last-child { width: 16px; height: 10px; }
+
+        .wa-marca {
+          width: 88px; height: 88px; margin: 0 auto 20px;
+          display: grid; place-items: center;
+          border-radius: 24px;
+          color: #25d366;
+          background: rgba(37, 211, 102, 0.10);
+          border: 1px solid rgba(37, 211, 102, 0.28);
+          box-shadow: 0 14px 44px -14px rgba(37, 211, 102, 0.42);
+        }
+        .wa-marca svg { width: 52px; height: 52px; display: block; }
+        @media (max-width: 640px) {
+          .wa-marca { width: 70px; height: 70px; border-radius: 20px; }
+          .wa-marca svg { width: 42px; height: 42px; }
+        }
 
         .wa-head {
           display: flex; align-items: center; gap: 7px;

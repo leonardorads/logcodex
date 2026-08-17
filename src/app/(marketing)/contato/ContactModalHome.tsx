@@ -45,11 +45,15 @@ export function ContactModalHome({ open, onClose }: ContactModalHomeProps) {
           background: #111318;
           border: 1px solid rgba(255,255,255,.1);
           border-radius: 20px;
-          width: 100%; max-width: 480px;
-          padding: 40px 36px 36px;
+          width: 100%; max-width: 420px;
+          padding: 30px 28px 28px;
           position: relative;
           animation: cm-up .22s ease;
           margin: auto;
+          /* O calendário + formulário passavam da altura da tela em notebook;
+             a caixa rola por dentro em vez de crescer indefinidamente. */
+          max-height: 88vh;
+          overflow-y: auto;
         }
         @media (max-width: 560px) {
           .cm-backdrop { padding: 0; align-items: flex-end; }
@@ -134,7 +138,11 @@ export function ContactModalHome({ open, onClose }: ContactModalHomeProps) {
 
           <p className="cm-eyebrow">Agendar reunião</p>
           <h2 className="cm-title">Fale com um especialista</h2>
-          <p className="cm-sub">Escolha um horário disponível. A reunião fica confirmada na hora.</p>
+          {/* Sem prometer "confirmada na hora": com o Google Calendar
+              desligado o sistema só registra o horário preferido, e a tela de
+              sucesso já diz isso. O texto de antes prometia o que o back-end
+              nem sempre entrega. */}
+          <p className="cm-sub">Escolha um horário disponível. Retornamos a confirmação pelo WhatsApp.</p>
           <AgendaPicker />
         </div>
       </div>

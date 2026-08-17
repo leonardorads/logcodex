@@ -128,7 +128,11 @@ html {
   display: inline-flex; align-items: center; gap: 10px;
   padding: 12px 22px; border-radius: 999px;
   font-size: 14px; font-weight: 500;
-  transition: all .2s var(--ease);
+  /* Lista explícita em vez de `all`: evita animar layout por acidente se
+     alguém acrescentar uma regra de hover no futuro. */
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease),
+              color .2s var(--ease), border-color .2s var(--ease),
+              background-color .2s var(--ease);
 }
 .lcx-root .btn-primary { background: var(--ink); color: var(--bg); }
 .lcx-root .btn-primary:hover {
@@ -141,18 +145,25 @@ html {
 /* Botão que leva ao Fleet: carrega o dourado da marca do produto (--fl-accent
    da Fleet Landing) em vez do cinza neutro, para se destacar como a única
    porta de saída da home para o produto. */
+/* Preenchido, não contornado: é o único caminho da home para o produto e o
+   contorno translúcido de antes se perdia no fundo escuro. */
 .lcx-root .btn-fleet {
-  color: #c9a876;
-  border: 1px solid rgba(201,168,118,0.42);
-  background: rgba(201,168,118,0.07);
+  color: #1a1408;
+  border: 1px solid rgba(201,168,118,0.9);
+  background: linear-gradient(135deg, #d9b884, #c9a876);
+  font-weight: 600;
+  padding: 15px 30px;
+  font-size: 15px;
+  box-shadow: 0 4px 20px -4px rgba(201,168,118,0.35);
 }
 .lcx-root .btn-fleet:hover {
-  color: #e4c896;
-  border-color: rgba(201,168,118,0.75);
-  background: rgba(201,168,118,0.14);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 22px rgba(201,168,118,0.16);
+  color: #120e05;
+  border-color: #e4c896;
+  background: linear-gradient(135deg, #e8cb9a, #d9b884);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 34px -6px rgba(201,168,118,0.5);
 }
+.lcx-root .btn-fleet img { border-radius: 5px; }
 
 /* Eyebrow com o ícone do Fleet: o traço padrão sai para o ícone ocupar o
    lugar dele, senão sobram dois elementos disputando a mesma posição. */
@@ -236,9 +247,16 @@ html {
   gap: 40px; align-items: center;
   padding: 36px 0;
   border-top: 1px solid var(--line);
-  transition: padding .3s var(--ease);
+  /* transform em vez de padding: o padding no hover ESTREITAVA a coluna de
+     texto em 32px, então a descrição que cabia em 1 linha quebrava para 2 e
+     "descia" na tela a cada passagem do mouse. transform desloca sem mexer na
+     largura, então o texto nunca refluxa. */
+  transition: transform .3s var(--ease), background-color .3s var(--ease);
 }
-.lcx-root .svc-row:hover { padding-left: 16px; padding-right: 16px; }
+.lcx-root .svc-row:hover {
+  transform: translateX(16px);
+  background-color: rgba(255,255,255,0.02);
+}
 .lcx-root .svc-row:hover .svc-arrow { color: var(--accent); transform: translateX(4px); }
 .lcx-root .svc-row:hover .svc-name { color: var(--ink); }
 .lcx-root .svc-row:hover .svc-icon { color: var(--accent); }
@@ -377,9 +395,12 @@ html {
   gap: 32px; align-items: center;
   padding: 32px 0;
   border-top: 1px solid var(--line);
-  transition: all .25s var(--ease);
+  /* Mesmo caso do .svc-row: padding no hover refluía o texto. E `all` animava
+     qualquer propriedade que mudasse, inclusive layout — trocado por lista
+     explícita, que só toca no compositor. */
+  transition: transform .25s var(--ease), background-color .25s var(--ease);
 }
-.lcx-root .work-row:hover { background: rgba(255,255,255,0.012); padding-left: 16px; padding-right: 16px; }
+.lcx-root .work-row:hover { background: rgba(255,255,255,0.012); transform: translateX(16px); }
 .lcx-root .work-row:hover .w-arrow { transform: translateX(4px); color: var(--accent); }
 .lcx-root .work-row:last-child { border-bottom: 1px solid var(--line); }
 .lcx-root .w-n {
@@ -486,22 +507,11 @@ html {
 }
 .lcx-root .faq-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 80px; }
 .lcx-root .faq-list { border-top: 1px solid var(--line); }
-.lcx-root details.faq-item { border-bottom: 1px solid var(--line); transition: background .2s; }
-.lcx-root details.faq-item summary {
-  list-style: none; cursor: pointer;
-  padding: 24px 0; display: flex;
-  justify-content: space-between; align-items: center; gap: 24px;
-  font-size: 17px; font-weight: 400; letter-spacing: -0.012em;
-  color: var(--ink);
-}
-.lcx-root details.faq-item summary::-webkit-details-marker { display: none; }
-.lcx-root details.faq-item summary::after {
-  content: '+'; font-family: var(--mono); font-size: 22px;
-  color: var(--ink-3); transition: transform .25s;
-  font-weight: 300;
-}
-.lcx-root details.faq-item[open] summary::after { content: '−'; color: var(--accent); }
-.lcx-root details.faq-item .ans {
+/* O FAQ deixou de ser <details> nativo (que abre sem animação) e virou um
+   botão controlado em SecFaq.tsx — as regras de `summary` saíram junto.
+   A moldura e o estilo da resposta continuam aqui. */
+.lcx-root .faq-item { border-bottom: 1px solid var(--line); }
+.lcx-root .faq-item .ans {
   padding: 0 0 24px; font-size: 15.5px;
   color: var(--ink-2); line-height: 1.7; max-width: 64ch;
   font-weight: 300;

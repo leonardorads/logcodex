@@ -7,7 +7,8 @@ import { ContactModalHome, type ContactIntent } from '../contato/ContactModalHom
 import { FleetChat } from '../FleetChat'
 import { FleetShaderBackground } from './FleetShaderBackground'
 import { FleetWhatsApp } from './FleetWhatsApp'
-import { FAQ } from './faq-data'
+import { FleetIntegracoes } from './FleetIntegracoes'
+import { FleetFaq } from './FleetFaq'
 import { FleetMarquee } from './FleetMarquee'
 import { FLEET_MARQUEE_ROW_A, FLEET_MARQUEE_ROW_B } from '../home/marquee-data'
 
@@ -177,7 +178,22 @@ export function FleetLanding() {
         /* SECTION LAYOUT */
         .fl-section{padding:80px 40px;max-width:1100px;margin:0 auto}
         .fl-section-sm{padding:80px 40px;max-width:860px;margin:0 auto}
-        .fl-eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fl-accent);margin-bottom:14px;display:block}
+        /* 13.5px: os rótulos de seção estavam pequenos demais para separar
+           blocos numa página longa. */
+        .fl-eyebrow{font-size:13.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--fl-accent);margin-bottom:14px;display:block}
+        /* Rótulo numerado de módulo ("01 · Viagens e rotas"): é divisor de
+           capítulo, não legenda — em 12px sumia ao lado do título. Ganha
+           corpo, um filete dourado e o número destacado. */
+        .fl-eyebrow-num{
+          font-size:clamp(17px,2.2vw,23px);font-weight:800;letter-spacing:-.01em;
+          text-transform:none;color:var(--fl-ink);margin-bottom:18px;
+          display:inline-flex;align-items:center;gap:12px;
+        }
+        .fl-eyebrow-num::before{
+          content:'';width:34px;height:2px;border-radius:2px;
+          background:linear-gradient(90deg,var(--fl-accent),transparent);
+        }
+        .fl-eyebrow-num b{color:var(--fl-accent);font-weight:800}
         .fl-h2{font-size:clamp(28px,4vw,46px);font-weight:800;letter-spacing:-.03em;line-height:1.08;margin-bottom:16px}
         .fl-h2 em{font-style:normal;color:var(--fl-ink2)}
         .fl-lead{font-size:17px;color:var(--fl-ink2);line-height:1.7;max-width:520px}
@@ -242,13 +258,35 @@ export function FleetLanding() {
         .fl-incluso-card p{font-size:13.5px;color:var(--fl-ink2);line-height:1.6}
 
         /* OBJEÇÕES / FAQ */
+        /* FAQ deixou de ser <details> nativo (abria sem animação) e virou
+           botão controlado em FleetFaq.tsx — mesmo tratamento da home. */
         .fl-faq-list{display:flex;flex-direction:column}
-        details.fl-faq{border-bottom:1px solid var(--fl-line)}
-        details.fl-faq summary{list-style:none;cursor:pointer;padding:20px 0;display:flex;justify-content:space-between;align-items:center;gap:20px;font-size:16px;font-weight:600;letter-spacing:-.01em;color:var(--fl-ink)}
-        details.fl-faq summary::-webkit-details-marker{display:none}
-        details.fl-faq summary::after{content:'+';font-size:22px;color:var(--fl-ink3);transition:transform .25s;font-weight:300;flex-shrink:0}
-        details.fl-faq[open] summary::after{content:'−';color:var(--fl-accent)}
-        details.fl-faq .ans{padding:0 0 20px;font-size:15px;color:var(--fl-ink2);line-height:1.7;max-width:640px}
+        .fl-faq{border-bottom:1px solid var(--fl-line)}
+        .fl-faq-q{
+          width:100%;display:flex;align-items:flex-start;justify-content:space-between;
+          gap:20px;padding:20px 0;background:none;border:none;text-align:left;
+          font-family:inherit;font-size:16px;font-weight:600;letter-spacing:-.01em;
+          color:var(--fl-ink);cursor:pointer;transition:color .2s var(--fl-ease)
+        }
+        .fl-faq-q:hover{color:var(--fl-accent)}
+        .fl-faq-chevron{
+          width:18px;height:18px;flex-shrink:0;margin-top:2px;color:var(--fl-ink3);
+          transition:transform .35s var(--fl-ease),color .2s var(--fl-ease)
+        }
+        .fl-faq-open .fl-faq-chevron{transform:rotate(180deg);color:var(--fl-accent)}
+        /* 0fr → 1fr: anima sem medir altura em pixel. */
+        .fl-faq-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s var(--fl-ease)}
+        .fl-faq-open .fl-faq-wrap{grid-template-rows:1fr}
+        .fl-faq-inner{overflow:hidden}
+        .fl-faq .ans{
+          padding:0 0 20px;font-size:15px;color:var(--fl-ink2);line-height:1.7;max-width:640px;
+          opacity:0;transform:translateY(-4px);
+          transition:opacity .3s var(--fl-ease),transform .3s var(--fl-ease)
+        }
+        .fl-faq-open .ans{opacity:1;transform:none;transition-delay:.08s}
+        @media(prefers-reduced-motion:reduce){
+          .fl-faq-wrap,.fl-faq-chevron,.fl-faq .ans{transition:none}
+        }
 
         /* CTA FINAL */
         .fl-final{padding:120px 40px;text-align:center;background:radial-gradient(ellipse 70% 55% at 50% 100%,rgba(201,168,118,.11),transparent)}
@@ -451,6 +489,11 @@ export function FleetLanding() {
           celular — a leitura natural é "no computador… e também no WhatsApp". */}
       <FleetWhatsApp />
 
+      {/* ── INTEGRAÇÕES ──
+          Depois do WhatsApp de propósito: a seção anterior mostra UM canal
+          funcionando, esta responde "e as outras ferramentas que eu uso?". */}
+      <FleetIntegracoes />
+
       {/* ── ANTES vs DEPOIS ── */}
       <div className="fl-section rev">
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -525,7 +568,7 @@ export function FleetLanding() {
         {/* GIF viagens */}
         <div style={{ marginBottom: '80px' }}>
           <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <span className="fl-eyebrow">01 · Viagens e rotas</span>
+            <span className="fl-eyebrow fl-eyebrow-num"><b>01</b> · Viagens e rotas</span>
             <h3 style={{ fontSize: 'clamp(22px,3vw,32px)', fontWeight: 700, letterSpacing: '-.02em', marginBottom: '10px' }}>Cada viagem documentada em segundos</h3>
             <p style={{ color: 'var(--fl-ink2)', fontSize: '15px', maxWidth: '500px', margin: '0 auto', lineHeight: 1.6 }}>Origem, destino, KM, valor do frete. O custo real sai calculado automaticamente — sem abrir planilha.</p>
           </div>
@@ -553,7 +596,7 @@ export function FleetLanding() {
             @media(max-width:500px){.fl-fin-cards{grid-template-columns:1fr}}
           `}</style>
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <span className="fl-eyebrow">02 · Financeiro</span>
+            <span className="fl-eyebrow fl-eyebrow-num"><b>02</b> · Financeiro</span>
             <h3 style={{ fontSize: 'clamp(24px,3.5vw,38px)', fontWeight: 800, letterSpacing: '-.03em', marginBottom: '12px' }}>
               Do acerto ao DRE.<br /><span style={{ color: 'var(--fl-ink2)', fontWeight: 400 }}>Tudo em um lugar.</span>
             </h3>
@@ -721,14 +764,7 @@ export function FleetLanding() {
           <span className="fl-eyebrow">Dúvidas comuns</span>
           <h2 className="fl-h2">Antes de conversar,<br /><em>vale saber.</em></h2>
         </div>
-        <div className="fl-faq-list">
-          {FAQ.map(({ q, a }) => (
-            <details key={q} className="fl-faq">
-              <summary>{q}</summary>
-              <p className="ans">{a}</p>
-            </details>
-          ))}
-        </div>
+        <FleetFaq />
       </div>
 
       {/* ── CTA FINAL ── */}
@@ -738,7 +774,7 @@ export function FleetLanding() {
         <button type="button" className="fl-btn-primary" onClick={() => openModal('agendar')} style={{ fontSize: '18px', padding: '18px 40px' }}>
           Falar com especialista →
         </button>
-        <p className="fl-fine" style={{ marginTop: '16px' }}>Sem compromisso · reunião confirmada na hora</p>
+        <p className="fl-fine" style={{ marginTop: '16px' }}>Sem compromisso · retorno pelo WhatsApp</p>
       </div>
 
       {/* ── FOOTER ── */}

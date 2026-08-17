@@ -98,19 +98,25 @@ export function SecCapacidades() {
 
       {/* SCREENSHOT — ASSISTENTE (única prova visual mantida na home) */}
       <section style={{ padding: '0 clamp(16px,4vw,40px) 100px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div className="reveal" style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <p className="eyebrow eyebrow-fleet" style={{ justifyContent: 'center', marginBottom: '12px' }}>
-            <Image src={`${BASE}/fleet-icon.png`} alt="" width={26} height={26} aria-hidden="true" />
-            Em produção · Fleet.ai
-          </p>
-          <h2 style={{ fontSize: 'clamp(24px,3vw,36px)', fontWeight: 800, letterSpacing: '-.025em', marginBottom: '10px' }}>
-            Pergunta em português. <em style={{ fontStyle: 'normal', color: 'var(--ink-3)' }}>Resposta com dados reais.</em>
-          </h2>
-          <p style={{ color: 'var(--ink-3)', fontSize: '16px', maxWidth: '560px', margin: '0 auto', lineHeight: 1.6 }}>
-            Um exemplo do tipo de automação que a LogCodex constrói em cima da operação real do cliente.
-          </p>
+        {/* Texto à esquerda, ícone grande à direita: o ícone deixa de ser um
+            selo de 26px dentro do eyebrow e vira a âncora visual do bloco. */}
+        <div className="reveal cap-fleet-head">
+          <div className="cap-fleet-txt">
+            <p className="eyebrow eyebrow-fleet" style={{ marginBottom: '12px' }}>Em produção · Fleet.ai</p>
+            <h2 style={{ fontSize: 'clamp(24px,3vw,36px)', fontWeight: 800, letterSpacing: '-.025em', marginBottom: '10px' }}>
+              Pergunta em português. <em style={{ fontStyle: 'normal', color: 'var(--ink-3)' }}>Resposta com dados reais.</em>
+            </h2>
+            <p style={{ color: 'var(--ink-3)', fontSize: '16px', maxWidth: '560px', lineHeight: 1.6 }}>
+              Um exemplo do tipo de automação que a LogCodex constrói em cima da operação real do cliente.
+            </p>
+          </div>
+          <div className="cap-fleet-icone">
+            <Image src={`${BASE}/fleet-icon.png`} alt="Fleet.ai" width={168} height={168} />
+          </div>
         </div>
-        <div className="reveal-zoom lcx-laptop" style={{ maxWidth: '620px' }}>
+
+        {/* 520px: o vídeo é ilustrativo e competia com o texto em 620px. */}
+        <div className="reveal-zoom lcx-laptop" style={{ maxWidth: '520px' }}>
           <div className="lcx-laptop-frame">
             <div className="lcx-laptop-bar">
               <div className="lcx-laptop-dot lcx-dot-red" />
@@ -129,8 +135,14 @@ export function SecCapacidades() {
           <div className="lcx-laptop-base" />
           <div className="lcx-laptop-foot" />
         </div>
+
         <div style={{ textAlign: 'center', marginTop: '40px' }}>
-          <a href="/fleet" className="btn btn-fleet">Ver o Fleet.ai →</a>
+          {/* Nova guia: a home é a página de conversão, o Fleet é material de
+              apoio — mandar embora quem estava decidindo custa o lead. */}
+          <a href="/fleet" className="btn btn-fleet" target="_blank" rel="noopener noreferrer">
+            <Image src={`${BASE}/fleet-icon.png`} alt="" width={22} height={22} aria-hidden="true" />
+            Conheça o Fleet.ai →
+          </a>
         </div>
       </section>
 
@@ -169,6 +181,25 @@ export function SecCapacidades() {
 
       <style>{`
         #capacidades .svc-list > .reveal-right { width: 100%; }
+
+        .cap-fleet-head {
+          display: flex; align-items: center; justify-content: space-between;
+          gap: 40px; margin-bottom: 48px;
+        }
+        .cap-fleet-txt { flex: 1; min-width: 0; }
+        .cap-fleet-icone { flex-shrink: 0; line-height: 0; }
+        .cap-fleet-icone img {
+          width: 168px; height: 168px; border-radius: 34px;
+          box-shadow: 0 20px 60px -18px rgba(201,168,118,0.4);
+        }
+        @media (max-width: 860px) {
+          /* Empilha e centraliza: lado a lado em tela estreita espremeria os
+             dois. O ícone vem primeiro por ser o elemento de impacto. */
+          .cap-fleet-head { flex-direction: column-reverse; text-align: center; gap: 28px; }
+          .cap-fleet-txt .eyebrow { justify-content: center; }
+          .cap-fleet-txt p:last-child { margin-left: auto; margin-right: auto; }
+          .cap-fleet-icone img { width: 132px; height: 132px; border-radius: 28px; }
+        }
         .rm-row {
           width: 100%;
           opacity: 0;
