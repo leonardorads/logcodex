@@ -112,6 +112,52 @@ function diaKeyEmSP(iso: string): string {
   return `${get('year')}-${get('month')}-${get('day')}`
 }
 
+/**
+ * Arquivo .ics do compromisso, para o visitante salvar na agenda DELE.
+ *
+ * POR QUÊ: a conta de serviço que cria o evento na agenda da LogCodex não pode
+ * convidar participantes (o Google recusa a requisição inteira sem domain-wide
+ * delegation — ver `insertEvent` em src/lib/gcal.ts). Então o visitante não
+ * recebe convite nenhum: sem isto, ele fecha a página e não tem lembrete.
+ *
+ * .ics em vez de link do Google Agenda: o formato é aberto e abre no Google,
+ * Outlook, Apple Calendar e no celular. Um link `calendar.google.com` só
+ * atenderia quem usa Google — e quem usa Outlook ficaria sem nada.
+ *
+ * Timestamps em UTC (sufixo Z), que é o previsto no formato: cada aplicativo
+ * converte para o fuso do próprio usuário. Assim o horário chega certo mesmo
+ * para quem estiver fora do Brasil, sem depender de tabela de fuso embutida.
+ */
+function montarIcs(inicioIso: string, fimIso: string): string {
+  const carimbo = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
+  // Quebra de linha e vírgula são separadores no formato — precisam de escape.
+  const esc = (t: string) => t.replace(/\\/g, '\\\\').replace(/[,;]/g, (c) => '\\' + c).replace(/\n/g, '\\n')
+
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//LogCodex//Agendamento//PT-BR',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:${carimbo(inicioIso)}-logcodex@logcodex.com`,
+    `DTSTAMP:${carimbo(new Date().toISOString())}`,
+    `DTSTART:${carimbo(inicioIso)}`,
+    `DTEND:${carimbo(fimIso)}`,
+    `SUMMARY:${esc('Diagnóstico LogCodex')}`,
+    `DESCRIPTION:${esc('Conversa sobre a sua operação logística. A LogCodex confirma os detalhes pelo WhatsApp.')}`,
+    'STATUS:CONFIRMED',
+    // Lembrete 1h antes: é o que faz o compromisso não ser esquecido.
+    'BEGIN:VALARM',
+    'TRIGGER:-PT1H',
+    'ACTION:DISPLAY',
+    `DESCRIPTION:${esc('Diagnóstico LogCodex em 1 hora')}`,
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n') // CRLF é exigido pelo formato (RFC 5545)
+}
+
 /** Constrói a grade do mês (semanas de domingo a sábado) para uma chave YYYY-MM. */
 function gradeDoMes(ano: number, mes: number): (string | null)[][] {
   const primeiro = new Date(Date.UTC(ano, mes, 1))
@@ -259,9 +305,40 @@ export function AgendaPicker() {
         <p className="cm-title" style={{ marginBottom: '8px' }}>Recebemos, {done.nome}.</p>
         <p className="cm-sub" style={{ marginBottom: 0 }}>
           {done.calendarConfirmed
-            ? `Reunião confirmada para ${selected?.diaLabel} às ${selected?.label} (Horários em Brasília). O convite foi criado na nossa agenda.`
+            ? // Sem "convite": o visitante NÃO recebe convite nenhum (nem e-mail,
+              // nem evento na agenda dele). Prometer isso faria ele fechar a
+              // página achando que estava resolvido — e esquecer da reunião.
+              `Seu horário está reservado: ${selected?.diaLabel} às ${selected?.label} (Horários em Brasília). Confirmamos pelo WhatsApp — e você pode salvar o compromisso na sua agenda aqui embaixo.`
             : 'Registramos seu horário preferido. Confirmamos por WhatsApp.'}
         </p>
+
+        {/* Só faz sentido oferecer o arquivo quando existe horário reservado. */}
+        {done.calendarConfirmed && selected && (
+          <button
+            type="button"
+            className="cm-ics-btn"
+            onClick={() => {
+              const blob = new Blob([montarIcs(selected.inicio, selected.fim)], {
+                type: 'text/calendar;charset=utf-8',
+              })
+              const url = URL.createObjectURL(blob)
+              const a = document.createElement('a')
+              a.href = url
+              a.download = 'diagnostico-logcodex.ics'
+              document.body.appendChild(a)
+              a.click()
+              document.body.removeChild(a)
+              // Libera a memória do blob depois do clique.
+              setTimeout(() => URL.revokeObjectURL(url), 1000)
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+              <path d="M16 2v4M8 2v4M3 10h18" />
+            </svg>
+            Adicionar à minha agenda
+          </button>
+        )}
       </div>
     )
   }

@@ -130,6 +130,23 @@ export function ContactModalHome({ open, onClose }: ContactModalHomeProps) {
         }
         .cm-send-err p { font-size: 13px; color: #f87171; margin: 0; }
         .cm-done { text-align: center; padding: 12px 0; }
+        /* Botão de salvar o .ics: secundário — a reunião já está reservada,
+           isto é conveniência para o visitante não esquecer. */
+        .cm-ics-btn {
+          display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+          margin-top: 20px; padding: 12px 22px;
+          background: rgba(255,255,255,.07);
+          border: 1px solid rgba(255,255,255,.16);
+          border-radius: 10px; color: #fff;
+          font-size: 14px; font-weight: 600; font-family: inherit;
+          cursor: pointer; transition: background .15s, border-color .15s, transform .1s;
+        }
+        .cm-ics-btn:hover {
+          background: rgba(255,255,255,.12);
+          border-color: rgba(255,255,255,.3);
+          transform: translateY(-1px);
+        }
+        .cm-ics-btn svg { opacity: .75; flex-shrink: 0; }
       `}</style>
 
       <div className="cm-backdrop" onClick={onClose}>
