@@ -45,3 +45,6 @@ next-env.d.ts
 .opencode/
 scratchpad.md
 matrix-media-*.png
+
+.vercel
+.env*
