@@ -21,11 +21,21 @@ export function ContactModalHome({ open, onClose }: ContactModalHomeProps) {
   // uma única vez, já resolvido na primeira renderização client-side.
   const [mounted] = useState(() => typeof document !== 'undefined')
 
+  // Preenchido quando o AgendaPicker conclui — é o que troca o cabeçalho.
+  const [reserva, setReserva] = useState<{ nome: string; calendarConfirmed: boolean } | null>(null)
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
     if (open) document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [open, onClose])
+
+  // Ao reabrir, o formulário volta ao zero (o conteúdo é desmontado ao fechar),
+  // mas `reserva` vive aqui fora e sobreviveria: o cabeçalho abriria dizendo
+  // "Horário reservado" sobre um formulário em branco.
+  useEffect(() => {
+    if (open) setReserva(null)
+  }, [open])
 
   if (!open || !mounted) return null
 
@@ -148,6 +158,15 @@ export function ContactModalHome({ open, onClose }: ContactModalHomeProps) {
         }
         .cm-ics-btn svg { opacity: .75; flex-shrink: 0; }
         .cm-ics-btn--google { text-decoration: none; }
+        /* A data é o que a pessoa relê — ganha peso próprio em vez de ficar
+           diluída no meio de um parágrafo corrido. */
+        .cm-done-data {
+          font-size: 19px; font-weight: 700; color: #fff;
+          letter-spacing: -.01em; margin: 0 0 4px;
+        }
+        .cm-done-fuso {
+          font-size: 12.5px; color: rgba(255,255,255,.4); margin: 0;
+        }
         /* Empilhado no celular, lado a lado quando há largura. */
         .cm-cal-acoes {
           display: flex; flex-direction: column; gap: 10px;
@@ -164,14 +183,42 @@ export function ContactModalHome({ open, onClose }: ContactModalHomeProps) {
         <div className="cm-box" onClick={(e) => e.stopPropagation()}>
           <button className="cm-close" onClick={onClose} aria-label="Fechar">×</button>
 
-          <p className="cm-eyebrow">Agendar reunião</p>
-          <h2 className="cm-title">Fale com um especialista</h2>
-          {/* Sem prometer "confirmada na hora": com o Google Calendar
-              desligado o sistema só registra o horário preferido, e a tela de
-              sucesso já diz isso. O texto de antes prometia o que o back-end
-              nem sempre entrega. */}
-          <p className="cm-sub">Escolha um horário disponível. Retornamos a confirmação pelo WhatsApp.</p>
-          <AgendaPicker />
+          {/* O cabeçalho acompanha o estado: enquanto escolhe, convida a
+              escolher; depois de reservar, confirma. Fixo, ele pedia "escolha
+              um horário" na mesma tela que já mostrava o horário reservado. */}
+          {reserva ? (
+            <>
+              {/* A etiqueta acompanha o desfecho real: com a agenda desligada
+                  não há reserva nenhuma, e anunciar "reservado" contradiria o
+                  texto logo abaixo. */}
+              <p className="cm-eyebrow">
+                {reserva.calendarConfirmed ? 'Horário reservado' : 'Pedido recebido'}
+              </p>
+              <h2 className="cm-title">
+                {reserva.calendarConfirmed
+                  ? `Horário reservado, ${reserva.nome}.`
+                  : `Recebemos, ${reserva.nome}.`}
+              </h2>
+              {/* Sem "convite": o visitante não recebe convite automático —
+                  a confirmação sai pelo WhatsApp, como o texto diz. */}
+              <p className="cm-sub">
+                {reserva.calendarConfirmed
+                  ? 'Sua conversa com um especialista está reservada. Confirmamos pelo WhatsApp.'
+                  : 'Ainda não é uma reserva confirmada — combinamos os detalhes pelo WhatsApp.'}
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="cm-eyebrow">Agendar reunião</p>
+              <h2 className="cm-title">Fale com um especialista</h2>
+              {/* Sem prometer "confirmada na hora": com o Google Calendar
+                  desligado o sistema só registra o horário preferido, e a tela de
+                  sucesso já diz isso. O texto de antes prometia o que o back-end
+                  nem sempre entrega. */}
+              <p className="cm-sub">Escolha um horário disponível. Retornamos a confirmação pelo WhatsApp.</p>
+            </>
+          )}
+          <AgendaPicker onConcluir={setReserva} />
         </div>
       </div>
     </>,

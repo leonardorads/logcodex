@@ -195,7 +195,13 @@ function gradeDoMes(ano: number, mes: number): (string | null)[][] {
 
 type FieldErrors = { nome?: string; empresa?: string; whatsapp?: string; email?: string; consent?: string; slot?: string }
 
-export function AgendaPicker() {
+/**
+ * `onConcluir` avisa o componente de fora que a reserva terminou. O cabeçalho
+ * do modal (etiqueta/título/subtítulo) vive lá e é fixo: sem esse aviso, ele
+ * continua dizendo "Escolha um horário disponível" numa tela que já mostra o
+ * horário reservado — a mesma tela pedindo e confirmando ao mesmo tempo.
+ */
+export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; calendarConfirmed: boolean }) => void } = {}) {
   const turnstileRef = useRef<HTMLDivElement | null>(null)
   const widgetIdRef = useRef<string | null>(null)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
@@ -309,7 +315,12 @@ export function AgendaPicker() {
         return
       }
       trackLeadConversion('lead_agendamento')
-      setDone({ nome: json.data?.nome ?? nome, calendarConfirmed: Boolean(json.data?.calendarConfirmed) })
+      const resultado = {
+        nome: json.data?.nome ?? nome,
+        calendarConfirmed: Boolean(json.data?.calendarConfirmed),
+      }
+      setDone(resultado)
+      onConcluir?.(resultado)
     } catch {
       setSendErr('Não conseguimos enviar agora. Verifique sua internet e tente de novo.')
     } finally {
@@ -320,15 +331,33 @@ export function AgendaPicker() {
   if (done) {
     return (
       <div className="cm-done">
-        <p className="cm-title" style={{ marginBottom: '8px' }}>Recebemos, {done.nome}.</p>
-        <p className="cm-sub" style={{ marginBottom: 0 }}>
-          {done.calendarConfirmed
-            ? // Sem "convite": o visitante NÃO recebe convite nenhum (nem e-mail,
-              // nem evento na agenda dele). Prometer isso faria ele fechar a
-              // página achando que estava resolvido — e esquecer da reunião.
-              `Seu horário está reservado: ${selected?.diaLabel} às ${selected?.label} (Horários em Brasília). Confirmamos pelo WhatsApp — e você pode salvar o compromisso na sua agenda aqui embaixo.`
-            : 'Registramos seu horário preferido. Confirmamos por WhatsApp.'}
-        </p>
+        {/* O nome saiu daqui e virou o título do modal: dois cumprimentos
+            empilhados competiam entre si. Aqui fica o que a pessoa vai querer
+            reler — a data — em destaque, e não diluída num parágrafo. */}
+        {done.calendarConfirmed && selected ? (
+          <>
+            <p className="cm-done-data">
+              {selected.diaLabel} · {selected.label}
+            </p>
+            <p className="cm-done-fuso">Horários em Brasília</p>
+            {/* Diz o ganho de clicar: o lembrete é o que evita o esquecimento.
+                E nada de "convite" — o visitante NÃO recebe convite nenhum. */}
+            <p className="cm-sub" style={{ marginBottom: 0, marginTop: '18px' }}>
+              Quer receber um lembrete? Salve na sua agenda:
+            </p>
+          </>
+        ) : (
+          // O cabeçalho já diz que combinamos pelo WhatsApp; aqui fica só o
+          // horário pedido, sem repetir a frase logo acima.
+          selected && (
+            <>
+              <p className="cm-done-data">
+                {selected.diaLabel} · {selected.label}
+              </p>
+              <p className="cm-done-fuso">Horário preferido · Horários em Brasília</p>
+            </>
+          )
+        )}
 
         {/* Só faz sentido oferecer o arquivo quando existe horário reservado. */}
         {done.calendarConfirmed && selected && (
