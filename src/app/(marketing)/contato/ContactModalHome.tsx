@@ -147,6 +147,17 @@ export function ContactModalHome({ open, onClose }: ContactModalHomeProps) {
           transform: translateY(-1px);
         }
         .cm-ics-btn svg { opacity: .75; flex-shrink: 0; }
+        .cm-ics-btn--google { text-decoration: none; }
+        /* Empilhado no celular, lado a lado quando há largura. */
+        .cm-cal-acoes {
+          display: flex; flex-direction: column; gap: 10px;
+          align-items: center; margin-top: 20px;
+        }
+        .cm-cal-acoes .cm-ics-btn { margin-top: 0; width: 100%; max-width: 280px; }
+        @media (min-width: 460px) {
+          .cm-cal-acoes { flex-direction: row; justify-content: center; flex-wrap: wrap; }
+          .cm-cal-acoes .cm-ics-btn { width: auto; }
+        }
       `}</style>
 
       <div className="cm-backdrop" onClick={onClose}>
