@@ -43,6 +43,44 @@ const MENSAGENS: Msg[] = [
     texto: 'Faturamento de 11 a 17/08: R$ 48.320,00\n\n12 viagens concluídas\nMargem média: 23%\nDespesa com diesel: R$ 11.940,00',
     hora: '11:15',
   },
+  // A partir daqui a conversa deixa de ser consulta e vira TAREFA: é o que
+  // separa "painel que responde" de "assistente que faz". Sem isso a demo
+  // inteira mostrava só perguntas.
+  // Cita a viagem pelo número e pela rota que JÁ apareceram no card acima:
+  // pedido genérico ("manda pro Anderson") parece exemplo; com referência
+  // parece a operação de verdade.
+  { id: 5, tipo: 'saida', texto: 'Envia a ordem de viagem VG-2418 pro Anderson', hora: '11:16' },
+  {
+    id: 6,
+    tipo: 'entrada',
+    variante: 'texto',
+    texto: 'Ordem VG-2418 enviada ✅\n\nAnderson Prado · LFT9J13\nParanaguá → Londrina · 19/08, 07h\nEntregue no WhatsApp dele às 11:16',
+    hora: '11:16',
+  },
+  // Tarefa que cruza CANAIS: lê o e-mail, entende o anexo e cadastra sozinho.
+  // É o pedido que mais parece "funcionário", não "sistema".
+  {
+    id: 7,
+    tipo: 'saida',
+    texto: 'Lê os documentos que a Ana mandou por e-mail agora e cadastra os veículos',
+    hora: '11:17',
+  },
+  {
+    id: 8,
+    tipo: 'entrada',
+    variante: 'texto',
+    texto: '3 veículos cadastrados ✅\n\nLidos de "CRLVs — frota nova.pdf"\n\nMBB1F29 · Scania R450 · 2022\nJKD7H04 · Volvo FH460 · 2021\nPTR3M85 · Carreta Randon · 2020\n\nRenavam e chassi conferidos.',
+    hora: '11:17',
+  },
+  // A última não tem pergunta antes: o sistema avisa SOZINHO. É a mensagem
+  // que mostra automação de verdade — ninguém pediu.
+  {
+    id: 9,
+    tipo: 'entrada',
+    variante: 'texto',
+    texto: '🔔 Alerta automático\n\nA viagem Curitiba → Maringá está há 3 dias sem acerto.\n\nQuer que eu cobre o Rafael agora?',
+    hora: '11:18',
+  },
 ]
 
 // Roteiro da animação: quantas mensagens estão visíveis em cada momento e
@@ -52,8 +90,17 @@ const ROTEIRO = [
   { t: 2600, visiveis: 2, digitando: false },
   { t: 4400, visiveis: 3, digitando: true },
   { t: 6300, visiveis: 4, digitando: false },
+  { t: 8200, visiveis: 5, digitando: true },
+  { t: 10000, visiveis: 6, digitando: false },
+  { t: 11800, visiveis: 7, digitando: true },
+  // Espera maior antes da resposta: ler o e-mail e cadastrar 3 veículos é
+  // trabalho, e responder instantâneo tiraria a credibilidade da cena.
+  { t: 14200, visiveis: 8, digitando: false },
+  // Pausa maior ainda antes do alerta: ele chega SEM ninguém perguntar, e o
+  // silêncio é o que faz perceber que partiu do sistema.
+  { t: 16800, visiveis: 9, digitando: false },
 ]
-const DURACAO_CICLO = 11000
+const DURACAO_CICLO = 22500
 
 const PONTOS = [
   {
@@ -294,7 +341,10 @@ export function FleetWhatsApp() {
         /* ── Aparelho ── */
         .wa-phone {
           position: relative; width: 100%; max-width: 300px; margin: 0 auto;
-          aspect-ratio: 300 / 610;
+          /* Era 300/610. A conversa passou de 4 para 7 mensagens e as
+             primeiras saíam de vista rápido demais; o aparelho mais alto
+             mantém a troca inteira legível sem precisar rolar. */
+          aspect-ratio: 300 / 700;
           background: #0f0f10; border-radius: 42px; padding: 10px;
           box-shadow: 0 30px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(201,168,118,.14);
         }
