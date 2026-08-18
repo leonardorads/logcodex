@@ -130,7 +130,7 @@ export function FleetLanding() {
     <div className="fl-root">
       <ContactModalHome open={modalOpen} onClose={() => setModalOpen(false)} intent={intent} />
       <style>{`
-        :root{--fl-bg:#0a0a0a;--fl-bg2:#121212;--fl-bg3:#1a1a1a;--fl-line:#292929;--fl-ink:#f2f0ec;--fl-ink2:#a3a09a;--fl-ink3:#5c5952;--fl-accent:#c9a876;--fl-accent-ink:#1a1712;--fl-green:#22c55e;--fl-red:#ef4444;--fl-amber:#f59e0b;--fl-ease:cubic-bezier(.16,1,.3,1)}
+        :root{--fl-bg:#0a0a0a;--fl-bg2:#121212;--fl-bg3:#1a1a1a;--fl-line:#292929;--fl-ink:#f2f0ec;--fl-ink2:#a3a09a;--fl-ink3:#8a877f;--fl-accent:#c9a876;--fl-accent-ink:#1a1712;--fl-green:#22c55e;--fl-red:#ef4444;--fl-amber:#f59e0b;--fl-ease:cubic-bezier(.16,1,.3,1)}
         /* overflow-x:clip contém o deslize lateral das seções (rev-left /
            rev-right): elas ocupam a largura toda, então transladar 26px joga a
            caixa inteira para fora da viewport e cria barra de rolagem
@@ -418,7 +418,9 @@ export function FleetLanding() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            style={{ fontSize: '12.5px', color: 'rgba(255,255,255,0.22)', marginBottom: '40px' }}
+            // .22 dava contraste 1.91 sobre o fundo escuro — abaixo do mínimo
+            // legível de 4.5. .62 sobe para ~7 e o texto continua secundário.
+            style={{ fontSize: '12.5px', color: 'rgba(255,255,255,0.62)', marginBottom: '40px' }}
           >
             Diagnóstico sem compromisso · a solução é desenhada para a sua operação
           </motion.p>
@@ -429,11 +431,15 @@ export function FleetLanding() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.55, ease: 'easeOut' }}
           >
-            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,.24)', marginBottom: '10px', letterSpacing: '.08em', textTransform: 'uppercase', fontWeight: 600 }}>
+            {/* Era .24 (contraste 2.06): rótulo em maiúscula e pequeno é o que
+                mais sofre com pouco contraste. */}
+            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,.62)', marginBottom: '10px', letterSpacing: '.08em', textTransform: 'uppercase', fontWeight: 600 }}>
               Experimente o Assistente Fleet
             </p>
             <FleetChat onOpenContact={() => openModal('agendar')} />
-            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,.15)', marginTop: '10px', textAlign: 'center' }}>
+            {/* Era .15 (contraste 1.47), o pior da página: é justamente a
+                instrução de como usar o chat — quem não lê, não experimenta. */}
+            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,.58)', marginTop: '10px', textAlign: 'center' }}>
               Pergunte como perguntaria para um gerente da sua operação
             </p>
           </motion.div>
@@ -781,7 +787,9 @@ export function FleetLanding() {
             <a href="mailto:leonardo.antunes@logcodex.com">Contato</a>
             <a href="#incluso">Como implantamos</a>
           </div>
-          <span style={{ fontSize: '13px', color: '#475569' }}>© 2026 LogCodex</span>
+          {/* Era #475569 (azulado, contraste 2.61): destoava da paleta quente
+              do Fleet e não era legível. Passa a usar o cinza da própria paleta. */}
+          <span style={{ fontSize: '13px', color: 'var(--fl-ink3)' }}>© 2026 LogCodex</span>
         </div>
       </footer>
     </div>
