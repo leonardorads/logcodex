@@ -8,11 +8,28 @@ interface FleetChatProps {
 
 // Frases digitadas automaticamente no placeholder, uma de cada vez, enquanto o
 // campo está vazio e sem foco — some assim que o usuário interage de verdade.
+// Ordem deliberada, do operacional ao financeiro:
+//   1) tarefas operacionais  2) perguntas operacionais
+//   3) perguntas financeiras 4) tarefas financeiras
+// Começa por COMANDO porque é o que separa assistente de painel: quem vê só
+// pergunta entende "relatório", quem vê ordem entende "ele faz por mim".
 const TYPE_EXAMPLES = [
+  // 1. Tarefas operacionais — o assistente executando
+  'Envie a ordem de viagem para o João agora',
+  'Agende no Depot o XXX-9J87 com Ciclano às 10h',
+  'Lança R$ 320 de diesel na viagem do Marcos',
+  'Me avisa se uma viagem atrasar o acerto',
+  // 2. Perguntas operacionais
+  'Quais viagens ainda não fecharam acerto?',
+  'Onde está a carga do booking MSCU4471?',
+  // 3. Perguntas financeiras
   'Quanto faturei essa semana?',
   'Qual motorista deu mais prejuízo esse mês?',
   'Custo de combustível em maio?',
-  'Quais viagens ainda não fecharam acerto?',
+  // 4. Tarefas financeiras
+  'Atualize a proposta da Silva Importadora +15%',
+  'Fecha o acerto do Paulo e manda pra ele',
+  'Me manda o DRE desse mês',
 ]
 
 const TYPE_SPEED_MS = 45
@@ -28,12 +45,18 @@ function useTypingPlaceholder(active: boolean) {
     // (ver FleetChat: overlay some no foco/digitação) — não precisa resetar
     // aqui, evitando setState síncrono dentro do efeito.
     if (!active) return
+
+    // Ordem FIXA: a sequência operacional → financeiro é a mensagem, e
+    // embaralhar a destruiria. O custo é que as últimas aparecem só para quem
+    // fica mais tempo — aceito, porque as primeiras são as que mais vendem.
+    const ordem = TYPE_EXAMPLES
+
     let phraseIndex = 0
     let cancelled = false
     let timeoutId: ReturnType<typeof setTimeout>
 
     function typePhrase() {
-      const phrase = TYPE_EXAMPLES[phraseIndex]
+      const phrase = ordem[phraseIndex]
       let charIndex = 0
 
       function typeStep() {
@@ -54,7 +77,7 @@ function useTypingPlaceholder(active: boolean) {
         if (charIndex > 0) {
           timeoutId = setTimeout(eraseStep, ERASE_SPEED_MS)
         } else {
-          phraseIndex = (phraseIndex + 1) % TYPE_EXAMPLES.length
+          phraseIndex = (phraseIndex + 1) % ordem.length
           timeoutId = setTimeout(typePhrase, PAUSE_MS)
         }
       }
@@ -109,36 +132,77 @@ export function FleetChat({ onOpenContact }: FleetChatProps) {
           margin: 0 auto;
         }
 
-        /* ── animated border box ── */
+        /* ── borda luminosa com halo ──
+           Duas camadas do MESMO gradiente giratório:
+           ::before é a linha nítida da borda; ::after é a mesma luz borrada,
+           vazando para fora — é o borrão que dá o aspecto de luz de verdade,
+           em vez de um traço colorido. */
         .fc-border-wrap {
           width: 100%;
           position: relative;
           border-radius: 22px;
           padding: 1.5px;
-          background: linear-gradient(
-            var(--fc-angle, 135deg),
-            rgba(201,168,118,0.55),
-            rgba(228,200,150,0.35),
-            rgba(255,255,255,0.08),
-            rgba(201,168,118,0.45)
+          isolation: isolate;
+        }
+        .fc-border-wrap::before,
+        .fc-border-wrap::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          background: conic-gradient(
+            from var(--fc-angle, 0deg),
+            rgba(201,168,118,0.00) 0deg,
+            rgba(201,168,118,0.85) 38deg,
+            rgba(244,214,160,0.95) 62deg,
+            rgba(168,120,220,0.75) 96deg,
+            rgba(90,160,230,0.55) 130deg,
+            rgba(201,168,118,0.00) 190deg,
+            rgba(201,168,118,0.00) 360deg
           );
-          animation: fc-border-spin 4s linear infinite;
+          animation: fc-border-spin 6s linear infinite;
+        }
+        /* Camada nítida: recortada para sobrar só a moldura de 1.5px. */
+        .fc-border-wrap::before {
+          -webkit-mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+          -webkit-mask-composite: xor;
+          mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+          mask-composite: exclude;
+          z-index: 1;
+        }
+        /* Camada do brilho: borrada e atrás de tudo. */
+        .fc-border-wrap::after {
+          filter: blur(13px);
+          opacity: .75;
+          z-index: -1;
         }
         @property --fc-angle {
           syntax: '<angle>';
-          initial-value: 135deg;
+          initial-value: 0deg;
           inherits: false;
         }
         @keyframes fc-border-spin {
-          to { --fc-angle: 495deg; }
+          to { --fc-angle: 360deg; }
+        }
+        /* Quem pede menos animação recebe a borda parada, sem perder o visual. */
+        @media (prefers-reduced-motion: reduce) {
+          .fc-border-wrap::before,
+          .fc-border-wrap::after { animation: none; }
         }
 
         .fc-box {
           width: 100%;
-          background: #131313;
+          /* Leve degradê em vez de chapado: dá profundidade à caixa, como no
+             material de referência. Opaco, para o brilho não vazar no texto. */
+          background: linear-gradient(180deg, #17171a 0%, #111113 100%);
           border-radius: 20px;
           padding: 16px 18px 14px;
           position: relative;
+          z-index: 2;
         }
 
         @media (max-width: 640px) {
@@ -193,7 +257,8 @@ export function FleetChat({ onOpenContact }: FleetChatProps) {
         }
         .fc-hint {
           font-size: 12px;
-          color: rgba(255,255,255,0.15);
+          /* Era 0.15: contraste 1.55, praticamente invisível no fundo escuro. */
+          color: rgba(255,255,255,0.55);
         }
         .fc-send-btn {
           width: 34px; height: 34px;
