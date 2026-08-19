@@ -20,8 +20,15 @@ html {
   --line-strong: rgba(255,255,255,0.12);
   --ink: #ededee;
   --ink-2: #a1a2a6;
-  --ink-3: #65676c;
-  --ink-4: #3a3b3f;
+  /* Contraste WCAG sobre os 3 fundos da página (--bg, --bg-2, --surface).
+     Era #65676c: 3.25:1 no pior caso, abaixo do mínimo de 4.5 para texto
+     normal — e é o token de 22 usos (eyebrows, rótulos, hero-foot, ênfases
+     dos títulos), a causa da maioria dos textos ilegíveis da home. */
+  --ink-3: #8a8c91;
+  /* Era #3a3b3f: 1.65:1, quase invisível. Usado no texto legal do rodapé,
+     que é texto de leitura, não decoração — por isso vai até 4.5, e não
+     para os 3.0 que bastariam a um elemento decorativo. */
+  --ink-4: #7d7f84;
   --silver: #d9dadd;
   --accent: #6366f1;
   --sans: 'Plus Jakarta Sans', system-ui, sans-serif;

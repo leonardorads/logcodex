@@ -160,7 +160,9 @@ export function HomeHero({ onOpenContact }: { onOpenContact: (intent: 'agendar')
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
-            style={{ fontSize: 'clamp(15px, 1.8vw, 18px)', color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, maxWidth: '560px', margin: '0 auto 28px' }}
+            /* 0.45 dava 4.52 — passava no limite por 0.02. É o parágrafo que
+               mais gente lê na página inteira; 0.58 dá folga real. */
+            style={{ fontSize: 'clamp(15px, 1.8vw, 18px)', color: 'rgba(255,255,255,0.58)', lineHeight: 1.6, maxWidth: '560px', margin: '0 auto 28px' }}
           >
             Ponta a ponta: a LogCodex entende sua operação, desenha a solução certa, integra com o que você já usa e implanta tudo — do diagnóstico ao time treinado. Sem travar a operação, sem jogar a complexidade no seu colo.
           </motion.p>
@@ -196,7 +198,10 @@ export function HomeHero({ onOpenContact }: { onOpenContact: (intent: 'agendar')
             ].map(({ label, sub }) => (
               <div key={label} style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.7)', marginBottom: '2px' }}>{label}</div>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.28)' }}>{sub}</div>
+                {/* Era 0.28: contraste 2.44, abaixo do mínimo de 4.5. É a
+                    legenda que explica cada frente da entrega — se não se lê,
+                    o bloco vira só uma lista de títulos. */}
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>{sub}</div>
               </div>
             ))}
           </motion.div>
