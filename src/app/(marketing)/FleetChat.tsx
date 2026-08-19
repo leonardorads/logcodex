@@ -137,11 +137,18 @@ export function FleetChat({ onOpenContact }: FleetChatProps) {
            ::before é a linha nítida da borda; ::after é a mesma luz borrada,
            vazando para fora — é o borrão que dá o aspecto de luz de verdade,
            em vez de um traço colorido. */
+        /* Raio da moldura e espessura em variáveis: a caixa interna deriva os
+           dois (--fc-r menos --fc-b). Antes eram 3 números soltos e no celular
+           a conta não fechava — 18px de moldura com 16px de caixa, quando o
+           concêntrico pedia 16.5. Sobrava 2px de moldura no canto, e o olho lê
+           isso como "canto vivo". No PC a diferença era 0.5px e não aparecia. */
         .fc-border-wrap {
           width: 100%;
           position: relative;
-          border-radius: 22px;
-          padding: 1.5px;
+          --fc-r: 22px;
+          --fc-b: 1.5px;
+          border-radius: var(--fc-r);
+          padding: var(--fc-b);
           isolation: isolate;
         }
         .fc-border-wrap::before,
@@ -162,22 +169,30 @@ export function FleetChat({ onOpenContact }: FleetChatProps) {
           );
           animation: fc-border-spin 6s linear infinite;
         }
-        /* Camada nítida: recortada para sobrar só a moldura de 1.5px. */
+        /* Camada nítida: recortada para sobrar só a moldura.
+           Recorte interno por padding-box em vez de content-box: o content-box
+           ignora o padding em navegadores que calculam a caixa de forma
+           diferente, e a moldura saía com espessura irregular nos cantos. */
         .fc-border-wrap::before {
           -webkit-mask:
-            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0) padding-box,
             linear-gradient(#000 0 0);
           -webkit-mask-composite: xor;
           mask:
-            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0) padding-box,
             linear-gradient(#000 0 0);
           mask-composite: exclude;
           z-index: 1;
         }
-        /* Camada do brilho: borrada e atrás de tudo. */
+        /* Camada do brilho: borrada, atrás de tudo e ligeiramente MAIOR que a
+           moldura (inset negativo). Antes ela tinha exatamente o mesmo tamanho,
+           então o blur comia a própria borda e o halo morria rente ao canto —
+           que é o que fazia o efeito parecer de baixa resolução. */
         .fc-border-wrap::after {
-          filter: blur(13px);
-          opacity: .75;
+          inset: -3px;
+          border-radius: calc(var(--fc-r) + 3px);
+          filter: blur(16px) saturate(1.25);
+          opacity: .8;
           z-index: -1;
         }
         @property --fc-angle {
@@ -199,15 +214,19 @@ export function FleetChat({ onOpenContact }: FleetChatProps) {
           /* Leve degradê em vez de chapado: dá profundidade à caixa, como no
              material de referência. Opaco, para o brilho não vazar no texto. */
           background: linear-gradient(180deg, #17171a 0%, #111113 100%);
-          border-radius: 20px;
+          /* Derivado, nunca digitado à mão: canto concêntrico em qualquer
+             largura, mesmo que o raio da moldura mude. */
+          border-radius: calc(var(--fc-r) - var(--fc-b));
           padding: 16px 18px 14px;
           position: relative;
           z-index: 2;
         }
 
         @media (max-width: 640px) {
-          .fc-box { padding: 14px 16px 12px; border-radius: 16px; }
-          .fc-border-wrap { border-radius: 18px; }
+          .fc-box { padding: 14px 16px 12px; }
+          /* Só o raio da moldura muda: a caixa interna se ajusta sozinha pelo
+             calc(). Era aqui que os dois números divergiam. */
+          .fc-border-wrap { --fc-r: 18px; }
           .fc-textarea, .fc-typing-overlay { font-size: 14px; }
           .fc-textarea { min-height: 44px; }
         }
