@@ -231,7 +231,11 @@ export function FleetChat({ onOpenContact }: FleetChatProps) {
           .fc-textarea { min-height: 44px; }
         }
 
-        .fc-input-wrap { position: relative; }
+        /* O texto do efeito e sobreposto ao campo (position:absolute), entao
+           nao empurra nada. Quando ele quebra em 2 linhas precisa de altura
+           para caber — senao invade o rodape "Enter para enviar".
+           2 linhas de 15px com line-height 1.55 = ~47px. */
+        .fc-input-wrap { position: relative; min-height: 47px; }
         .fc-textarea {
           width: 100%;
           background: transparent;
@@ -255,7 +259,13 @@ export function FleetChat({ onOpenContact }: FleetChatProps) {
           line-height: 1.55;
           color: rgba(255,255,255,0.32);
           pointer-events: none;
-          white-space: pre;
+          /* Era pre, que NAO quebra linha: em tela estreita a frase saia
+             pela borda da caixa. pre-wrap preserva os espacos do efeito de
+             digitacao E quebra quando falta largura — assim o texto se adapta
+             a qualquer tela, em vez de depender de encurtar cada frase a mao
+             (que quebraria de novo na proxima tela menor). */
+          white-space: pre-wrap;
+          overflow-wrap: break-word;
         }
         .fc-typing-cursor {
           display: inline-block;
