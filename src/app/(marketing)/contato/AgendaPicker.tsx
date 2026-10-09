@@ -131,20 +131,101 @@ function diaKeyEmSP(iso: string): string {
 // Link que abre o Google Agenda já com o evento preenchido — o visitante só
 // confirma. Atende quem usa Google (a maioria) sem baixar arquivo nenhum.
 // Não substitui o .ics: quem usa Outlook ou iPhone precisa do arquivo.
-function montarLinkGoogle(inicioIso: string, fimIso: string): string {
+// Textos que mudam conforme a página que abriu a agenda. Logística é o padrão
+// (home); hospedagem é a página /hospedagem (08/10/2026).
+export type Nicho = 'logistica' | 'hospedagem'
+type Textos = {
+  titulo: string; detalhe: string; empresa: string; placeholder: string; erroEmpresa: string
+  msgLabel: string; msgPlaceholder: string; emailPlaceholder: string; consentimento: string
+  zapAjuda: string; zapErro: string; arquivoIcs: string
+  /** Número do WhatsApp de socorro; sem ele usa NEXT_PUBLIC_WHATSAPP_NUMBER (o da home). */
+  zapNumero?: string
+}
+const TEXTOS: Record<Nicho, Textos> = {
+  logistica: {
+    titulo: 'Diagnóstico LogCodex',
+    detalhe: 'Conversa sobre a sua operação logística. A LogCodex confirma os detalhes pelo WhatsApp.',
+    empresa: 'Empresa',
+    placeholder: 'Nome da transportadora',
+    erroEmpresa: 'Informe o nome da sua empresa.',
+    msgLabel: 'Conte um pouco da sua operação (opcional)',
+    msgPlaceholder: 'Quantos veículos, como controla hoje, o que mais incomoda...',
+    emailPlaceholder: 'voce@empresa.com.br',
+    consentimento: 'Aceito receber contato da LogCodex sobre minha operação.',
+    zapAjuda: 'Olá! Quero agendar uma reunião sobre a minha operação.',
+    zapErro: 'Olá! Tentei agendar uma reunião pelo site e não consegui. Pode me ajudar?',
+    arquivoIcs: 'diagnostico-logcodex.ics',
+  },
+  hospedagem: {
+    titulo: 'Conversa LogCodex — site da pousada',
+    detalhe: 'Conversa sobre o site da sua pousada. A LogCodex confirma os detalhes pelo WhatsApp.',
+    empresa: 'Pousada',
+    placeholder: 'Nome da pousada',
+    erroEmpresa: 'Informe o nome da sua pousada.',
+    msgLabel: 'Conte um pouco da sua pousada (opcional)',
+    msgPlaceholder: 'Instagram ou site atual, quantos quartos, de onde vêm as reservas hoje...',
+    emailPlaceholder: 'voce@email.com',
+    consentimento: 'Aceito receber contato da LogCodex sobre o site da minha pousada.',
+    zapAjuda: 'Olá, Leo! Quero agendar uma conversa sobre o site da minha pousada.',
+    zapErro: 'Olá, Leo! Tentei agendar pelo site e não consegui. Quero uma prévia do site da minha pousada.',
+    arquivoIcs: 'conversa-logcodex-pousada.ics',
+    // Mesmo número da página /hospedagem. TODO(Leo): trocar pelo Fluke quando a linha for ativada.
+    zapNumero: '5541999283590',
+  },
+}
+
+/**
+ * Horários carregados ANTES do clique (09/10/2026: o Leo viu a agenda "aparecer
+ * do nada" segundos depois de o modal abrir — a busca só começava ao abrir, e
+ * publicado ela inclui servidor frio + consulta ao Google Agenda).
+ * A página chama `precarregarHorarios()` ao montar / ao passar o mouse no botão;
+ * o modal abre já com a lista pronta. Depois de 2 min a lista é buscada de novo,
+ * mas a antiga aparece na hora enquanto isso (o servidor recusa horário tomado).
+ */
+const VALIDADE_HORARIOS = 120_000
+let cacheHorarios: { quando: number; promessa: Promise<SlotApi[]>; valor?: SlotApi[] } | null = null
+
+export function precarregarHorarios(): Promise<SlotApi[]> {
+  if (cacheHorarios && Date.now() - cacheHorarios.quando < VALIDADE_HORARIOS) return cacheHorarios.promessa
+  const anterior = cacheHorarios?.valor
+  const item: NonNullable<typeof cacheHorarios> = { quando: Date.now(), promessa: Promise.resolve([]), valor: anterior }
+  item.promessa = fetch('/api/agenda/slots')
+    .then((r) => r.json())
+    .then((json) => {
+      const lista: SlotApi[] = json.data?.slots ?? []
+      item.valor = lista
+      return lista
+    })
+  // Falhou: não guarda a falha — a próxima tentativa busca de novo.
+  item.promessa.catch(() => { if (cacheHorarios === item) cacheHorarios = anterior ? { quando: 0, promessa: Promise.resolve(anterior), valor: anterior } : null })
+  cacheHorarios = item
+  return item.promessa
+}
+
+// Abre já no primeiro dia com horário livre: um calendário que abre vazio faz
+// o visitante procurar onde clicar.
+function primeiroDia(lista: SlotApi[]): { dia: string; mes: { ano: number; mes: number } } | null {
+  const primeiroLivre = lista.find((s) => !s.ocupado) ?? lista[0]
+  if (!primeiroLivre) return null
+  const key = diaKeyEmSP(primeiroLivre.inicio)
+  const [a, m] = key.split('-').map(Number)
+  return { dia: key, mes: { ano: a, mes: m - 1 } }
+}
+
+function montarLinkGoogle(inicioIso: string, fimIso: string, nicho: Nicho = 'logistica'): string {
   const carimbo = (iso: string) =>
     new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
   const p = new URLSearchParams({
     action: 'TEMPLATE',
-    text: 'Diagnóstico LogCodex',
+    text: TEXTOS[nicho].titulo,
     // Carimbo em UTC (sufixo Z): o Google converte para o fuso de quem abrir.
     dates: `${carimbo(inicioIso)}/${carimbo(fimIso)}`,
-    details: 'Conversa sobre a sua operação logística. A LogCodex confirma os detalhes pelo WhatsApp.',
+    details: TEXTOS[nicho].detalhe,
   })
   return `https://calendar.google.com/calendar/render?${p.toString()}`
 }
 
-function montarIcs(inicioIso: string, fimIso: string): string {
+function montarIcs(inicioIso: string, fimIso: string, nicho: Nicho = 'logistica'): string {
   const carimbo = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
   // Quebra de linha e vírgula são separadores no formato — precisam de escape.
   const esc = (t: string) => t.replace(/\\/g, '\\\\').replace(/[,;]/g, (c) => '\\' + c).replace(/\n/g, '\\n')
@@ -160,14 +241,14 @@ function montarIcs(inicioIso: string, fimIso: string): string {
     `DTSTAMP:${carimbo(new Date().toISOString())}`,
     `DTSTART:${carimbo(inicioIso)}`,
     `DTEND:${carimbo(fimIso)}`,
-    `SUMMARY:${esc('Diagnóstico LogCodex')}`,
-    `DESCRIPTION:${esc('Conversa sobre a sua operação logística. A LogCodex confirma os detalhes pelo WhatsApp.')}`,
+    `SUMMARY:${esc(TEXTOS[nicho].titulo)}`,
+    `DESCRIPTION:${esc(TEXTOS[nicho].detalhe)}`,
     'STATUS:CONFIRMED',
     // Lembrete 1h antes: é o que faz o compromisso não ser esquecido.
     'BEGIN:VALARM',
     'TRIGGER:-PT1H',
     'ACTION:DISPLAY',
-    `DESCRIPTION:${esc('Diagnóstico LogCodex em 1 hora')}`,
+    `DESCRIPTION:${esc(`${TEXTOS[nicho].titulo} em 1 hora`)}`,
     'END:VALARM',
     'END:VEVENT',
     'END:VCALENDAR',
@@ -201,7 +282,8 @@ type FieldErrors = { nome?: string; empresa?: string; whatsapp?: string; email?:
  * continua dizendo "Escolha um horário disponível" numa tela que já mostra o
  * horário reservado — a mesma tela pedindo e confirmando ao mesmo tempo.
  */
-export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; calendarConfirmed: boolean }) => void } = {}) {
+export function AgendaPicker({ onConcluir, nicho = 'logistica' }: { onConcluir?: (r: { nome: string; calendarConfirmed: boolean }) => void; nicho?: Nicho } = {}) {
+  const tx = TEXTOS[nicho]
   const turnstileRef = useRef<HTMLDivElement | null>(null)
   const widgetIdRef = useRef<string | null>(null)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
@@ -222,11 +304,12 @@ export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; 
   // formulário não pode ficar travado esperando um token que nunca vem.
   const aguardandoTurnstile = Boolean(TURNSTILE_SITE_KEY) && !turnstileToken && !turnstileDesistiu
 
-  const [slots, setSlots] = useState<SlotApi[] | null>(null)
+  // Se a página já buscou os horários, o calendário nasce pronto (sem espera).
+  const [slots, setSlots] = useState<SlotApi[] | null>(() => cacheHorarios?.valor ?? null)
   const [loadErr, setLoadErr] = useState(false)
   const [selected, setSelected] = useState<SlotApi | null>(null)
-  const [diaAberto, setDiaAberto] = useState<string | null>(null)
-  const [mesVisivel, setMesVisivel] = useState<{ ano: number; mes: number } | null>(null)
+  const [diaAberto, setDiaAberto] = useState<string | null>(() => (cacheHorarios?.valor ? primeiroDia(cacheHorarios.valor)?.dia ?? null : null))
+  const [mesVisivel, setMesVisivel] = useState<{ ano: number; mes: number } | null>(() => (cacheHorarios?.valor ? primeiroDia(cacheHorarios.valor)?.mes ?? null : null))
 
   const [nome, setNome] = useState('')
   const [empresa, setEmpresa] = useState('')
@@ -241,23 +324,20 @@ export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; 
 
   useEffect(() => {
     let cancelled = false
-    fetch('/api/agenda/slots')
-      .then((r) => r.json())
-      .then((json) => {
+    precarregarHorarios()
+      .then((lista) => {
         if (cancelled) return
-        const lista: SlotApi[] = json.data?.slots ?? []
         setSlots(lista)
-        // Abre já no primeiro dia com horário livre: um calendário que abre
-        // vazio faz o visitante procurar onde clicar.
-        const primeiroLivre = lista.find((s) => !s.ocupado) ?? lista[0]
-        if (primeiroLivre) {
-          const key = diaKeyEmSP(primeiroLivre.inicio)
-          setDiaAberto(key)
-          const [a, m] = key.split('-').map(Number)
-          setMesVisivel({ ano: a, mes: m - 1 })
+        // Só posiciona o calendário se ele ainda não estava aberto num dia —
+        // a atualização silenciosa não pode tirar o visitante de onde ele está.
+        const p = primeiroDia(lista)
+        if (p) {
+          setDiaAberto((d) => d ?? p.dia)
+          setMesVisivel((m) => m ?? p.mes)
         }
       })
-      .catch(() => { if (!cancelled) setLoadErr(true) })
+      // Com uma lista antiga já na tela, a falha da atualização não vira erro.
+      .catch(() => { if (!cancelled && !cacheHorarios?.valor) setLoadErr(true) })
     return () => { cancelled = true }
   }, [])
 
@@ -265,7 +345,7 @@ export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; 
     const e: FieldErrors = {}
     if (!selected) e.slot = 'Escolha um horário na lista.'
     if (nome.trim().length < 2) e.nome = 'Informe seu nome para a gente saber como te chamar.'
-    if (empresa.trim().length < 2) e.empresa = 'Informe o nome da sua empresa.'
+    if (empresa.trim().length < 2) e.empresa = tx.erroEmpresa
     if (whatsapp.replace(/\D/g, '').length < 10) e.whatsapp = 'Informe um WhatsApp válido com DDD.'
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) e.email = 'Esse e-mail não parece válido.'
     if (!consent) e.consent = 'Marque a caixa de consentimento para a gente poder entrar em contato.'
@@ -292,7 +372,7 @@ export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nome, empresa, whatsapp, email, consent,
+          nome, empresa, whatsapp, email, consent, nicho,
           mensagem: mensagem || undefined,
           slot_inicio: selected.inicio,
           slot_fim: selected.fim,
@@ -365,7 +445,7 @@ export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; 
             {/* Primeiro o Google: um clique, sem download, atende a maioria. */}
             <a
               className="cm-ics-btn cm-ics-btn--google"
-              href={montarLinkGoogle(selected.inicio, selected.fim)}
+              href={montarLinkGoogle(selected.inicio, selected.fim, nicho)}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -380,13 +460,13 @@ export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; 
             type="button"
             className="cm-ics-btn"
             onClick={() => {
-              const blob = new Blob([montarIcs(selected.inicio, selected.fim)], {
+              const blob = new Blob([montarIcs(selected.inicio, selected.fim, nicho)], {
                 type: 'text/calendar;charset=utf-8',
               })
               const url = URL.createObjectURL(blob)
               const a = document.createElement('a')
               a.href = url
-              a.download = 'diagnostico-logcodex.ics'
+              a.download = tx.arquivoIcs
               document.body.appendChild(a)
               a.click()
               document.body.removeChild(a)
@@ -433,15 +513,34 @@ export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; 
     setMesVisivel({ ano: a, mes: m - 1 })
   }
 
+  const campoMensagem = (
+    <div className="cm-field">
+      <label htmlFor="ap-msg">{tx.msgLabel}</label>
+      <textarea id="ap-msg" className="cm-input" rows={nicho === 'hospedagem' ? 2 : 3} value={mensagem} onChange={(e) => setMensagem(e.target.value)} placeholder={tx.msgPlaceholder} />
+    </div>
+  )
+
   return (
     <form className="cm-form" onSubmit={onSubmit} noValidate>
       <div style={{ position: 'absolute', left: '-9999px' }} aria-hidden="true">
         <label>Não preencha este campo<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label>
       </div>
 
+      {/* Duas colunas na página /hospedagem (agenda | dados), empilhadas no
+          celular; na home `.ap-col` é `display: contents` e nada muda. */}
+      <div className="ap-col ap-col--agenda">
       <div className="cm-field">
-        <label>Horário (Horários em Brasília)</label>
-        {!slots && !loadErr && <p className="cm-sub" style={{ marginBottom: 0 }}>Carregando horários…</p>}
+        <label>{nicho === 'hospedagem' ? 'Escolha o dia e o horário (horário de Brasília)' : 'Horário (Horários em Brasília)'}</label>
+        {/* Esqueleto no lugar do texto "Carregando…": o calendário ocupa o
+            espaço desde o primeiro quadro, sem a caixa "pular" quando chega. */}
+        {!slots && !loadErr && (
+          <div className="ap-cal ap-cal--esqueleto" aria-busy="true" aria-label="Carregando horários">
+            <span className="ap-esq ap-esq--titulo" />
+            <div className="ap-esq-grade">
+              {Array.from({ length: 35 }, (_, i) => <span key={i} className="ap-esq ap-esq--dia" />)}
+            </div>
+          </div>
+        )}
         {loadErr && <p className="cm-field-err">Não conseguimos carregar os horários agora. Tente recarregar a página.</p>}
         {slots && slots.length === 0 && <p className="cm-sub" style={{ marginBottom: 0 }}>Sem horários disponíveis no momento — fale com a gente pelo WhatsApp.</p>}
         {slots && slots.length > 0 && mesVisivel && (
@@ -515,7 +614,12 @@ export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; 
         )}
         {errors.slot && <p className="cm-field-err">{errors.slot}</p>}
       </div>
+      </div>
 
+      <div className="ap-col ap-col--dados">
+      {/* `.ap-par`: dois campos lado a lado na /hospedagem (janela mais baixa);
+          na home é `display: contents` e os campos seguem um embaixo do outro. */}
+      <div className="ap-par">
       <div className="cm-field">
         <label htmlFor="ap-nome">Seu nome</label>
         <input id="ap-nome" className={`cm-input${errors.nome ? ' err' : ''}`} value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex: João da Silva" autoComplete="name" />
@@ -523,10 +627,13 @@ export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; 
       </div>
 
       <div className="cm-field">
-        <label htmlFor="ap-empresa">Empresa</label>
-        <input id="ap-empresa" className={`cm-input${errors.empresa ? ' err' : ''}`} value={empresa} onChange={(e) => setEmpresa(e.target.value)} placeholder="Nome da transportadora" autoComplete="organization" />
+        <label htmlFor="ap-empresa">{tx.empresa}</label>
+        <input id="ap-empresa" className={`cm-input${errors.empresa ? ' err' : ''}`} value={empresa} onChange={(e) => setEmpresa(e.target.value)} placeholder={tx.placeholder} autoComplete="organization" />
         {errors.empresa && <p className="cm-field-err">{errors.empresa}</p>}
       </div>
+      </div>
+
+      <div className="ap-par">
 
       <div className="cm-field">
         <label htmlFor="ap-wpp">WhatsApp</label>
@@ -536,18 +643,16 @@ export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; 
 
       <div className="cm-field">
         <label htmlFor="ap-email">E-mail</label>
-        <input id="ap-email" type="email" className={`cm-input${errors.email ? ' err' : ''}`} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@empresa.com.br" autoComplete="email" />
+        <input id="ap-email" type="email" className={`cm-input${errors.email ? ' err' : ''}`} value={email} onChange={(e) => setEmail(e.target.value)} placeholder={tx.emailPlaceholder} autoComplete="email" />
         {errors.email && <p className="cm-field-err">{errors.email}</p>}
       </div>
-
-      <div className="cm-field">
-        <label htmlFor="ap-msg">Conte um pouco da sua operação (opcional)</label>
-        <textarea id="ap-msg" className="cm-input" rows={3} value={mensagem} onChange={(e) => setMensagem(e.target.value)} placeholder="Quantos veículos, como controla hoje, o que mais incomoda..." />
       </div>
+
+      {campoMensagem}
 
       <label className="cm-consent">
         <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-        <span>Aceito receber contato da LogCodex sobre minha operação. <a href="/politica-de-privacidade" target="_blank" rel="noopener noreferrer">Política de privacidade</a></span>
+        <span>{tx.consentimento} <a href="/politica-de-privacidade" target="_blank" rel="noopener noreferrer">Política de privacidade</a></span>
       </label>
       {errors.consent && <p className="cm-field-err">{errors.consent}</p>}
 
@@ -558,14 +663,14 @@ export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; 
       {turnstileDesistiu && !turnstileToken && (
         <div className="cm-send-err">
           <p>A verificação de segurança não carregou. Você pode tentar enviar mesmo assim ou falar direto com a gente.</p>
-          <WhatsAppButton message="Olá! Quero agendar uma reunião sobre a minha operação." label="Falar no WhatsApp" />
+          <WhatsAppButton message={tx.zapAjuda} label="Falar no WhatsApp" numero={tx.zapNumero} />
         </div>
       )}
 
       {sendErr && (
         <div className="cm-send-err">
           <p>{sendErr}</p>
-          <WhatsAppButton message="Olá! Tentei agendar uma reunião pelo site e não consegui. Pode me ajudar?" label="Falar no WhatsApp agora" />
+          <WhatsAppButton message={tx.zapErro} label="Falar no WhatsApp agora" numero={tx.zapNumero} />
         </div>
       )}
 
@@ -575,6 +680,7 @@ export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; 
       <button className="cm-email-btn" type="submit" disabled={loading || aguardandoTurnstile}>
         {loading ? 'Enviando…' : aguardandoTurnstile ? 'Verificando segurança…' : 'Confirmar horário'}
       </button>
+      </div>
 
       <style>{`
         /* Calendário em grade de mês, no espírito do date picker de referência
@@ -651,6 +757,13 @@ export function AgendaPicker({ onConcluir }: { onConcluir?: (r: { nome: string; 
         .ap-slot:hover:not(:disabled) { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.28); }
         .ap-slot.active { background: #fff; color: #0c0d0f; border-color: #fff; font-weight: 700; }
         .ap-slot.busy { opacity: .32; cursor: default; text-decoration: line-through; }
+
+        .ap-col, .ap-par { display: contents; }
+        .ap-esq { display: block; border-radius: 8px; background: rgba(255,255,255,.07); animation: ap-pulsa 1.2s ease-in-out infinite; }
+        .ap-esq--titulo { width: 120px; height: 14px; margin-bottom: 14px; }
+        .ap-esq-grade { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; justify-items: center; }
+        .ap-esq--dia { width: 30px; height: 30px; border-radius: 50%; }
+        @keyframes ap-pulsa { 50% { opacity: .45; } }
 
         @media (max-width: 560px) {
           .ap-cal { padding: 12px 10px 10px; }

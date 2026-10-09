@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { AgendaPicker } from './AgendaPicker'
+import { AgendaPicker, type Nicho } from './AgendaPicker'
 
 // Um único caminho: falar com especialista = agendar direto no calendário.
 // `ContactIntent` continua exportado (mesmo com um único valor possível) para
@@ -13,9 +13,16 @@ interface ContactModalHomeProps {
   open: boolean
   onClose: () => void
   intent?: ContactIntent
+  /** Página que abriu: muda os textos da agenda e a origem do lead. Padrão: logística (home). */
+  nicho?: Nicho
+  /** Classes extras da caixa (ex.: variáveis das fontes da página /hospedagem, que não chegam ao portal no body). */
+  classeExtra?: string
+  /** Marca exibida no topo da caixa (ex.: o cubo animado na /hospedagem). */
+  marca?: ReactNode
 }
 
-export function ContactModalHome({ open, onClose }: ContactModalHomeProps) {
+export function ContactModalHome({ open, onClose, nicho = 'logistica', classeExtra = '', marca }: ContactModalHomeProps) {
+  const pousada = nicho === 'hospedagem'
   // `createPortal` só pode rodar após montar no client — em vez de setState num
   // efeito (cascata de render), usa useState(lazy init) para ler `document`
   // uma única vez, já resolvido na primeira renderização client-side.
@@ -179,9 +186,10 @@ export function ContactModalHome({ open, onClose }: ContactModalHomeProps) {
         }
       `}</style>
 
-      <div className="cm-backdrop" onClick={onClose}>
+      <div className={`cm-backdrop${pousada ? ' cm--pz' : ''} ${classeExtra}`} onClick={onClose}>
         <div className="cm-box" onClick={(e) => e.stopPropagation()}>
           <button className="cm-close" onClick={onClose} aria-label="Fechar">×</button>
+          {marca && <div className="cm-marca">{marca}</div>}
 
           {/* O cabeçalho acompanha o estado: enquanto escolhe, convida a
               escolher; depois de reservar, confirma. Fixo, ele pedia "escolha
@@ -207,6 +215,13 @@ export function ContactModalHome({ open, onClose }: ContactModalHomeProps) {
                   : 'Ainda não é uma reserva confirmada — combinamos os detalhes pelo WhatsApp.'}
               </p>
             </>
+          ) : pousada ? (
+            // Página /hospedagem (09/10/2026): mesmo tom da página e o prazo da prévia.
+            <>
+              <p className="cm-eyebrow">Conversa rápida e sem compromisso</p>
+              <h2 className="cm-title">Fale com um <em>especialista</em></h2>
+              <p className="cm-sub">Escolha o melhor horário. Confirmamos pelo WhatsApp e, em até 1 hora depois da conversa, a sua prévia grátis fica pronta.</p>
+            </>
           ) : (
             <>
               <p className="cm-eyebrow">Agendar reunião</p>
@@ -218,7 +233,7 @@ export function ContactModalHome({ open, onClose }: ContactModalHomeProps) {
               <p className="cm-sub">Escolha um horário disponível. Retornamos a confirmação pelo WhatsApp.</p>
             </>
           )}
-          <AgendaPicker onConcluir={setReserva} />
+          <AgendaPicker onConcluir={setReserva} nicho={nicho} />
         </div>
       </div>
     </>,

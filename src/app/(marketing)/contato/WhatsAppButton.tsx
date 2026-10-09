@@ -1,9 +1,11 @@
 const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
 
-export function WhatsAppButton({ message, label = 'Falar pelo WhatsApp' }: { message: string; label?: string }) {
-  if (!WA_NUMBER) return null
+// `numero` permite outra página (ex.: /hospedagem) usar o próprio contato.
+export function WhatsAppButton({ message, label = 'Falar pelo WhatsApp', numero }: { message: string; label?: string; numero?: string }) {
+  const destino = numero ?? WA_NUMBER
+  if (!destino) return null
 
-  const href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`
+  const href = `https://wa.me/${destino}?text=${encodeURIComponent(message)}`
 
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" className="cm-wa-btn">

@@ -52,8 +52,14 @@ export async function POST(req: NextRequest) {
   const nome = typeof body.nome === 'string' ? body.nome.trim() : ''
   if (nome.length < 2) return err('VALIDATION_ERROR', 'Informe seu nome para a gente saber como te chamar.', 422)
 
+  // Página de origem: só valores conhecidos (o padrão continua sendo a home de logística).
+  const hospedagem = body.nicho === 'hospedagem'
+  const origem = hospedagem ? 'hospedagem_agendamento' : 'home_agendamento'
+
   const empresa = typeof body.empresa === 'string' ? body.empresa.trim() : ''
-  if (empresa.length < 2) return err('VALIDATION_ERROR', 'Informe o nome da sua empresa.', 422)
+  if (empresa.length < 2) {
+    return err('VALIDATION_ERROR', hospedagem ? 'Informe o nome da sua pousada.' : 'Informe o nome da sua empresa.', 422)
+  }
 
   const whatsapp = typeof body.whatsapp === 'string' ? body.whatsapp.trim() : ''
   if (whatsapp.replace(/\D/g, '').length < 10) {
@@ -104,10 +110,10 @@ export async function POST(req: NextRequest) {
   if (isCalendarEnabled()) {
     try {
       const result = await insertEvent({
-        summary: `Diagnóstico LogCodex — ${empresa}`,
+        summary: hospedagem ? `Site de pousada — ${empresa}` : `Diagnóstico LogCodex — ${empresa}`,
         description: [
           `Nome: ${nome}`,
-          `Empresa: ${empresa}`,
+          hospedagem ? `Pousada: ${empresa} (veio da página /hospedagem)` : `Empresa: ${empresa}`,
           `WhatsApp: ${whatsapp}`,
           `E-mail: ${email}`,
           mensagem ? `Mensagem: ${mensagem}` : null,
@@ -145,7 +151,7 @@ export async function POST(req: NextRequest) {
       INSERT INTO marketing.leads
         (nome, whatsapp, email, origem, empresa, mensagem, slot_inicio, slot_fim, calendar_event_id, consent_at)
       VALUES
-        (${nome}, ${whatsapp}, ${email}, 'home_agendamento', ${empresa}, ${mensagem}, ${slotInicio}, ${slotFim}, ${calendarEventId}, ${consentAt})
+        (${nome}, ${whatsapp}, ${email}, ${origem}, ${empresa}, ${mensagem}, ${slotInicio}, ${slotFim}, ${calendarEventId}, ${consentAt})
       ON CONFLICT (email) DO UPDATE SET
         nome              = EXCLUDED.nome,
         whatsapp          = EXCLUDED.whatsapp,
