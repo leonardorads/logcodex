@@ -14,5 +14,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 1,
     },
+    // Página de pousadas: endereço oficial no .com.br (canonical da própria página).
+    {
+      url: 'https://www.logcodex.com.br/hospedagem',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
   ]
 }
