@@ -13,6 +13,7 @@ export const LINK_ZAP = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(MSG
 export const EMAIL = 'leonardo.antunes@logcodex.com'
 
 export const LINKS_NAV = [
+  { href: '#topo', label: 'Início' },
   { href: '#solucoes', label: 'Soluções' },
   { href: '#projetos', label: 'Projetos' },
   { href: '#como', label: 'Como funciona' },

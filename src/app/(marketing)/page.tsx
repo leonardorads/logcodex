@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import { HomeGeral } from './_geral/HomeGeral'
 import { EMAIL, FAQ } from './_geral/dados'
 import './_geral/home-geral.css'
+import './_geral/aparelho.css'
+import './_geral/mesa.css'
+import './_geral/fleet-demo.css'
 
 // Home geral da LogCodex: sistemas sob medida para pequenos e médios negócios
 // (decisão do Leo e do Igor, 10/2026; roteiro em docs/briefing-home-geral-2026-10.md).

@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- prints da vitrine: imagens estáticas (next.config: images.unoptimized) */
 import { Emblema, Icone } from './Icone'
-import { MarcaCompleta, MarcaLC } from './MarcaLC'
+import { Cubo, MarcaCompleta } from './Marca'
+import { fonteMarca } from './fonte-marca'
 import { Mesa } from './Mesa'
 import { FleetDemo } from './FleetDemo'
 import { Duvidas } from './Duvidas'
@@ -39,7 +40,7 @@ function JanelaPrint({ src, alt, url }: { src: string; alt: string; url: string 
 
 export function HomeGeral() {
   return (
-    <div className="hg" id="topo">
+    <div className={`hg ${fonteMarca.variable}`} id="topo">
       <script dangerouslySetInnerHTML={{ __html: SCRIPT_MOVIMENTO }} />
       <div className="hg-fundo" aria-hidden="true">
         <span className="hg-fundo__grade" />
@@ -102,7 +103,7 @@ export function HomeGeral() {
           </Titulo>
           <div className="hg-solucoes">
             {SOLUCOES.map((s) => (
-              <article key={s.n} data-rev="" className={`hg-solucao hg-solucao--${s.cor}`}>
+              <article key={s.n} data-rev="" className={`hg-solucao hg-solucao--${s.cor} hg-luz`}>
                 <div className="hg-solucao__topo">
                   <Emblema nome={s.icone} />
                   <span className="hg-solucao__n">{s.n}</span>
@@ -124,15 +125,19 @@ export function HomeGeral() {
           </Titulo>
 
           <div className="hg-projetos">
-            <article className="hg-projeto">
-              <div className="hg-projeto__texto" data-rev="">
-                <span className="hg-etiqueta hg-etiqueta--uso">Sistema em uso por uma transportadora</span>
-                <h3>Fleet: a frota num sistema só, com assistente</h3>
-                <p>Viagens, despesas, acertos com motoristas e contas a receber no mesmo lugar. O dono pergunta em português e o assistente responde com os números.</p>
-                <ul className="hg-chips">
-                  <li>Sistema sob medida</li><li>IA</li><li>Painel</li>
-                </ul>
-                <a className="hg-link-seta" href="/fleet">Conhecer o Fleet <Icone nome="seta" /></a>
+            <article className="hg-projeto hg-projeto--largo">
+              <div className="hg-projeto__texto hg-projeto__texto--largo" data-rev="">
+                <div>
+                  <span className="hg-etiqueta hg-etiqueta--uso">Sistema em uso por uma transportadora</span>
+                  <h3>Fleet: a frota num sistema só, com assistente</h3>
+                </div>
+                <div>
+                  <p>Viagens, despesas, acertos com motoristas e relatórios no mesmo lugar. Dá para cadastrar pelo menu ou pedir ao assistente com IA, e o relatório sai em PDF num clique.</p>
+                  <ul className="hg-chips">
+                    <li>Sistema sob medida</li><li>Assistente com IA</li><li>Relatórios</li>
+                  </ul>
+                  <a className="hg-link-seta" href="/fleet">Conhecer o Fleet <Icone nome="seta" /></a>
+                </div>
               </div>
               <div className="hg-palco hg-palco--fleet" data-rev="">
                 <FleetDemo />
@@ -178,7 +183,7 @@ export function HomeGeral() {
           </Titulo>
           <ol className="hg-passos">
             {PASSOS.map((p) => (
-              <li key={p.n} data-rev="" className="hg-passo">
+              <li key={p.n} data-rev="" className="hg-passo hg-luz">
                 <div className="hg-passo__topo">
                   <Emblema nome={p.icone} />
                   <span className="hg-passo__n">{p.n}</span>
@@ -217,7 +222,7 @@ export function HomeGeral() {
             Tem uma página feita <span className="hg-grad">para o seu setor.</span>
           </Titulo>
           <div className="hg-setores-grade">
-            <a className="hg-setor hg-setor--logistica" href="/logistica" data-rev="">
+            <a className="hg-setor hg-setor--logistica hg-luz" href="/logistica" data-rev="">
               <Emblema nome="caminhao" />
               <span className="hg-setor__texto">
                 <b>Logística</b>
@@ -225,7 +230,7 @@ export function HomeGeral() {
               </span>
               <Icone nome="setaDiag" className="hg-setor__seta" />
             </a>
-            <a className="hg-setor hg-setor--pousadas" href="/hospedagem" data-rev="">
+            <a className="hg-setor hg-setor--pousadas hg-luz" href="/hospedagem" data-rev="">
               <Emblema nome="cama" />
               <span className="hg-setor__texto">
                 <b>Pousadas</b>
@@ -233,7 +238,7 @@ export function HomeGeral() {
               </span>
               <Icone nome="setaDiag" className="hg-setor__seta" />
             </a>
-            <div className="hg-setor hg-setor--outro" data-rev="">
+            <div className="hg-setor hg-setor--outro hg-luz" data-rev="">
               <Emblema nome="brilho" />
               <span className="hg-setor__texto">
                 <b>Outro setor?</b>
@@ -255,7 +260,7 @@ export function HomeGeral() {
         {/* ── FECHAMENTO ───────────────────────────────────── */}
         <section className="hg-fecho">
           <div className="hg-fecho__palco">
-            <span data-rev="" className="hg-fecho__logo"><MarcaLC className="hg-logo--grande" /></span>
+            <span data-rev="" className="hg-fecho__logo"><Cubo className="hg-cubo--grande" /></span>
             <h2 data-rev="">Vamos desenhar o sistema <span className="hg-grad">do seu negócio?</span></h2>
             <p data-rev="">Conte o que você precisa numa conversa rápida. A prévia é grátis e você só decide depois de ver.</p>
             <div data-rev="" className="hg-acoes hg-acoes--centro">
@@ -271,7 +276,7 @@ export function HomeGeral() {
       <footer className="hg-rodape">
         <div className="hg-rodape__grade">
           <div className="hg-rodape__marca">
-            <span className="hg-marca hg-marca--quieta"><MarcaLC animar={false} /><span className="hg-marca__nome">LogCodex</span></span>
+            <MarcaCompleta animar={false} />
             <p>Sistemas sob medida para pequenos e médios negócios. Atendemos todo o Brasil.</p>
           </div>
           <div>

@@ -1,0 +1,31 @@
+/* Peças de aparelho compartilhadas (Aparelho.tsx): a moldura do celular, igual à
+   do celular da página do Fleet, e o toque do dedo. Usadas na cena do topo e no Fleet. */
+
+.hg-cel {
+  position: relative;
+  background: #0f0f10; border-radius: 42px; padding: 9px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, .6), 0 0 0 1px rgba(140, 144, 255, .16), inset 0 0 0 1px rgba(255, 255, 255, .05);
+}
+.hg-cel__botao { position: absolute; width: 3px; border-radius: 2px; background: #2a2a2c; }
+.hg-cel__botao--1 { left: -3px; top: 88px; height: 26px; }
+.hg-cel__botao--2 { left: -3px; top: 128px; height: 42px; }
+.hg-cel__botao--3 { left: -3px; top: 182px; height: 42px; }
+.hg-cel__botao--liga { right: -3px; top: 140px; height: 62px; }
+.hg-cel__tela { position: relative; height: 100%; overflow: hidden; border-radius: 33px; background: #0b141a; isolation: isolate; }
+.hg-cel__barra { position: absolute; z-index: 30; left: 0; right: 0; bottom: 5px; display: flex; justify-content: center; pointer-events: none; }
+.hg-cel__barra span { width: 84px; height: 4px; border-radius: 999px; background: rgba(140, 140, 150, .55); }
+
+.hg-cel__status { display: flex; align-items: center; justify-content: space-between; flex: none; padding: 9px 20px 4px; font-size: 10.5px; font-weight: 700; color: #fff; }
+.hg-cel__status--claro { color: #111; }
+.hg-cel__status-ic { display: inline-flex; align-items: center; gap: 5px; }
+.hg-cel__status-ic svg { width: 11px; height: 11px; }
+.hg-cel__status-ic svg:last-child { width: 16px; height: 10px; }
+
+/* toque do dedo */
+.hg-toque {
+  position: absolute; z-index: 25; width: 36px; height: 36px; margin: -18px 0 0 -18px; border-radius: 50%; pointer-events: none;
+  background: rgba(255, 255, 255, .3); border: 2px solid rgba(255, 255, 255, .95); box-shadow: 0 2px 12px rgba(0, 0, 0, .35), inset 0 0 0 1px rgba(0, 0, 0, .08);
+  animation: hg-toque .75s ease-out forwards;
+}
+@keyframes hg-toque { 0% { opacity: 0; transform: scale(.4); } 25% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.7); } }
+

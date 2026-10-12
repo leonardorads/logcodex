@@ -16,6 +16,27 @@ export const contentType = 'image/png'
  *  - sem fonte de emoji embutida (emoji vira retângulo vazio).
  */
 
+// Cubo LogCodex: mesma geometria e cores de _geral/Marca.tsx e hospedagem/CuboLogo.tsx
+type P = [number, number]
+const sub = (p: P, q: P): P => [p[0] - q[0], p[1] - q[1]]
+function faceCubo(o: P, u: P, v: P, cor: (i: number, j: number) => string): [string, string][] {
+  const out: [string, string][] = []
+  const f = 0.07
+  for (let i = 0; i < 3; i++)
+    for (let j = 0; j < 3; j++) {
+      const u0 = i / 3 + f / 2, u1 = (i + 1) / 3 - f / 2, v0 = j / 3 + f / 2, v1 = (j + 1) / 3 - f / 2
+      const pts = ([[u0, v0], [u1, v0], [u1, v1], [u0, v1]] as P[]).map(([a, b]) => `${(o[0] + a * u[0] + b * v[0]).toFixed(2)},${(o[1] + a * u[1] + b * v[1]).toFixed(2)}`).join(' ')
+      out.push([pts, cor(i, j)])
+    }
+  return out
+}
+const T: P = [32, 4], UR: P = [60, 20], B: P = [32, 68], LL: P = [4, 52], UL: P = [4, 20], C: P = [32, 36]
+const CUBO = [
+  ...faceCubo(UL, sub(T, UL), sub(C, UL), () => '#4b5b75'),
+  ...faceCubo(UL, sub(C, UL), sub(LL, UL), (i, j) => (i === 0 || j === 2 ? '#f2f6fc' : '#505c6d')),
+  ...faceCubo(C, sub(UR, C), sub(B, C), (i, j) => (i === 0 || j === 0 || j === 2 ? '#2f6bff' : '#1d3a86')),
+]
+
 const FRENTES = [
   { t: 'Ser encontrado', c: '#5b9dff' },
   { t: 'Atender no WhatsApp', c: '#3ddc97' },
@@ -40,20 +61,12 @@ export default async function Image() {
           background: 'radial-gradient(900px 600px at 95% -10%, rgba(110,104,255,.45), transparent 60%), radial-gradient(700px 500px at -10% 110%, rgba(40,170,160,.22), transparent 60%), #08090d',
         }}
       >
-        {/* Marca: o mesmo monograma LC do site */}
+        {/* Marca: o cubo LogCodex (o mesmo da home e da /hospedagem) */}
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '40px' }}>
-          <svg width="56" height="56" viewBox="0 0 32 32" fill="none">
-            <rect x="0.5" y="0.5" width="31" height="31" rx="7" stroke="#eef0f5" strokeOpacity="0.45" />
-            <path d="M9 8.5 V21.5 H13.6" stroke="#eef0f5" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M24 11 L20 8.6 L16.6 12 L16.6 18 L20 21.4 L24 19" stroke="#eef0f5" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx="24" cy="11" r="1.7" fill="#8c90ff" />
-            <circle cx="20" cy="8.6" r="1.25" fill="#eef0f5" />
-            <circle cx="16.6" cy="12" r="1.25" fill="#eef0f5" />
-            <circle cx="16.6" cy="18" r="1.25" fill="#eef0f5" />
-            <circle cx="20" cy="21.4" r="1.25" fill="#eef0f5" />
-            <circle cx="24" cy="19" r="1.25" fill="#eef0f5" />
+          <svg width="52" height="59" viewBox="2 2 60 68">
+            {CUBO.map(([pts, cor], k) => <polygon key={k} points={pts} fill={cor} />)}
           </svg>
-          <span style={{ fontSize: 32, marginLeft: '16px', letterSpacing: '-0.01em' }}>LogCodex</span>
+          <span style={{ fontSize: 34, marginLeft: '16px', letterSpacing: '-0.01em' }}>logcodex</span>
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', fontSize: 70, lineHeight: 1.04, letterSpacing: '-0.035em', maxWidth: '980px' }}>

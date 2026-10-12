@@ -4,7 +4,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { ContactModalHome } from '../contato/ContactModalHome'
 import { precarregarHorarios } from '../contato/AgendaPicker'
 import { Icone } from './Icone'
-import { MarcaLC } from './MarcaLC'
+import { Cubo } from './Marca'
 
 // Peças pequenas com clique, separadas do resto da página (que é estática).
 
@@ -40,7 +40,7 @@ export function Agenda() {
     precarregarHorarios().catch(() => {})
     return () => window.removeEventListener(EVENTO_AGENDA, abrir)
   }, [])
-  return <ContactModalHome open={aberta} onClose={() => setAberta(false)} nicho="geral" classeExtra="cm--hg" marca={<MarcaLC className="hg-logo--modal" />} />
+  return <ContactModalHome open={aberta} onClose={() => setAberta(false)} nicho="geral" classeExtra="cm--hg" marca={<Cubo className="hg-cubo--modal" />} />
 }
 
 // Entrada das seções ao rolar (piso da skill site-entregue-sem-animacao):
@@ -70,7 +70,38 @@ export function Movimento() {
       { rootMargin: '0px 0px -8% 0px', threshold: 0.12 }
     )
     els.forEach((el) => io.observe(el))
-    return () => io.disconnect()
+
+    // Cartões fluidos: a luz segue o mouse. Um ouvinte só, para a página toda.
+    let quadro = 0
+    const aoMover = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse') return
+      const card = (e.target as HTMLElement).closest?.<HTMLElement>('.hg-luz')
+      if (!card) return
+      cancelAnimationFrame(quadro)
+      quadro = requestAnimationFrame(() => {
+        const r = card.getBoundingClientRect()
+        const x = (e.clientX - r.left) / r.width
+        const y = (e.clientY - r.top) / r.height
+        card.style.setProperty('--mx', `${(x * 100).toFixed(1)}%`)
+        card.style.setProperty('--my', `${(y * 100).toFixed(1)}%`)
+      })
+    }
+    // Clique na marca: o cubo se desmonta e monta de novo (como na /hospedagem).
+    const aoClicar = (e: MouseEvent) => {
+      const cubo = (e.target as HTMLElement).closest?.('.hg-marca, .hg-fecho__logo')?.querySelector('.hg-cubo')
+      if (!cubo || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      cubo.classList.remove('hg-cubo--anima')
+      void cubo.getBoundingClientRect()
+      cubo.classList.add('hg-cubo--anima')
+    }
+    document.addEventListener('pointermove', aoMover, { passive: true })
+    document.addEventListener('click', aoClicar)
+    return () => {
+      io.disconnect()
+      cancelAnimationFrame(quadro)
+      document.removeEventListener('pointermove', aoMover)
+      document.removeEventListener('click', aoClicar)
+    }
   }, [])
   return null
 }
@@ -156,14 +187,38 @@ export function Gaveta({ links, setores, linkZap }: { links: readonly { href: st
   )
 }
 
-// Barra do topo: ganha fundo depois de rolar um pouco.
+// Barra do topo: ganha fundo depois de rolar um pouco, e o link da seção em que
+// a pessoa está fica aceso ("Início" no topo da página).
 export function NavRolagem() {
   useEffect(() => {
     const nav = document.querySelector('.hg-nav')
-    const aoRolar = () => nav?.classList.toggle('hg-nav--rolou', window.scrollY > 12)
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.hg-nav__links > a[href^="#"]'))
+    const secoes = links
+      .map((a) => a.getAttribute('href')!)
+      .filter((h) => h !== '#topo')
+      .map((h) => document.querySelector<HTMLElement>(h))
+      .filter((el): el is HTMLElement => !!el)
+    let quadro = 0
+    const aoRolar = () => {
+      cancelAnimationFrame(quadro)
+      quadro = requestAnimationFrame(() => {
+        nav?.classList.toggle('hg-nav--rolou', window.scrollY > 12)
+        let atual = '#topo'
+        for (const s of secoes) if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) atual = `#${s.id}`
+        // no fim da página, a última seção é a ativa mesmo sem chegar ao topo
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4 && secoes.length) atual = `#${secoes[secoes.length - 1].id}`
+        for (const a of links) {
+          if (a.getAttribute('href') === atual) a.setAttribute('aria-current', 'true')
+          else a.removeAttribute('aria-current')
+        }
+      })
+    }
     aoRolar()
     window.addEventListener('scroll', aoRolar, { passive: true })
-    return () => window.removeEventListener('scroll', aoRolar)
+    return () => {
+      cancelAnimationFrame(quadro)
+      window.removeEventListener('scroll', aoRolar)
+    }
   }, [])
   return null
 }

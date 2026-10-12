@@ -1,20 +1,30 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="lc-stroke" x1="6" y1="6" x2="26" y2="26" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#60a5fa"/>
-      <stop offset="1" stop-color="#818cf8"/>
-    </linearGradient>
-  </defs>
-  <rect x="0.5" y="0.5" width="31" height="31" rx="7" fill="#0c0d0f" stroke="#ffffff" stroke-opacity="0.12"/>
-  <!-- L sólido: a base operacional -->
-  <path d="M9 8.5 V21.5 H13.6" stroke="url(#lc-stroke)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- C como arco de nós conectados: leitura de IA/rede neural -->
-  <path d="M23.2 11.4 L19.4 9.3 L16.4 12.2 L16.4 17.8 L19.4 20.7 L23.2 18.6" stroke="url(#lc-stroke)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M19.4 9.3 L16.4 17.8 M16.4 12.2 L19.4 20.7" stroke="url(#lc-stroke)" stroke-width="1" stroke-opacity="0.45" stroke-linecap="round"/>
-  <circle cx="23.2" cy="11.4" r="2.1" fill="#818cf8"/>
-  <circle cx="19.4" cy="9.3" r="1.7" fill="url(#lc-stroke)"/>
-  <circle cx="16.4" cy="12.2" r="1.7" fill="url(#lc-stroke)"/>
-  <circle cx="16.4" cy="17.8" r="1.7" fill="url(#lc-stroke)"/>
-  <circle cx="19.4" cy="20.7" r="1.7" fill="url(#lc-stroke)"/>
-  <circle cx="23.2" cy="18.6" r="1.7" fill="url(#lc-stroke)"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 2 68 68" width="64" height="64">
+<!-- Cubo LogCodex: favicon do site (12/10/2026, marca padronizada pelo cubo da /hospedagem). A /logistica mantém o LC antigo em logistica/icon.svg. -->
+<polygon points="5.96,20.00 13.33,15.79 20.71,20.00 13.33,24.21" fill="#4b5b75"/>
+<polygon points="15.29,25.33 22.67,21.12 30.04,25.33 22.67,29.55" fill="#4b5b75"/>
+<polygon points="24.63,30.67 32.00,26.45 39.37,30.67 32.00,34.88" fill="#4b5b75"/>
+<polygon points="15.29,14.67 22.67,10.45 30.04,14.67 22.67,18.88" fill="#4b5b75"/>
+<polygon points="24.63,20.00 32.00,15.79 39.37,20.00 32.00,24.21" fill="#4b5b75"/>
+<polygon points="33.96,25.33 41.33,21.12 48.71,25.33 41.33,29.55" fill="#4b5b75"/>
+<polygon points="24.63,9.33 32.00,5.12 39.37,9.33 32.00,13.55" fill="#4b5b75"/>
+<polygon points="33.96,14.67 41.33,10.45 48.71,14.67 41.33,18.88" fill="#4b5b75"/>
+<polygon points="43.29,20.00 50.67,15.79 58.04,20.00 50.67,24.21" fill="#4b5b75"/>
+<polygon points="4.98,21.68 12.35,25.89 12.35,34.32 4.98,30.11" fill="#f2f6fc"/>
+<polygon points="4.98,32.35 12.35,36.56 12.35,44.99 4.98,40.77" fill="#f2f6fc"/>
+<polygon points="4.98,43.01 12.35,47.23 12.35,55.65 4.98,51.44" fill="#f2f6fc"/>
+<polygon points="14.31,27.01 21.69,31.23 21.69,39.65 14.31,35.44" fill="#505c6d"/>
+<polygon points="14.31,37.68 21.69,41.89 21.69,50.32 14.31,46.11" fill="#505c6d"/>
+<polygon points="14.31,48.35 21.69,52.56 21.69,60.99 14.31,56.77" fill="#f2f6fc"/>
+<polygon points="23.65,32.35 31.02,36.56 31.02,44.99 23.65,40.77" fill="#505c6d"/>
+<polygon points="23.65,43.01 31.02,47.23 31.02,55.65 23.65,51.44" fill="#505c6d"/>
+<polygon points="23.65,53.68 31.02,57.89 31.02,66.32 23.65,62.11" fill="#f2f6fc"/>
+<polygon points="32.98,36.56 40.35,32.35 40.35,40.77 32.98,44.99" fill="#2f6bff"/>
+<polygon points="32.98,47.23 40.35,43.01 40.35,51.44 32.98,55.65" fill="#2f6bff"/>
+<polygon points="32.98,57.89 40.35,53.68 40.35,62.11 32.98,66.32" fill="#2f6bff"/>
+<polygon points="42.31,31.23 49.69,27.01 49.69,35.44 42.31,39.65" fill="#2f6bff"/>
+<polygon points="42.31,41.89 49.69,37.68 49.69,46.11 42.31,50.32" fill="#1d3a86"/>
+<polygon points="42.31,52.56 49.69,48.35 49.69,56.77 42.31,60.99" fill="#2f6bff"/>
+<polygon points="51.65,25.89 59.02,21.68 59.02,30.11 51.65,34.32" fill="#2f6bff"/>
+<polygon points="51.65,36.56 59.02,32.35 59.02,40.77 51.65,44.99" fill="#1d3a86"/>
+<polygon points="51.65,47.23 59.02,43.01 59.02,51.44 51.65,55.65" fill="#2f6bff"/>
 </svg>
