@@ -2,56 +2,28 @@ import { ImageResponse } from 'next/og'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
-export const alt =
-  'LogCodex — diagnóstico, integração, implantação e suporte para operações logísticas.'
+export const alt = 'LogCodex: sistemas sob medida para o seu negócio. Site, WhatsApp com IA, CRM e automações.'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
 /**
- * Prévia de link da HOME (WhatsApp, LinkedIn, Telegram).
- *
- * Substitui o antigo `public/og-image.png`, que tinha três problemas: era quase
- * todo espaço vazio, dizia só o nome da marca sem contar o que a LogCodex faz, e
- * carregava o slogan antigo ("Tecnologia que resolve. Operação que escala.")
- * além do domínio `.com.br` — enquanto o canônico do site é o `.com`.
- *
- * Gerado em código, como o da /fleet: um PNG estático desatualiza a cada ajuste
- * de posicionamento e ninguém percebe, porque a arte só aparece fora do site.
+ * Prévia de link da HOME GERAL (WhatsApp, LinkedIn, Telegram).
+ * A arte da logística mudou junto com a página para logistica/opengraph-image.tsx.
  *
  * Restrições do Satori (motor do ImageResponse), que não é um browser:
  *  - todo elemento com mais de um filho precisa de `display: flex` explícito;
- *  - não há `gap` confiável — o espaçamento vem de margin;
+ *  - não há `gap` confiável: o espaçamento vem de margin;
  *  - sem fonte de emoji embutida (emoji vira retângulo vazio).
  */
 
-// As 7 frentes da entrega, as mesmas da seção "O que está incluso" da página.
-// Divididas em duas colunas para caber sem apertar.
-const FRENTES_A = ['Diagnóstico completo', 'Integração com o que já existe', 'Implantação assistida', 'Capacitação do time']
-const FRENTES_B = ['Suporte técnico consultivo', 'Automação com IA', 'Personalização da solução']
-
-function Item({ texto }: { texto: string }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '14px' }}>
-      <div
-        style={{
-          display: 'flex',
-          width: '7px',
-          height: '7px',
-          borderRadius: '4px',
-          background: '#818cf8',
-          marginRight: '12px',
-          flexShrink: 0,
-        }}
-      />
-      <span style={{ fontSize: 19, color: '#cbd5e1' }}>{texto}</span>
-    </div>
-  )
-}
+const FRENTES = [
+  { t: 'Ser encontrado', c: '#5b9dff' },
+  { t: 'Atender no WhatsApp', c: '#3ddc97' },
+  { t: 'Organizar o dia a dia', c: '#f5b75b' },
+]
 
 export default async function Image() {
-  const [fontData] = await Promise.all([
-    readFile(join(process.cwd(), 'assets/fonts/PlusJakartaSans-Bold.ttf')),
-  ])
+  const fonte = await readFile(join(process.cwd(), 'assets/fonts/PlusJakartaSans-Bold.ttf'))
 
   return new ImageResponse(
     (
@@ -62,102 +34,66 @@ export default async function Image() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          background: 'linear-gradient(145deg, #090b0f 0%, #0f1729 50%, #1e1b4b 100%)',
-          fontFamily: 'PlusJakartaSans',
-          color: '#fff',
-          padding: '0 72px',
+          padding: '0 80px',
+          color: '#eef0f5',
+          fontFamily: 'Jakarta',
+          background: 'radial-gradient(900px 600px at 95% -10%, rgba(110,104,255,.45), transparent 60%), radial-gradient(700px 500px at -10% 110%, rgba(40,170,160,.22), transparent 60%), #08090d',
         }}
       >
-        {/* Marca */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '26px' }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '52px',
-              height: '52px',
-              borderRadius: '13px',
-              background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-              marginRight: '16px',
-              flexShrink: 0,
-            }}
-          >
-            <span style={{ fontSize: 21, fontWeight: 700, color: '#fff' }}>LC</span>
-          </div>
-          <span style={{ fontSize: 30, fontWeight: 700, letterSpacing: '-0.01em' }}>LogCodex</span>
+        {/* Marca: o mesmo monograma LC do site */}
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '40px' }}>
+          <svg width="56" height="56" viewBox="0 0 32 32" fill="none">
+            <rect x="0.5" y="0.5" width="31" height="31" rx="7" stroke="#eef0f5" strokeOpacity="0.45" />
+            <path d="M9 8.5 V21.5 H13.6" stroke="#eef0f5" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M24 11 L20 8.6 L16.6 12 L16.6 18 L20 21.4 L24 19" stroke="#eef0f5" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="24" cy="11" r="1.7" fill="#8c90ff" />
+            <circle cx="20" cy="8.6" r="1.25" fill="#eef0f5" />
+            <circle cx="16.6" cy="12" r="1.25" fill="#eef0f5" />
+            <circle cx="16.6" cy="18" r="1.25" fill="#eef0f5" />
+            <circle cx="20" cy="21.4" r="1.25" fill="#eef0f5" />
+            <circle cx="24" cy="19" r="1.25" fill="#eef0f5" />
+          </svg>
+          <span style={{ fontSize: 32, marginLeft: '16px', letterSpacing: '-0.01em' }}>LogCodex</span>
         </div>
 
-        {/* Headline — o posicionamento, não o slogan antigo */}
-        <div
-          style={{
-            display: 'flex',
-            fontSize: 56,
-            fontWeight: 700,
-            lineHeight: 1.1,
-            letterSpacing: '-0.025em',
-            marginBottom: '20px',
-            maxWidth: '900px',
-            background: 'linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%)',
-            backgroundClip: 'text',
-            color: 'transparent',
-          }}
-        >
-          Sua operação logística, resolvida ponta a ponta.
+        <div style={{ display: 'flex', flexWrap: 'wrap', fontSize: 70, lineHeight: 1.04, letterSpacing: '-0.035em', maxWidth: '980px' }}>
+          <span style={{ marginRight: '18px' }}>Sistemas</span>
+          <span style={{ marginRight: '18px', color: '#a5a8ff' }}>sob medida</span>
+          <span>para o seu negócio.</span>
         </div>
 
-        <div
-          style={{
-            display: 'flex',
-            fontSize: 22,
-            color: '#94a3b8',
-            lineHeight: 1.45,
-            marginBottom: '34px',
-            maxWidth: '860px',
-          }}
-        >
-          Não é licença de software: é a entrega completa, do diagnóstico ao time treinado —
-          sem travar a operação.
+        <div style={{ display: 'flex', fontSize: 25, color: '#aab0bd', lineHeight: 1.45, marginTop: '26px', maxWidth: '900px' }}>
+          Site, WhatsApp com IA, CRM e automações para pequenos e médios negócios. Prévia grátis antes de decidir.
         </div>
 
-        {/* As 7 frentes, em duas colunas */}
-        <div style={{ display: 'flex' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', width: '430px' }}>
-            {FRENTES_A.map((f) => (
-              <Item key={f} texto={f} />
-            ))}
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {FRENTES_B.map((f) => (
-              <Item key={f} texto={f} />
-            ))}
-          </div>
+        <div style={{ display: 'flex', marginTop: '40px' }}>
+          {FRENTES.map((f) => (
+            <div
+              key={f.t}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '10px 18px',
+                marginRight: '12px',
+                borderRadius: '999px',
+                border: '1px solid rgba(255,255,255,.14)',
+                background: 'rgba(255,255,255,.04)',
+                fontSize: 19,
+                color: '#d7dbe5',
+              }}
+            >
+              <div style={{ display: 'flex', width: '9px', height: '9px', borderRadius: '5px', background: f.c, marginRight: '10px' }} />
+              {f.t}
+            </div>
+          ))}
         </div>
 
-        {/* Rodapé — domínio canônico .com, não .com.br */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            marginTop: '22px',
-            paddingTop: '20px',
-            borderTop: '1px solid rgba(148, 163, 184, 0.18)',
-          }}
-        >
-          <span style={{ fontSize: 17, color: '#64748b' }}>logcodex.com</span>
-        </div>
+        <div style={{ display: 'flex', marginTop: '46px', fontSize: 19, color: '#8b91a0' }}>logcodex.com.br</div>
       </div>
     ),
     {
       ...size,
-      fonts: [
-        {
-          name: 'PlusJakartaSans',
-          data: fontData,
-          style: 'normal' as const,
-          weight: 700,
-        },
-      ],
+      fonts: [{ name: 'Jakarta', data: fonte, style: 'normal' as const, weight: 700 }],
     }
   )
 }

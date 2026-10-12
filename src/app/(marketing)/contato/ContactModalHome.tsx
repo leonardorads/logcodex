@@ -222,6 +222,14 @@ export function ContactModalHome({ open, onClose, nicho = 'logistica', classeExt
               <h2 className="cm-title">Fale com um <em>especialista</em></h2>
               <p className="cm-sub">Escolha o melhor horário. Confirmamos pelo WhatsApp e, em até 1 hora depois da conversa, a sua prévia grátis fica pronta.</p>
             </>
+          ) : nicho === 'geral' ? (
+            // Home geral (sistemas sob medida): a prévia grátis vale para qualquer
+            // serviço, mas sem o prazo de 1 hora, que é só das pousadas.
+            <>
+              <p className="cm-eyebrow">Conversa rápida e sem compromisso</p>
+              <h2 className="cm-title">Fale com um especialista</h2>
+              <p className="cm-sub">Escolha o melhor horário. Confirmamos pelo WhatsApp e combinamos a sua prévia grátis.</p>
+            </>
           ) : (
             <>
               <p className="cm-eyebrow">Agendar reunião</p>

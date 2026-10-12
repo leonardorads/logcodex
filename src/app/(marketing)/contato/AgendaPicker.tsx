@@ -132,8 +132,9 @@ function diaKeyEmSP(iso: string): string {
 // confirma. Atende quem usa Google (a maioria) sem baixar arquivo nenhum.
 // Não substitui o .ics: quem usa Outlook ou iPhone precisa do arquivo.
 // Textos que mudam conforme a página que abriu a agenda. Logística é o padrão
-// (home); hospedagem é a página /hospedagem (08/10/2026).
-export type Nicho = 'logistica' | 'hospedagem'
+// (home); hospedagem é a página /hospedagem (08/10/2026); geral é a home nova
+// da LogCodex (sistemas sob medida, 10/2026).
+export type Nicho = 'logistica' | 'hospedagem' | 'geral'
 type Textos = {
   titulo: string; detalhe: string; empresa: string; placeholder: string; erroEmpresa: string
   msgLabel: string; msgPlaceholder: string; emailPlaceholder: string; consentimento: string
@@ -170,6 +171,22 @@ const TEXTOS: Record<Nicho, Textos> = {
     zapErro: 'Olá, Leo! Tentei agendar pelo site e não consegui. Quero uma prévia do site da minha pousada.',
     arquivoIcs: 'conversa-logcodex-pousada.ics',
     // Mesmo número da página /hospedagem. TODO(Leo): trocar pelo Fluke quando a linha for ativada.
+    zapNumero: '5541999283590',
+  },
+  geral: {
+    titulo: 'Conversa LogCodex',
+    detalhe: 'Conversa sobre o sistema do seu negócio. A LogCodex confirma os detalhes pelo WhatsApp.',
+    empresa: 'Seu negócio',
+    placeholder: 'Nome do seu negócio',
+    erroEmpresa: 'Informe o nome do seu negócio.',
+    msgLabel: 'O que você precisa? (opcional)',
+    msgPlaceholder: 'Site, atendimento no WhatsApp, organizar clientes, um sistema para a sua rotina...',
+    emailPlaceholder: 'voce@email.com',
+    consentimento: 'Aceito receber contato da LogCodex sobre o meu projeto.',
+    zapAjuda: 'Olá, Leo! Quero agendar uma conversa sobre um sistema para o meu negócio.',
+    zapErro: 'Olá, Leo! Tentei agendar pelo site e não consegui. Quero conversar sobre um sistema para o meu negócio.',
+    arquivoIcs: 'conversa-logcodex.ics',
+    // Mesmo número da /hospedagem. TODO(Leo): trocar pelo Fluke quando a linha for ativada.
     zapNumero: '5541999283590',
   },
 }
@@ -530,7 +547,7 @@ export function AgendaPicker({ onConcluir, nicho = 'logistica' }: { onConcluir?:
           celular; na home `.ap-col` é `display: contents` e nada muda. */}
       <div className="ap-col ap-col--agenda">
       <div className="cm-field">
-        <label>{nicho === 'hospedagem' ? 'Escolha o dia e o horário (horário de Brasília)' : 'Horário (Horários em Brasília)'}</label>
+        <label>{nicho !== 'logistica' ? 'Escolha o dia e o horário (horário de Brasília)' : 'Horário (Horários em Brasília)'}</label>
         {/* Esqueleto no lugar do texto "Carregando…": o calendário ocupa o
             espaço desde o primeiro quadro, sem a caixa "pular" quando chega. */}
         {!slots && !loadErr && (

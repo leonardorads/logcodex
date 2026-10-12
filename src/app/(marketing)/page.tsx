@@ -1,41 +1,40 @@
 import type { Metadata } from 'next'
-import { LogisticaPage } from './logistica/LogisticaPage'
-import { FAQ } from './logistica/secoes/faq-data'
+import { HomeGeral } from './_geral/HomeGeral'
+import { EMAIL, FAQ } from './_geral/dados'
+import './_geral/home-geral.css'
 
-// ESPAÇO DA HOME NOVA (página geral da LogCodex, roteiro em docs/briefing-home-geral-2026-10.md).
-// Até ela ficar pronta, a raiz mostra a página de logística exatamente como antes:
-// mesmo texto, mesmos metadados, mesmo canonical. A logística já mora em /logistica.
-
+// Home geral da LogCodex: sistemas sob medida para pequenos e médios negócios
+// (decisão do Leo e do Igor, 10/2026; roteiro em docs/briefing-home-geral-2026-10.md).
+// A página de logística, que morava aqui, está em /logistica, sem mudança.
+//
+// URL: o domínio oficial (.com.br, decisão do Leo) entra na etapa de SEO, junto
+// com sitemap, robots e metadataBase. Até lá, fica o mesmo endereço de hoje.
 const URL = 'https://www.logcodex.com'
-// Título da ABA: só a marca, por decisão do Leonardo. O texto descritivo segue
-// vivo no og:title/twitter (compartilhamento em redes) e na description, que é
-// o que o Google usa como resumo — a aba fica limpa sem perder o social card.
+// Título da ABA: só a marca, por decisão do Leo (mesma regra da página antiga).
+// O texto descritivo vive no og:title e na description.
 const TAB_TITLE = 'LogCodex'
-const TITLE = 'LogCodex Fleet — Tecnologia e automação para operações logísticas'
+const TITLE = 'LogCodex — Sistemas sob medida para o seu negócio'
 const DESCRIPTION =
-  'A LogCodex faz o diagnóstico da sua operação, integra com os sistemas que você já usa e implanta a solução — com capacitação do time e suporte técnico consultivo. O Fleet é um exemplo do que já colocamos em produção.'
+  'A LogCodex cria sistemas sob medida para pequenos e médios negócios: site, página de venda, atendimento no WhatsApp com IA, CRM e automações. Prévia grátis antes de decidir. Atendemos todo o Brasil.'
 
 export const metadata: Metadata = {
   title: TAB_TITLE,
   description: DESCRIPTION,
   keywords: [
     'LogCodex',
-    'LogCodex Fleet',
-    'consultoria em tecnologia logística',
-    'integração de sistemas logísticos',
-    'automação de processos logísticos com IA',
-    'implantação de sistema para transportadora',
-    'transformação operacional logística',
-    'diagnóstico de operação logística',
-    'gestão de transporte',
-    'tecnologia para logística',
+    'sistemas sob medida',
+    'sistema para pequenas empresas',
+    'criação de sites',
+    'criação de landing page',
+    'CRM para pequenas empresas',
+    'atendimento no WhatsApp com IA',
+    'automação de WhatsApp',
+    'automação de processos',
+    'desenvolvimento de software sob medida',
   ],
   alternates: { canonical: URL },
   robots: { index: true, follow: true },
-  // Sem `images`: o `opengraph-image.tsx` desta pasta é detectado pelo Next e
-  // preenche og:image/twitter:image sozinho. Declarar `/og-image.png` aqui
-  // sobrescreveria a arte gerada e traria de volta o PNG antigo — que trazia o
-  // slogan velho e o domínio .com.br.
+  // Sem `images`: o opengraph-image.tsx desta pasta preenche og:image sozinho.
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
@@ -51,31 +50,28 @@ export const metadata: Metadata = {
   },
 }
 
-// JSON-LD da marca. Diz ao Google que "LogCodex" é uma organização e que
-// "LogCodex Fleet" é o mesmo negócio (alternateName) — ajuda a busca por marca.
-// A /fleet perdeu seu Organization concorrente (§5b) — este é o único agora.
+// A empresa geral. O Fleet é um produto dela, não outro nome da organização
+// (a página antiga declarava "LogCodex Fleet" como alternateName).
 const organizationJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'LogCodex',
-  alternateName: 'LogCodex Fleet',
   url: URL,
   logo: `${URL}/logcodex-logo-color.png`,
   description:
-    'LogCodex é parceira de transformação operacional para logística: diagnóstico, integração de sistemas, implantação assistida, capacitação de equipe, suporte técnico e automação com IA. O Fleet, sistema de controle de frota, é um exemplo do que já entregamos em produção.',
-  email: 'leonardo.antunes@logcodex.com',
+    'A LogCodex cria sistemas sob medida para pequenos e médios negócios: sites, páginas de venda, atendimento no WhatsApp com IA, CRM, automações e sistemas de gestão.',
+  email: EMAIL,
   areaServed: 'BR',
   knowsAbout: [
-    'logística',
-    'transformação operacional',
-    'transporte rodoviário de cargas',
-    'integração de sistemas',
+    'desenvolvimento de software sob medida',
+    'criação de sites',
+    'CRM',
+    'automação de processos',
+    'atendimento com inteligência artificial',
     'gestão de frota',
-    'inteligência artificial aplicada à logística',
   ],
 }
 
-// WebSite JSON-LD: reforça o nome do site para o Google (sitelinks/branding).
 const websiteJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -84,26 +80,24 @@ const websiteJsonLd = {
   inLanguage: 'pt-BR',
 }
 
-// Service JSON-LD: substitui a narrativa de produto por serviço consultivo.
-// Sem price em nenhum item — decisão de posicionamento (sem preço visível).
+// Sem preço em nenhum item: preço é sob consulta (decisão do Leo).
 const serviceJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Service',
-  serviceType: 'Transformação operacional e automação para logística',
+  serviceType: 'Desenvolvimento de sistemas sob medida',
   provider: { '@type': 'Organization', name: 'LogCodex', url: URL },
   areaServed: 'BR',
   description: DESCRIPTION,
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
-    name: 'O que está incluso',
+    name: 'O que a LogCodex constrói',
     itemListElement: [
-      'Diagnóstico completo da operação',
-      'Integração com sistemas existentes',
-      'Personalização da solução',
-      'Implantação assistida',
-      'Capacitação do time',
-      'Suporte técnico consultivo',
-      'Automação de processos logísticos com IA',
+      'Site profissional',
+      'Página de venda',
+      'Atendimento no WhatsApp com IA',
+      'Automações',
+      'CRM',
+      'Sistema sob medida',
     ].map((name) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name } })),
   },
 }
@@ -121,23 +115,10 @@ const faqJsonLd = {
 export default function HomePage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-      <LogisticaPage />
+      {[organizationJsonLd, websiteJsonLd, serviceJsonLd, faqJsonLd].map((j) => (
+        <script key={j['@type']} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(j) }} />
+      ))}
+      <HomeGeral />
     </>
   )
 }
