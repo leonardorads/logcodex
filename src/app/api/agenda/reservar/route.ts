@@ -52,9 +52,12 @@ export async function POST(req: NextRequest) {
   const nome = typeof body.nome === 'string' ? body.nome.trim() : ''
   if (nome.length < 2) return err('VALIDATION_ERROR', 'Informe seu nome para a gente saber como te chamar.', 422)
 
-  // Página de origem: só valores conhecidos (o padrão continua sendo a home de logística).
+  // Página de origem: só valores conhecidos. Cada um precisa existir no CHECK
+  // marketing.leads.leads_origem_check (db/marketing/), senão o INSERT do lead falha.
+  // /logistica continua com home_agendamento (a etiqueta de sempre da página de logística).
   const hospedagem = body.nicho === 'hospedagem'
-  const origem = hospedagem ? 'hospedagem_agendamento' : 'home_agendamento'
+  const geral = body.nicho === 'geral'
+  const origem = hospedagem ? 'hospedagem_agendamento' : geral ? 'geral_agendamento' : 'home_agendamento'
 
   const empresa = typeof body.empresa === 'string' ? body.empresa.trim() : ''
   if (empresa.length < 2) {
@@ -103,17 +106,46 @@ export async function POST(req: NextRequest) {
     return err('INTERNAL_ERROR', INTERNAL_ERROR_MSG, 500)
   }
 
-  // 7. Google Calendar (se ligado)
+  // 7. Lead em marketing.leads ANTES do Google Agenda (12/10/2026). Antes ele era
+  //    gravado por último e a falha era engolida: o visitante via "pronto" e o
+  //    contato sumia (aconteceu com a /hospedagem em 09/10, origem fora do CHECK).
+  //    Agora, se o lead não grava, o horário é liberado e o visitante recebe o
+  //    erro, com o WhatsApp ao lado (AgendaPicker) — nunca um sucesso falso.
+  //    Mesmo COALESCE do /api/leads para não apagar dado.
+  try {
+    await sql`
+      INSERT INTO marketing.leads
+        (nome, whatsapp, email, origem, empresa, mensagem, slot_inicio, slot_fim, consent_at)
+      VALUES
+        (${nome}, ${whatsapp}, ${email}, ${origem}, ${empresa}, ${mensagem}, ${slotInicio}, ${slotFim}, ${consentAt})
+      ON CONFLICT (email) DO UPDATE SET
+        nome              = EXCLUDED.nome,
+        whatsapp          = EXCLUDED.whatsapp,
+        origem            = EXCLUDED.origem,
+        empresa           = COALESCE(EXCLUDED.empresa, marketing.leads.empresa),
+        mensagem          = COALESCE(EXCLUDED.mensagem, marketing.leads.mensagem),
+        slot_inicio       = EXCLUDED.slot_inicio,
+        slot_fim          = EXCLUDED.slot_fim,
+        calendar_event_id = NULL,
+        consent_at        = EXCLUDED.consent_at
+    `
+  } catch (e) {
+    console.error('[agenda/reservar] lead não gravado; horário liberado', { origem, code: (e as { code?: string }).code })
+    await sql`DELETE FROM marketing.agenda_reservas WHERE id = ${reservaId}`.catch(() => {})
+    return err('INTERNAL_ERROR', INTERNAL_ERROR_MSG, 500)
+  }
+
+  // 8. Google Calendar (se ligado)
   let calendarEventId: string | null = null
   let calendarConfirmed = false
 
   if (isCalendarEnabled()) {
     try {
       const result = await insertEvent({
-        summary: hospedagem ? `Site de pousada — ${empresa}` : `Diagnóstico LogCodex — ${empresa}`,
+        summary: hospedagem ? `Site de pousada — ${empresa}` : geral ? `Conversa LogCodex — ${empresa}` : `Diagnóstico LogCodex — ${empresa}`,
         description: [
           `Nome: ${nome}`,
-          hospedagem ? `Pousada: ${empresa} (veio da página /hospedagem)` : `Empresa: ${empresa}`,
+          hospedagem ? `Pousada: ${empresa} (veio da página /hospedagem)` : geral ? `Negócio: ${empresa} (veio da página inicial)` : `Empresa: ${empresa}`,
           `WhatsApp: ${whatsapp}`,
           `E-mail: ${email}`,
           mensagem ? `Mensagem: ${mensagem}` : null,
@@ -129,6 +161,9 @@ export async function POST(req: NextRequest) {
       calendarConfirmed = true
 
       await sql`UPDATE marketing.agenda_reservas SET calendar_event_id = ${calendarEventId} WHERE id = ${reservaId}`
+      // O lead já existe (passo 7): só anota o evento. Se esta linha falhar, a
+      // reunião continua marcada e o lead continua salvo — falta só o vínculo.
+      await sql`UPDATE marketing.leads SET calendar_event_id = ${calendarEventId} WHERE email = ${email}`.catch(() => {})
     } catch (e) {
       const gcalError = e as Error & { deterministic?: boolean }
       if (gcalError.deterministic) {
@@ -143,29 +178,6 @@ export async function POST(req: NextRequest) {
       // lado do Google e a resposta se perdeu. Falha de rede não autoriza
       // afirmar que não aconteceu. calendarEventId fica nulo, marcador de pendência.
     }
-  }
-
-  // 8. Lead em marketing.leads — mesmo COALESCE do /api/leads para não apagar dado
-  try {
-    await sql`
-      INSERT INTO marketing.leads
-        (nome, whatsapp, email, origem, empresa, mensagem, slot_inicio, slot_fim, calendar_event_id, consent_at)
-      VALUES
-        (${nome}, ${whatsapp}, ${email}, ${origem}, ${empresa}, ${mensagem}, ${slotInicio}, ${slotFim}, ${calendarEventId}, ${consentAt})
-      ON CONFLICT (email) DO UPDATE SET
-        nome              = EXCLUDED.nome,
-        whatsapp          = EXCLUDED.whatsapp,
-        origem            = EXCLUDED.origem,
-        empresa           = COALESCE(EXCLUDED.empresa, marketing.leads.empresa),
-        mensagem          = COALESCE(EXCLUDED.mensagem, marketing.leads.mensagem),
-        slot_inicio       = EXCLUDED.slot_inicio,
-        slot_fim          = EXCLUDED.slot_fim,
-        calendar_event_id = EXCLUDED.calendar_event_id,
-        consent_at        = EXCLUDED.consent_at
-    `
-  } catch {
-    // Lock e evento (se houver) já existem — a reunião ESTÁ marcada. Responde
-    // sucesso e engole o erro do lead; ele é recuperável a partir da reserva.
   }
 
   // 9. Sucesso
