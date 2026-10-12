@@ -1,6 +1,10 @@
 import type { Metadata } from 'next'
-import { MarketingPage } from './MarketingPage'
-import { FAQ } from './home/faq-data'
+import { LogisticaPage } from './logistica/LogisticaPage'
+import { FAQ } from './logistica/secoes/faq-data'
+
+// ESPAÇO DA HOME NOVA (página geral da LogCodex, roteiro em docs/briefing-home-geral-2026-10.md).
+// Até ela ficar pronta, a raiz mostra a página de logística exatamente como antes:
+// mesmo texto, mesmos metadados, mesmo canonical. A logística já mora em /logistica.
 
 const URL = 'https://www.logcodex.com'
 // Título da ABA: só a marca, por decisão do Leonardo. O texto descritivo segue
@@ -133,7 +137,7 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
-      <MarketingPage />
+      <LogisticaPage />
     </>
   )
 }

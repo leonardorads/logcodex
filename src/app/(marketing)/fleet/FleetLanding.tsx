@@ -10,7 +10,7 @@ import { FleetWhatsApp } from './FleetWhatsApp'
 import { FleetIntegracoes } from './FleetIntegracoes'
 import { FleetFaq } from './FleetFaq'
 import { FleetMarquee } from './FleetMarquee'
-import { FLEET_MARQUEE_ROW_A, FLEET_MARQUEE_ROW_B } from '../home/marquee-data'
+import { FLEET_MARQUEE_ROW_A, FLEET_MARQUEE_ROW_B } from '../logistica/secoes/marquee-data'
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || ''
 

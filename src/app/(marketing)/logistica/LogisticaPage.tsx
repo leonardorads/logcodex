@@ -1,22 +1,22 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ContactModalHome, type ContactIntent } from './contato/ContactModalHome'
-import { HomeNav } from './home/HomeNav'
-import { HomeHero } from './home/HomeHero'
-import { SecDiagnostico } from './home/SecDiagnostico'
-import { SecComoEntregamos } from './home/SecComoEntregamos'
-import { SecIntegracoes } from './home/SecIntegracoes'
-import { SecIncluso } from './home/SecIncluso'
-import { SecObjecoes } from './home/SecObjecoes'
-import { SecCapacidades } from './home/SecCapacidades'
-import { SecMarquee } from './home/SecMarquee'
-import { HOME_MARQUEE_ROW_A, HOME_MARQUEE_ROW_B } from './home/marquee-data'
-import { SecFaq } from './home/SecFaq'
-import { SecCloser } from './home/SecCloser'
-import { HomeFooter } from './home/HomeFooter'
+import { ContactModalHome, type ContactIntent } from '../contato/ContactModalHome'
+import { HomeNav } from './secoes/HomeNav'
+import { HomeHero } from './secoes/HomeHero'
+import { SecDiagnostico } from './secoes/SecDiagnostico'
+import { SecComoEntregamos } from './secoes/SecComoEntregamos'
+import { SecIntegracoes } from './secoes/SecIntegracoes'
+import { SecIncluso } from './secoes/SecIncluso'
+import { SecObjecoes } from './secoes/SecObjecoes'
+import { SecCapacidades } from './secoes/SecCapacidades'
+import { SecMarquee } from './secoes/SecMarquee'
+import { HOME_MARQUEE_ROW_A, HOME_MARQUEE_ROW_B } from './secoes/marquee-data'
+import { SecFaq } from './secoes/SecFaq'
+import { SecCloser } from './secoes/SecCloser'
+import { HomeFooter } from './secoes/HomeFooter'
 
-export function MarketingPage() {
+export function LogisticaPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [intent, setIntent] = useState<ContactIntent>(null)
 

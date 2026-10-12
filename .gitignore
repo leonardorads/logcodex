@@ -48,3 +48,6 @@ matrix-media-*.png
 
 .vercel
 .env*
+
+# documentos internos (roteiros, relatórios): ficam só na máquina, o repositório é público
+/docs/

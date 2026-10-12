@@ -42,7 +42,7 @@ const STEPS = [
 
 // Timeline com revelação própria, sequencial e ligada ao scroll — cada passo só
 // aparece quando ELE entra na viewport (não a seção inteira). Isolado do
-// fallback global de 1200ms do MarketingPage (que forçaria tudo visível de uma
+// fallback global de 1200ms do LogisticaPage (que forçaria tudo visível de uma
 // vez), para o efeito de "desenrolar" a lista ficar genuíno em 7 passos.
 export function SecComoEntregamos() {
   const containerRef = useRef<HTMLDivElement>(null)

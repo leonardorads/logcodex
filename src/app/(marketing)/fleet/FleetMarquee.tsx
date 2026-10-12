@@ -1,4 +1,4 @@
-import type { MarqueeItem } from '../home/SecMarquee'
+import type { MarqueeItem } from '../logistica/secoes/SecMarquee'
 
 // Versão do marquee com as classes .fl-* da /fleet (paleta e tipografia próprias
 // da landing, isoladas de .lcx-root). Mesma mecânica de scroll do SecMarquee.

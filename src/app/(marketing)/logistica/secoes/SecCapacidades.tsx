@@ -35,7 +35,7 @@ const ROADMAP = [
 
 // O roadmap tem revelação própria, sequencial e ligada ao scroll — cada linha
 // só aparece quando ELA entra na viewport, isolado do fallback global de
-// 1200ms do MarketingPage (que forçaria as 4 linhas visíveis de uma vez),
+// 1200ms do LogisticaPage (que forçaria as 4 linhas visíveis de uma vez),
 // mesmo padrão já usado em SecComoEntregamos.tsx.
 export function SecCapacidades() {
   const roadmapRef = useRef<HTMLDivElement>(null)
@@ -79,7 +79,7 @@ export function SecCapacidades() {
               // `reveal-right` isolado num wrapper, não na própria `.svc-row`:
               // essa classe já tem `transition: padding` (hover) definida no
               // CSS global — se `reveal-right` fosse aplicada na mesma tag,
-              // a `transition` do MarketingPage (opacity/transform) tomaria
+              // a `transition` do LogisticaPage (opacity/transform) tomaria
               // a propriedade inteira e o hover perderia a suavização,
               // saltando o padding em vez de animar.
               <div key={c.n} className="reveal-right">

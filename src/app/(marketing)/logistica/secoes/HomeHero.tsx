@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShaderBackground } from '../ShaderBackground'
+import { ShaderBackground } from '../../ShaderBackground'
 
 // A palavra rotativa FECHA a frase: "Sua operação logística, automatizada."
 // Antes ela caía no meio, entre a vírgula e um "resolvida ponta a ponta" fixo,
