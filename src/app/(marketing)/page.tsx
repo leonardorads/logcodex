@@ -7,9 +7,9 @@ import './_geral/home-geral.css'
 // (decisão do Leo e do Igor, 10/2026; roteiro em docs/briefing-home-geral-2026-10.md).
 // A página de logística, que morava aqui, está em /logistica, sem mudança.
 //
-// URL: o domínio oficial (.com.br, decisão do Leo) entra na etapa de SEO, junto
-// com sitemap, robots e metadataBase. Até lá, fica o mesmo endereço de hoje.
-const URL = 'https://www.logcodex.com'
+// Domínio oficial: .com.br (decisão do Leo, 11/10/2026). O .com serve a mesma
+// página; o canonical consolida tudo no .com.br, como já fazia a /hospedagem.
+const URL = 'https://www.logcodex.com.br'
 // Título da ABA: só a marca, por decisão do Leo (mesma regra da página antiga).
 // O texto descritivo vive no og:title e na description.
 const TAB_TITLE = 'LogCodex'

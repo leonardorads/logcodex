@@ -4,10 +4,12 @@ import { FAQ } from './secoes/faq-data'
 
 // Página de logística, que até 10/2026 era a home (decisão do Leo e do Igor: a
 // home vira a página geral da LogCodex e esta continua no ar, igual, aqui).
-// URL = a empresa (JSON-LD de Organization/WebSite/provider seguem apontando para
-// a raiz); PAGINA = o endereço desta página (canonical e og:url).
-// O domínio oficial (.com x .com.br) é trocado só na etapa de SEO, junto com a home nova.
-const URL = 'https://www.logcodex.com'
+// URL = a empresa (provider do Service aponta para a raiz); PAGINA = o endereço
+// desta página (canonical e og:url). Domínio oficial: .com.br (decisão do Leo);
+// o .com serve a mesma página e o canonical consolida no .com.br.
+// Organization e WebSite saíram daqui (12/10/2026): quem descreve a empresa é a
+// home geral; esta página declarava a LogCodex como "LogCodex Fleet" e só logística.
+const URL = 'https://www.logcodex.com.br'
 const PAGINA = `${URL}/logistica`
 // Título da ABA: só a marca, por decisão do Leonardo. O texto descritivo segue
 // vivo no og:title/twitter (compartilhamento em redes) e na description, que é
@@ -53,39 +55,6 @@ export const metadata: Metadata = {
   },
 }
 
-// JSON-LD da marca. Diz ao Google que "LogCodex" é uma organização e que
-// "LogCodex Fleet" é o mesmo negócio (alternateName) — ajuda a busca por marca.
-// A /fleet perdeu seu Organization concorrente (§5b) — este é o único agora.
-const organizationJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'LogCodex',
-  alternateName: 'LogCodex Fleet',
-  url: URL,
-  logo: `${URL}/logcodex-logo-color.png`,
-  description:
-    'LogCodex é parceira de transformação operacional para logística: diagnóstico, integração de sistemas, implantação assistida, capacitação de equipe, suporte técnico e automação com IA. O Fleet, sistema de controle de frota, é um exemplo do que já entregamos em produção.',
-  email: 'leonardo.antunes@logcodex.com',
-  areaServed: 'BR',
-  knowsAbout: [
-    'logística',
-    'transformação operacional',
-    'transporte rodoviário de cargas',
-    'integração de sistemas',
-    'gestão de frota',
-    'inteligência artificial aplicada à logística',
-  ],
-}
-
-// WebSite JSON-LD: reforça o nome do site para o Google (sitelinks/branding).
-const websiteJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'LogCodex',
-  url: URL,
-  inLanguage: 'pt-BR',
-}
-
 // Service JSON-LD: substitui a narrativa de produto por serviço consultivo.
 // Sem price em nenhum item — decisão de posicionamento (sem preço visível).
 const serviceJsonLd = {
@@ -123,14 +92,6 @@ const faqJsonLd = {
 export default function LogisticaRoute() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}

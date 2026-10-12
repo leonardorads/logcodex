@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 
-const BASE_URL = 'https://www.logcodex.com'
+// Domínio oficial .com.br (decisão do Leo, 11/10/2026).
+const BASE_URL = 'https://www.logcodex.com.br'
 
 export default function robots(): MetadataRoute.Robots {
   return {

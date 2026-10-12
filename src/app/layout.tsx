@@ -30,9 +30,10 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.logcodex.com'),
+  // Domínio oficial .com.br (decisão do Leo, 11/10/2026); vale para og:image etc.
+  metadataBase: new URL('https://www.logcodex.com.br'),
   title: 'LogCodex',
-  description: 'Tecnologia e automação para operações logísticas',
+  description: 'Sistemas sob medida para pequenos e médios negócios: site, WhatsApp com IA, CRM e automações.',
 }
 
 export const viewport: Viewport = {
