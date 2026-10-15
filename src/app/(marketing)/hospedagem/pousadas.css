@@ -522,3 +522,50 @@ button.pz-btn { border: 0; cursor: pointer; font-family: inherit; }
   background: rgba(232, 180, 106, .1); border: 1px solid rgba(232, 180, 106, .28); }
 .pz-calc__n { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 6px; border-radius: 50%; vertical-align: 1px;
   font: 700 12px/1 var(--font-jakarta), system-ui, sans-serif; font-style: normal; color: #1a1206; background: linear-gradient(135deg, var(--pz-areia), var(--pz-ouro)); }
+
+/* ── prévia grátis (formulário, 14/10/2026) ─ */
+.pz-previa { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(32px, 5vw, 72px); align-items: center; }
+.pz-previa__texto h2 { font-size: clamp(32px, 4.4vw, 54px); line-height: 1.08; letter-spacing: -.03em; font-weight: 600; }
+.pz-previa__sub { margin-top: 18px !important; color: var(--pz-suave); font-size: 17px; line-height: 1.6; max-width: 460px; }
+.pz-previa__passos { list-style: none; padding: 0; margin: 32px 0 0; display: grid; gap: 18px; }
+.pz-previa__passos li { display: flex; gap: 14px; align-items: flex-start; }
+.pz-previa__passos strong { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; }
+.pz-previa__passos strong svg { color: var(--pz-ouro); }
+.pz-previa__passos p { margin-top: 4px !important; color: var(--pz-suave); font-size: 15px; line-height: 1.5; }
+.pz-previa__n { flex-shrink: 0; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+  font-size: 14px; font-weight: 700; color: #1a1206; background: linear-gradient(135deg, var(--pz-areia), var(--pz-ouro)); }
+.pz-previa__cartao { padding: clamp(22px, 3vw, 36px); border-radius: 26px; background: rgba(11, 17, 32, .78);
+  border: 1px solid var(--pz-borda); box-shadow: 0 30px 80px -40px rgba(0, 0, 0, .8), inset 0 1px 0 rgba(255, 255, 255, .05); backdrop-filter: blur(10px); }
+
+.pz-form { display: grid; gap: 16px; }
+.pz-form label { display: grid; gap: 7px; font-size: 14px; font-weight: 600; color: var(--pz-texto); }
+.pz-form label em { font-style: normal; font-weight: 400; color: var(--pz-suave); }
+.pz-form input:not([type="checkbox"]) { width: 100%; padding: 13px 15px; border-radius: 14px; font: inherit; font-size: 16px; font-weight: 400;
+  color: var(--pz-texto); background: rgba(255, 255, 255, .05); border: 1px solid var(--pz-borda); outline: none; transition: border-color .2s, background .2s; }
+.pz-form input::placeholder { color: rgba(194, 201, 214, .55); }
+.pz-form input:focus { border-color: var(--pz-ouro); background: rgba(255, 255, 255, .08); }
+.pz-form__caixa { display: flex !important; grid-template-columns: none; gap: 12px !important; align-items: flex-start; font-weight: 400 !important;
+  font-size: 14px !important; line-height: 1.5; color: var(--pz-suave) !important; cursor: pointer; }
+.pz-form__caixa input { flex-shrink: 0; width: 20px; height: 20px; margin-top: 1px; accent-color: var(--pz-zap); }
+.pz-form__caixa a { color: var(--pz-areia); text-decoration: underline; text-underline-offset: 3px; }
+.pz-form__mel { position: absolute !important; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.pz-form__turnstile { min-height: 65px; }
+.pz-form__erro { padding: 11px 14px; border-radius: 12px; font-size: 14px; line-height: 1.5; color: #ffd9d9; background: rgba(220, 60, 60, .14); border: 1px solid rgba(220, 60, 60, .35); }
+.pz-form__enviar { justify-content: center; width: 100%; border: 0; cursor: pointer; font-family: inherit; }
+.pz-form__enviar:disabled { opacity: .55; cursor: not-allowed; }
+.pz-form__rodape { text-align: center; font-size: 13px; color: var(--pz-suave); }
+.pz-roda { animation: pz-roda 1s linear infinite; }
+@keyframes pz-roda { to { transform: rotate(360deg); } }
+
+.pz-previa__pronto { display: grid; gap: 16px; justify-items: center; text-align: center; }
+.pz-previa__pronto h3 { font-family: var(--pz-serif); font-size: clamp(26px, 3vw, 34px); font-weight: 500; }
+.pz-previa__pronto p { color: var(--pz-suave); font-size: 16px; line-height: 1.55; }
+.pz-previa__pronto b { color: var(--pz-texto); }
+.pz-previa__ok { color: var(--pz-zap); }
+.pz-previa__zap { width: 100%; justify-content: center; text-align: center; }
+.pz-previa__nota { display: flex; gap: 10px; align-items: flex-start; text-align: left; font-size: 14px !important; }
+.pz-previa__nota svg { flex-shrink: 0; margin-top: 3px; color: var(--pz-ouro); }
+
+@media (max-width: 900px) {
+  .pz-previa { grid-template-columns: 1fr; }
+}

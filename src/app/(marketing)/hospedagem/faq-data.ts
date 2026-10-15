@@ -1,6 +1,6 @@
 // Perguntas da página /hospedagem. Respostas curtas e só com o que o Leo já
 // decidiu (08–09/10/2026): prévia e versão completa são cortesia; paga para pôr
-// no ar; prévia em até 1 hora após a conversa; plano de 12 meses inclui painel,
+// no ar; prévia em até 1 hora após receber as fotos, em horário comercial (14/10); plano de 12 meses inclui painel,
 // WhatsApp automático e IA. Valores e mensalidade não foram definidos — não prometer.
 // `icone` é o nome do ícone animado que aparece ao lado da pergunta (Perguntas.tsx).
 export const PERGUNTAS = [
@@ -12,7 +12,7 @@ export const PERGUNTAS = [
   {
     icone: 'timer',
     q: 'Em quanto tempo vejo a prévia?',
-    a: 'Em até 1 hora depois da conversa com o especialista, com as suas fotos e informações em mãos.',
+    a: 'Em até 1 hora, em horário comercial, depois que recebemos as suas fotos. Peça pelo formulário da página ou pelo WhatsApp.',
   },
   {
     icone: 'wallet',

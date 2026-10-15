@@ -16,12 +16,14 @@ import { PlanoAnual } from './PlanoAnual'
 import { PhoneDemo } from './PhoneDemo'
 import { GoogleBusca, NoveEmDez } from './GoogleBusca'
 import { Perguntas } from './Perguntas'
+import { PreviaGratis } from './PreviaGratis'
+import { WHATSAPP_LOGCODEX } from '@/lib/previa'
 
-// Contato da frente de hospedagem. TODO(Leo): trocar pelo WhatsApp Business da
-// LogCodex (Fluke, 41 93618-4727) quando a linha for ativada; até lá, o do Leo.
-const WHATSAPP = '5541999283590'
-const MSG = 'Olá, Leo! Vi a página da LogCodex e quero uma prévia do site da minha pousada.'
-const LINK_ZAP = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(MSG)}`
+// Contato da frente de hospedagem: WhatsApp oficial da LogCodex (Fluke, Cloud API),
+// no ar desde 14/10/2026 com a Lia + aprovação do Leo. Trocado do número pessoal
+// do Leo em 14/10 (decisão dele no plano da prévia grátis).
+const MSG = 'Olá! Vi a página da LogCodex e quero uma prévia do site da minha pousada.'
+const LINK_ZAP = `https://wa.me/${WHATSAPP_LOGCODEX}?text=${encodeURIComponent(MSG)}`
 
 const sobe = {
   hidden: { opacity: 0, y: 28, filter: 'blur(8px)' },
@@ -78,7 +80,7 @@ const DORES = [
 ]
 
 const PASSOS = [
-  { n: '01', icon: <Camera size={22} />, t: 'Prévia com as suas fotos', d: 'Pronta em até 1 hora depois da conversa com o especialista. Grátis.' },
+  { n: '01', icon: <Camera size={22} />, t: 'Prévia com as suas fotos', d: 'Pronta em até 1 hora, em horário comercial, depois que as fotos chegam. Grátis.' },
   { n: '02', icon: <Gift size={22} />, t: 'Versão completa, cortesia', d: 'Ajustamos juntos até ficar com a sua cara.' },
   { n: '03', icon: <Rocket size={22} />, t: 'Você decide colocar no ar', d: 'Só investe quando aprovar. Sem surpresa.' },
 ]
@@ -160,8 +162,8 @@ export function PousadasLanding() {
               </a>
             </motion.div>
             <motion.p className="pz-dica" variants={sobe}>
-              Preço sob consulta, numa conversa rápida e sem compromisso. Prefere WhatsApp?{' '}
-              <a href={LINK_ZAP} target="_blank" rel="noopener noreferrer">Mande o nome ou o Instagram da pousada</a>.
+              Preço sob consulta, numa conversa rápida e sem compromisso. Prefere sem conversa?{' '}
+              <a href="#previa">Peça a sua prévia grátis</a> em 1 minuto.
             </motion.p>
             <motion.ul className="pz-hero__provas" variants={sobe}>
               <li><Gift size={15} /> Prévia sem custo</li>
@@ -263,7 +265,7 @@ export function PousadasLanding() {
             </motion.h2>
             <motion.p className="pz-rapido" variants={sobe}>
               <Zap size={15} />
-              <span>Rápido: sua prévia grátis fica pronta <b>em até 1 hora</b> depois da conversa com o especialista.</span>
+              <span>Rápido: sua prévia grátis fica pronta <b>em até 1 hora</b>, em horário comercial, depois que recebemos as suas fotos.</span>
             </motion.p>
           </Revela>
           <div className="pz-passos" ref={passosRef}>
@@ -280,6 +282,9 @@ export function PousadasLanding() {
             </Revela>
           </div>
         </section>
+
+        {/* ── PRÉVIA GRÁTIS (formulário) ───────── */}
+        <PreviaGratis />
 
         {/* ── ENTREGA ──────────────────────────── */}
         <section className="pz-secao">

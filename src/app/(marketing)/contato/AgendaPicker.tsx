@@ -38,7 +38,7 @@ declare global {
  * ("Verificação de segurança falhou"). Guardar o token em estado permite
  * bloquear o botão até ele existir.
  */
-function useTurnstileWidget(
+export function useTurnstileWidget(
   containerRef: React.RefObject<HTMLDivElement | null>,
   onToken: (token: string | null) => void,
   widgetIdRef: React.MutableRefObject<string | null>
