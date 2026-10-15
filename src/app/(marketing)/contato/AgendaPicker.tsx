@@ -138,6 +138,8 @@ export type Nicho = 'logistica' | 'hospedagem' | 'geral'
 type Textos = {
   titulo: string; detalhe: string; empresa: string; placeholder: string; erroEmpresa: string
   msgLabel: string; msgPlaceholder: string; emailPlaceholder: string; consentimento: string
+  // página de privacidade de cada frente (a da hospedagem é própria desde 15/10/2026)
+  privacidade?: string
   zapAjuda: string; zapErro: string; arquivoIcs: string
   /** Número do WhatsApp de socorro; sem ele usa NEXT_PUBLIC_WHATSAPP_NUMBER (o da home). */
   zapNumero?: string
@@ -167,11 +169,12 @@ const TEXTOS: Record<Nicho, Textos> = {
     msgPlaceholder: 'Instagram ou site atual, quantos quartos, de onde vêm as reservas hoje...',
     emailPlaceholder: 'voce@email.com',
     consentimento: 'Aceito receber contato da LogCodex sobre o site da minha pousada.',
-    zapAjuda: 'Olá, Leo! Quero agendar uma conversa sobre o site da minha pousada.',
-    zapErro: 'Olá, Leo! Tentei agendar pelo site e não consegui. Quero uma prévia do site da minha pousada.',
+    privacidade: '/hospedagem/privacidade',
+    zapAjuda: 'Olá! Quero agendar uma conversa sobre o site da minha pousada.',
+    zapErro: 'Olá! Tentei agendar pelo site e não consegui. Quero uma prévia do site da minha pousada.',
     arquivoIcs: 'conversa-logcodex-pousada.ics',
-    // Mesmo número da página /hospedagem. TODO(Leo): trocar pelo Fluke quando a linha for ativada.
-    zapNumero: '5541999283590',
+    // Mesmo número da página /hospedagem: WhatsApp da LogCodex (Fluke), trocado em 15/10/2026.
+    zapNumero: '5541936184727',
   },
   geral: {
     titulo: 'Conversa LogCodex',
@@ -669,7 +672,7 @@ export function AgendaPicker({ onConcluir, nicho = 'logistica' }: { onConcluir?:
 
       <label className="cm-consent">
         <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-        <span>{tx.consentimento} <a href="/politica-de-privacidade" target="_blank" rel="noopener noreferrer">Política de privacidade</a></span>
+        <span>{tx.consentimento} <a href={tx.privacidade ?? '/politica-de-privacidade'} target="_blank" rel="noopener noreferrer">Política de privacidade</a></span>
       </label>
       {errors.consent && <p className="cm-field-err">{errors.consent}</p>}
 

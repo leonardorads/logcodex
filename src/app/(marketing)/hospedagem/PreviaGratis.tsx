@@ -162,7 +162,7 @@ export function PreviaGratis() {
               <label className="pz-form__caixa">
                 <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} required />
                 <span>
-                  {CONSENT_TEXTO} <a href="/politica-de-privacidade" target="_blank" rel="noopener noreferrer">Privacidade</a>
+                  {CONSENT_TEXTO} <a href="/hospedagem/privacidade" target="_blank" rel="noopener noreferrer">Privacidade</a>
                 </span>
               </label>
               {TEM_TURNSTILE && <div ref={turnstileRef} className="pz-form__turnstile" />}

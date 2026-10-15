@@ -70,38 +70,10 @@ export default function PoliticaPrivacidadePage() {
           ocorrer primeiro. Cumpridas essas finalidades, os dados são eliminados de forma segura.
         </Section>
 
-        {/* Seção aprovada pelo Leo em 15/10/2026 (pedidos de prévia da /hospedagem + WhatsApp da LogCodex).
-            A promessa de 30 dias é cumprida pela rotina diária do logcodex-wa + montar-fila.sh (VPS). */}
-        <Section title="9. Pedidos de prévia de site (hospedagens)">
-          <strong style={strong}>O que coletamos.</strong> No formulário da página /hospedagem: o nome da hospedagem, a cidade,
-          o WhatsApp e, se você informar, um link (site, Instagram ou Booking). Pelo WhatsApp da LogCodex: as mensagens e as
-          fotos que você enviar.
-          <br /><br />
-          <strong style={strong}>Para que usamos.</strong> Para montar uma prévia privada do site da sua hospedagem (um vídeo do
-          site no celular) e conversar com você sobre ela. A prévia não é publicada. As suas fotos não são usadas em portfólio
-          nem em divulgação sem a sua autorização por escrito.
-          <br /><br />
-          <strong style={strong}>Fotos.</strong> Guardamos uma cópia nova de cada foto, sem os dados de localização (GPS) e da
-          câmera. Ao marcar a caixa do formulário, você declara ser responsável pela hospedagem ou autorizado por ela.
-          <br /><br />
-          <strong style={strong}>Atendimento com apoio de IA.</strong> As respostas no WhatsApp são escritas com a ajuda de uma
-          assistente virtual (a Lia) e revisadas pelo Leo antes de qualquer envio. Para isso, o texto das mensagens passa por um
-          provedor de inteligência artificial (OpenAI). O Leo revisa as conversas pelo Telegram.
-          <br /><br />
-          <strong style={strong}>Onde ficam.</strong> O pedido do formulário fica no Supabase. As mensagens e as fotos ficam num
-          servidor da LogCodex contratado na Hostinger. O WhatsApp é operado pela Meta.
-          <br /><br />
-          <strong style={strong}>Base legal.</strong> O seu consentimento (art. 7º, I, da LGPD) e o atendimento do seu pedido de
-          prévia (art. 7º, V).
-          <br /><br />
-          <strong style={strong}>Por quanto tempo.</strong> Se a hospedagem não fechar o site, as fotos, a prévia e o vídeo são
-          apagados em até 30 dias depois da entrega da prévia. O pedido (nome, cidade e WhatsApp) fica guardado por até 12 meses
-          como histórico de atendimento, ou até você pedir a exclusão. As mensagens que já chegaram ao seu WhatsApp ficam no seu
-          aparelho.
-          <br /><br />
-          <strong style={strong}>Parar e excluir.</strong> Responda “SAIR” no WhatsApp e não enviamos mais nada. Para acesso,
-          correção ou exclusão dos seus dados, escreva para{' '}
-          <a href="mailto:leonardo.antunes@logcodex.com" style={link}>leonardo.antunes@logcodex.com</a>.
+        {/* A LogCodex Hospedagem tem política própria desde 15/10/2026 (pedido do Leo: esta página fala do Fleet). */}
+        <Section title="9. LogCodex Hospedagem (sites para pousadas)">
+          Pedidos de prévia de site, agendamentos pela página /hospedagem e o atendimento pelo WhatsApp da LogCodex seguem a{' '}
+          <Link href="/hospedagem/privacidade" style={link}>política de privacidade da LogCodex Hospedagem</Link>.
         </Section>
 
         <Section title="10. Alterações desta política">

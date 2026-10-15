@@ -341,7 +341,7 @@ export function PousadasLanding() {
       <footer className="pz-rodape">
         <CuboLogo size={20} animar={false} />
         <span><span className="pz-logo-nome">logcodex</span> · sites e soluções sob medida · atendemos todo o Brasil</span>
-        <a href="/politica-de-privacidade">Privacidade</a>
+        <a href="/hospedagem/privacidade">Privacidade</a>
       </footer>
 
       <AgendaPousada />
