@@ -551,6 +551,8 @@ button.pz-btn { border: 0; cursor: pointer; font-family: inherit; }
 .pz-form__mel { position: absolute !important; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 .pz-form__turnstile { min-height: 65px; }
 .pz-form__erro { padding: 11px 14px; border-radius: 12px; font-size: 14px; line-height: 1.5; color: #ffd9d9; background: rgba(220, 60, 60, .14); border: 1px solid rgba(220, 60, 60, .35); }
+a.pz-form__erro, .pz-form__erro a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.pz-form__aviso { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--pz-suave); }
 .pz-form__enviar { justify-content: center; width: 100%; border: 0; cursor: pointer; font-family: inherit; }
 .pz-form__enviar:disabled { opacity: .55; cursor: not-allowed; }
 .pz-form__rodape { text-align: center; font-size: 13px; color: var(--pz-suave); }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Camera, CheckCircle2, Clock, Loader2, MessageCircle, Send } from 'lucide-react'
 import { useTurnstileWidget } from '../contato/AgendaPicker'
@@ -54,6 +54,17 @@ export function PreviaGratis() {
   useTurnstileWidget(turnstileRef, setToken, widgetIdRef)
 
   const bloqueado = enviando || (TEM_TURNSTILE && !token)
+
+  // Sem token depois de alguns segundos = a verificação não carregou (bloqueador
+  // de anúncio, rede ruim, domínio fora da lista do Cloudflare). O botão fica
+  // travado; então a pessoa precisa saber por quê e ter uma saída (WhatsApp).
+  // Erro de 14/10: no endereço de teste o botão ficava cinza sem explicação.
+  const [verifDemorou, setVerifDemorou] = useState(false)
+  useEffect(() => {
+    if (!TEM_TURNSTILE || token) return
+    const t = setTimeout(() => setVerifDemorou(true), 12000)
+    return () => { clearTimeout(t); setVerifDemorou(false) }
+  }, [token])
 
   async function enviar(e: FormEvent) {
     e.preventDefault()
@@ -156,6 +167,16 @@ export function PreviaGratis() {
               </label>
               {TEM_TURNSTILE && <div ref={turnstileRef} className="pz-form__turnstile" />}
               {erro && <p className="pz-form__erro" role="alert">{erro}</p>}
+              {TEM_TURNSTILE && !token && !enviando && (
+                verifDemorou ? (
+                  <p className="pz-form__erro" role="alert">
+                    A verificação de segurança não carregou. Recarregue a página ou{' '}
+                    <a href={linkWhatsapp(`Olá! Quero a prévia grátis do site da minha pousada${pousada.trim() ? ` (${pousada.trim()})` : ''}.`)} target="_blank" rel="noopener noreferrer">peça pelo WhatsApp</a>.
+                  </p>
+                ) : (
+                  <p className="pz-form__aviso"><Loader2 size={14} className="pz-roda" /> Verificando que você não é um robô…</p>
+                )
+              )}
               <button type="submit" className="pz-btn pz-btn--grande pz-form__enviar" disabled={bloqueado}>
                 {enviando ? <Loader2 size={18} className="pz-roda" /> : <Send size={18} />}
                 <span>{enviando ? 'Registrando…' : 'Quero minha prévia grátis'}</span>
